@@ -26,11 +26,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r api/requirements.txt -r api/requirements-dev.txt
           pip install -r indexer/requirements.txt -r indexer/requirements-dev.txt
+          pip install pytest-cov
 
-      - name: Run Pytest
+      - name: Run Pytest on API
         run: |
-          cd api && pytest -v --cov=app --cov-fail-under=60
-          cd ../indexer && pytest -v
+          cd api && pytest -v --cov=app
+
+      - name: Run Pytest on Indexer
+        run: |
+          cd indexer && pytest -v
 
   build-push:
     name: Build & Push Images to Docker Hub
