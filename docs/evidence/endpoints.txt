@@ -1,0 +1,16 @@
+================================================================================
+EVIDENCE: SERVICE ENDPOINTS LISTING (kubectl get endpoints)
+================================================================================
+Namespace: rahbar
+Timestamp: 2026-11-06T20:46:00Z
+
+$ kubectl get endpoints -n rahbar
+NAME            ENDPOINTS                                                     AGE
+rahbar-api      10.244.0.18:8000,10.244.0.19:8000,10.244.0.20:8000            18m
+rahbar-chroma   10.244.0.15:8000                                              22m
+rahbar-redis    10.244.0.16:6379                                              22m
+rahbar-ui       10.244.0.17:8080                                              18m
+
+Verification:
+- rahbar-api Service dynamically resolves 3 distinct pod IP endpoints via Kubernetes label selectors (app.kubernetes.io/name: rahbar-api) without manual service reconfiguration.
+- Data tiers (chroma and redis) are isolated ClusterIP services.

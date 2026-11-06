@@ -1,0 +1,20 @@
+================================================================================
+EVIDENCE: BLOCKED MERGE AND CI EVALUATION REGRESSION GATE
+================================================================================
+Pull Request: #4 ("feat: experimental chunk size adjustment")
+Head Branch: dev-chunk-experiment -> Base Branch: main
+Merge State: BLOCKED (Greyed-out merge button)
+
+Failing Check:
+  e2e-eval / eval-gate (failure)
+  Status: Completed with exit code 1
+  Run Details:
+    Question q11: recall@5 dropped to 0.7000 (baseline: 0.9231)
+    GATE FAILED:
+      - recall@5 dropped by 0.223 below baseline (max allowed drop is 0.05)
+    Process completed with exit code 1.
+
+GitHub Protection Response:
+  - "Merging is blocked: Required status check 'e2e-eval' failed."
+  - "Pull requests must pass all required checks before merging."
+  - Direct merge and administrative bypass disabled.

@@ -1,0 +1,23 @@
+================================================================================
+EVIDENCE: GITHUB REPOSITORY BRANCH PROTECTION RULES
+================================================================================
+Target Repository: hassanahsan843-pixel/rahber_starter
+Branch Pattern: main
+Enforcement Level: Strict (Include Administrators)
+
+Configured Rules:
+1. Require a pull request before merging:
+   - Require approvals: 1 approval minimum
+   - Dismiss stale pull request approvals when new commits are pushed: Enabled
+   - Require review from Code Owners: Disabled
+2. Require status checks to pass before merging:
+   - Require branches to be up to date before merging: Enabled
+   - Status checks required:
+     * lint (ruff, mypy)
+     * test (pytest >= 60% coverage)
+     * manifests (kubeconform -strict)
+     * build (container build verification)
+     * scan (Trivy vulnerability scan)
+     * e2e-eval (kind ephemeral cluster & eval gate)
+3. Do not allow bypassing the above settings: Enabled
+4. Restrict direct pushes to main: Enabled (All development on 'dev' branch via PR)
