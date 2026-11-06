@@ -1,7 +1,7 @@
 """Comprehensive unit and security tests for RAHBAR API.
 
 Includes prompt injection tests, honest abstention tests, fallback validation,
-config parsing, and contract verification to achieve >60% coverage.
+semantic cache, config parsing, and contract verification to achieve >60% coverage.
 """
 
 from __future__ import annotations
@@ -15,10 +15,13 @@ from app.logjson import JSONFormatter, configure_logging, request_id_var
 from app.main import app
 from app.providers.llm import get_provider
 from app.providers.llm.stub import StubProvider
+from app.providers.llm.ollama import SAFE_FALLBACK as OLLAMA_FALLBACK
+from app.providers.llm.hosted import SAFE_FALLBACK as HOSTED_FALLBACK
 from app.retrieval import get_retriever
 from app.retrieval.stub import StubRetriever
 from app.schemas import Answer, AskRequest, AskResponse, Citation, Passage, RetrievedRef
-from app.services.answer import answer_question
+from app.services.answer import answer_question, _is_valid_citation
+from app.services.cache import SemanticCache, get_cache
 
 
 @pytest.fixture()
@@ -44,10 +47,12 @@ def test_config_parsing(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("TOP_K", "10")
     monkeypatch.setenv("TEMPERATURE", "0.7")
     monkeypatch.setenv("LLM_PROVIDER", "stub")
+    monkeypatch.setenv("RELEVANCE_FLOOR", "0.60")
     s = get_settings()
     assert s.top_k == 10
     assert s.temperature == 0.7
     assert s.llm_provider == "stub"
+    assert s.relevance_floor == 0.60
 
 
 def test_provider_and_retriever_factories() -> None:
@@ -120,6 +125,72 @@ def test_abstention_on_unanswerable_query(client: TestClient) -> None:
     data = r.json()
     assert "answered_from_context" in data
     assert isinstance(data["answered_from_context"], bool)
+
+
+def test_relevance_floor_triggers_honest_abstention() -> None:
+    """When retrieved chunks do not clear the relevance floor, return answered_from_context: False."""
+    class LowScoreRetriever:
+        name = "low_retriever"
+        def retrieve(self, question: str, k: int) -> list[Passage]:
+            return [Passage(chunk_id="c1", text="Unrelated text", source="doc.pdf", section="Sec 1", score=0.2)]
+
+    s = Settings(relevance_floor=0.55)
+    resp = answer_question("Any hostel curfew?", LowScoreRetriever(), StubProvider(), s)
+    assert resp.answered_from_context is False
+    assert resp.citations == []
+    assert "do not contain information" in resp.answer
+
+
+def test_citation_validity_filters_hallucinations() -> None:
+    """Citations that do not match retrieved passages are discarded."""
+    passages = [Passage(chunk_id="c1", text="text", source="handbook.pdf", section="1.21 Attendance", score=0.9)]
+    valid_cit = Citation(source="handbook.pdf", section="1.21 Attendance")
+    fake_cit = Citation(source="other.pdf", section="9.9 Fabricated")
+
+    assert _is_valid_citation(valid_cit, passages) is True
+    assert _is_valid_citation(fake_cit, passages) is False
+
+
+def test_schema_failure_fallback_contracts() -> None:
+    """Ollama and Hosted providers define non-500 safe fallback responses."""
+    assert OLLAMA_FALLBACK.answered_from_context is False
+    assert HOSTED_FALLBACK.answered_from_context is False
+    assert len(OLLAMA_FALLBACK.citations) == 0
+
+
+def test_semantic_cache_operations() -> None:
+    """Test semantic cache threshold, never-cache rules, and invalidation."""
+    cache = SemanticCache(threshold=0.88)
+    q_vec = [1.0, 0.0, 0.0]
+
+    resp = AskResponse(
+        request_id="test-1",
+        answer="Valid grounded answer",
+        citations=[Citation(source="doc.pdf", section="Sec 1")],
+        answered_from_context=True,
+        confidence="high",
+        retrieved=[],
+        provider="stub",
+    )
+
+    # Store
+    cache.store("test query", q_vec, resp)
+
+    # Exact or high similarity hit
+    hit = cache.lookup(q_vec, is_followup=False)
+    assert hit is not None
+    assert hit.answer == "Valid grounded answer"
+
+    # Follow-up questions must skip cache
+    assert cache.lookup(q_vec, is_followup=True) is None
+
+    # Low similarity miss
+    low_sim_vec = [0.0, 1.0, 0.0]
+    assert cache.lookup(low_sim_vec, is_followup=False) is None
+
+    # Invalidation on re-index
+    cache.invalidate()
+    assert cache.lookup(q_vec, is_followup=False) is None
 
 
 def test_answer_question_service_integration() -> None:
