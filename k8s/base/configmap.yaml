@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rahbar-config
+  namespace: rahbar
+data:
+  # Embedding model pin - both indexer and api MUST use this exact model (section 4.4)
+  EMBED_MODEL: "nomic-embed-text"
+  
+  # Chroma vector store configuration
+  CHROMA_HOST: "chroma"
+  CHROMA_PORT: "8000"
+  CHROMA_COLLECTION: "rahbar"
+  
+  # Semantic cache configuration (section 3.3)
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+  CACHE_THRESHOLD: "0.90"
+  
+  # Retrieval and Generation parameters (sections 3.2, 3.4)
+  TOP_K: "5"
+  RELEVANCE_FLOOR: "0.50"
+  TEMPERATURE: "0.2"
+  LLM_PROVIDER: "stub"
+  LLM_MODEL: "llama3.2:3b"
+  OLLAMA_URL: "http://host.minikube.internal:11434"
+  
+  # Chunking configuration (section 3.1)
+  CHUNK_SIZE: "400"
+  CHUNK_OVERLAP: "50"
+  CORPUS_DIR: "/corpus"
+  LOG_LEVEL: "INFO"

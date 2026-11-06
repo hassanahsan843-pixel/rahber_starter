@@ -1,0 +1,64 @@
+documents:
+  # Property 2: two versions of one policy (and 7: exact clause numbers)
+  - name: Undergraduate Academic Rules (Aug 2023)
+    url: http://nu.edu.pk/public/downloads/Academic-Rules-Undergrad-Aug-2023.pdf
+    doc_version: "2023-08"
+    superseded: true
+    notes: "Old version of undergraduate academic rules. Contains clause 4.2 governing course repetition and prerequisites."
+
+  - name: Academic Rules Handbook (Jun 2026)
+    url: https://nu.edu.pk/public/downloads/Academic_Rules_Handbook_2026.pdf
+    doc_version: "2026-06"
+    superseded: false
+    notes: "Current undergraduate and graduate academic rules handbook (53 pages). Attendance rule is 1.21; warning is 5.4."
+
+  - name: Prospectus 2026 - Academic Rules and Regulations
+    url: https://nu.edu.pk/Admissions/ProspectusUpload/Academic Rules and Regulations.pdf
+    doc_version: "2026"
+    superseded: false
+    notes: "Prospectus summary of academic rules. Attendance is clause 1 here, but 1.21 in the handbook."
+
+  # Property 5: long definitions & AI policy
+  - name: Student Handbook (Jun 2026)
+    url: https://nu.edu.pk/public/downloads/Student_Handbook_2026.pdf
+    doc_version: "2026-06"
+    superseded: false
+    notes: "About 60 pages with comprehensive student code of conduct and long Generative AI policy with multi-clause definitions."
+
+  # Property 4: tables, and versions over time
+  - name: Annual Report 2019-20
+    url: https://nu.edu.pk/public/downloads/AnnualReportForm/Annual Report 2019-20.pdf
+    doc_version: "2019-20"
+    superseded: false
+    notes: "Five editions of annual reports with tabular layouts of faculty count, campus breakdown, and graduates."
+
+  - name: Annual Report 2023-24
+    url: https://nu.edu.pk/public/downloads/AnnualReportForm/Annual Report 2023-24.pdf
+    doc_version: "2023-24"
+    superseded: false
+    notes: "Updated annual report with complex financial and graduation rate tables across all 5 campuses."
+
+  # Property 4: tables in HTML pages
+  - name: Fee Structure page
+    url: https://www.nu.edu.pk/Admissions/FeeStructure
+    doc_version: "2026-27"
+    superseded: false
+    notes: "HTML tables of tuition fee per credit hour (Rs. 11,000/cr), admission fee (Rs. 35,000), and refund schedule percentages."
+
+  - name: Grading page
+    url: https://www.nu.edu.pk/Student/Grading
+    doc_version: "2026"
+    superseded: false
+    notes: "HTML table mapping letter grades to grade points (A=4.00, B+=3.33, B=3.00, C+=2.33, C=2.00, F=0.00)."
+
+  # Property 3: Scanned image-only PDF with no text layer
+  - name: Faculty Entrepreneurship and Technical Start-ups Policy
+    url: https://nu.edu.pk/OricResources/ResearchPolicies/27.pdf?20220530
+    doc_version: "2022-05"
+    superseded: false
+    notes: "Scanned document with 0 font entries in pdffonts. Requires OCR (pytesseract) to extract equity sharing percentages."
+
+  # Property 6: A deliberately absent topic (Transport & Hostel Rules)
+  # Intentionally omitted from ingestion:
+  # - name: Prospectus - Transport and Hostel Facilities
+  #   url: https://nu.edu.pk/Admissions/ProspectusUpload/Transport and Hostel Facilities.pdf
