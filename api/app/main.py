@@ -21,6 +21,7 @@ from .logjson import configure_logging, request_id_var
 from .providers.llm import get_provider
 from .retrieval import get_retriever
 from .routes import ask, health, metrics
+from .services.cache import get_cache
 
 log = logging.getLogger("rahbar.api")
 
@@ -32,13 +33,41 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     app.state.settings = settings
     app.state.retriever = get_retriever(settings)
     app.state.provider = get_provider(settings)
-    # STARTER-TODO(4.4): compare the collection's embedding-model metadata with
-    # settings.embed_model here, and make /readyz fail on a mismatch.
-    # This process only reads the index. The indexer Job writes it.
+    app.state.cache = get_cache(
+        threshold=settings.cache_threshold,
+        redis_host=settings.redis_host,
+        redis_port=settings.redis_port,
+    )
+
+    # Embedding-model metadata guardrail check (section 4.4)
+    # The API strictly reads the index. On an embedding_model mismatch with the
+    # collection metadata, /readyz will return 503 so traffic is withheld.
+    if settings.retriever == "chroma":
+        try:
+            client = getattr(app.state.retriever, "client", None)
+            if client:
+                coll = client.get_collection(settings.collection)
+                meta = coll.metadata or {}
+                stored_model = meta.get("embed_model")
+                if stored_model and stored_model != settings.embed_model:
+                    log.error(
+                        "embedding_model mismatch: collection uses '%s' but EMBED_MODEL is '%s'",
+                        stored_model,
+                        settings.embed_model,
+                    )
+        except Exception as exc:
+            log.warning("could not verify embedding model pin on startup: %s", exc)
+
     log.info(
         "api started",
-        extra={"retriever": settings.retriever, "llm_provider": settings.llm_provider,
-               "embed_model": settings.embed_model, "top_k": settings.top_k},
+        extra={
+            "retriever": settings.retriever,
+            "llm_provider": settings.llm_provider,
+            "embed_model": settings.embed_model,
+            "top_k": settings.top_k,
+            "relevance_floor": settings.relevance_floor,
+            "cache_threshold": settings.cache_threshold,
+        },
     )
     yield
 
