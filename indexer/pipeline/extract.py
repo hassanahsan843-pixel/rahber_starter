@@ -21,10 +21,10 @@ except ImportError:
 
 try:
     import pytesseract
-    from PIL import Image
+
 except ImportError:
     pytesseract = None
-    Image = None
+
 
 
 class _SimpleHTMLTableParser(HTMLParser):

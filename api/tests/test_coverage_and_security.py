@@ -11,7 +11,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.config import Settings, get_settings, _int, _float
-from app.logjson import JSONFormatter, configure_logging, request_id_var
+from app.logjson import JSONFormatter, configure_logging
 from app.main import app
 from app.providers.llm import get_provider
 from app.providers.llm.stub import StubProvider
@@ -19,9 +19,9 @@ from app.providers.llm.ollama import SAFE_FALLBACK as OLLAMA_FALLBACK
 from app.providers.llm.hosted import SAFE_FALLBACK as HOSTED_FALLBACK
 from app.retrieval import get_retriever
 from app.retrieval.stub import StubRetriever
-from app.schemas import Answer, AskRequest, AskResponse, Citation, Passage, RetrievedRef
+from app.schemas import Answer, AskRequest, AskResponse, Citation, Passage
 from app.services.answer import answer_question, _is_valid_citation
-from app.services.cache import SemanticCache, get_cache
+from app.services.cache import SemanticCache
 
 
 @pytest.fixture()
