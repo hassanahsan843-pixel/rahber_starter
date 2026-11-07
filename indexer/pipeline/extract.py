@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import importlib
 import re
 from html.parser import HTMLParser
 from pathlib import Path
@@ -9,24 +10,17 @@ from typing import Any
 
 from .models import Document, Page
 
-# Optional imports for PDF and OCR extraction
-pypdf: Any = None
-try:
-    import pypdf
-except ImportError:
-    pass
 
-pdfplumber: Any = None
-try:
-    import pdfplumber
-except ImportError:
-    pass
+def _safe_import(name: str) -> Any:
+    try:
+        return importlib.import_module(name)
+    except Exception:
+        return None
 
-pytesseract: Any = None
-try:
-    import pytesseract
-except ImportError:
-    pass
+
+pypdf: Any = _safe_import("pypdf")
+pdfplumber: Any = _safe_import("pdfplumber")
+pytesseract: Any = _safe_import("pytesseract")
 
 
 class _SimpleHTMLTableParser(HTMLParser):
@@ -93,10 +87,10 @@ def _extract_pdf(path: Path, source_name: str) -> list[Page]:
     if pdfplumber is not None:
         try:
             with pdfplumber.open(str(path)) as pdf:
-                for idx, page in enumerate(pdf.pages, start=1):
-                    raw_text = page.extract_text() or ""
+                for idx, plumber_page in enumerate(pdf.pages, start=1):
+                    raw_text = plumber_page.extract_text() or ""
                     # Table extraction
-                    tables = page.extract_tables()
+                    tables = plumber_page.extract_tables()
                     table_md = ""
                     if tables:
                         for tbl in tables:
@@ -113,7 +107,7 @@ def _extract_pdf(path: Path, source_name: str) -> list[Page]:
                     # Property 3: OCR fallback for scanned pages with no text layer
                     if len(final_text.strip()) < 30 and pytesseract is not None:
                         try:
-                            img = page.to_image(resolution=200).original
+                            img = plumber_page.to_image(resolution=200).original
                             ocr_text = pytesseract.image_to_string(img)
                             if len(ocr_text.strip()) > len(final_text.strip()):
                                 final_text = ocr_text.strip()
