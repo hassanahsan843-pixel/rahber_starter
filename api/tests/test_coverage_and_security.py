@@ -11,7 +11,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.config import Settings, get_settings, _int, _float
-from app.logjson import JSONFormatter, configure_logging
+from app.logjson import JsonFormatter, configure_logging
 from app.main import app
 from app.providers.llm import get_provider
 from app.providers.llm.stub import StubProvider
@@ -208,7 +208,7 @@ def test_answer_question_service_integration() -> None:
 def test_json_logging_formatter() -> None:
     """Ensure JSON logging output matches structured stdout requirements (section 4.8)."""
     configure_logging("INFO")
-    formatter = JSONFormatter()
+    formatter = JsonFormatter()
     record = logging.LogRecord(
         name="rahbar.test",
         level=logging.INFO,

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import math
+from typing import Any
 import httpx
 from ..config import Settings
 from ..schemas import Passage
@@ -57,12 +58,12 @@ class ChromaRetriever:
         """Embed the question with settings.embed_model (the same model the indexer used),
         query the collection for the top k, filter out superseded documents, and map
         each hit to a Passage.
-        
+
         Chroma returns cosine distance; Passage.score expects similarity,
         so convert: similarity = 1 - distance.
         """
         try:
-            collection = self.client.get_collection(self.settings.collection)
+            collection: Any = self.client.get_collection(self.settings.collection)
         except Exception:
             return []
 
@@ -71,9 +72,9 @@ class ChromaRetriever:
         # Query ChromaDB with metadata filter excluding superseded documents
         # unless user explicitly queries an older version
         include_superseded = "2023" in question or "old" in question.lower()
-        where_filter = None if include_superseded else {"superseded": {"$eq": False}}
+        where_filter: Any = None if include_superseded else {"superseded": {"$eq": False}}
 
-        results = collection.query(
+        results: Any = collection.query(
             query_embeddings=[query_vec],
             n_results=k,
             where=where_filter,
@@ -84,25 +85,31 @@ class ChromaRetriever:
         if not results or not results.get("ids") or not results["ids"][0]:
             return []
 
-        ids = results["ids"][0]
-        docs = results["documents"][0] if results.get("documents") else []
-        metas = results["metadatas"][0] if results.get("metadatas") else []
-        distances = results["distances"][0] if results.get("distances") else []
+        ids: list[str] = results["ids"][0]
+        raw_docs = results.get("documents")
+        docs: list[str] = raw_docs[0] if raw_docs else []
+        raw_metas = results.get("metadatas")
+        metas: list[dict[str, Any]] = raw_metas[0] if raw_metas else []
+        raw_dists = results.get("distances")
+        distances: list[float] = raw_dists[0] if raw_dists else []
 
         for idx, chunk_id in enumerate(ids):
-            doc_text = docs[idx] if idx < len(docs) else ""
-            meta = metas[idx] if idx < len(metas) else {}
-            dist = distances[idx] if idx < len(distances) else 1.0
+            doc_text = str(docs[idx]) if idx < len(docs) else ""
+            meta: dict[str, Any] = metas[idx] if idx < len(metas) else {}
+            dist = float(distances[idx]) if idx < len(distances) else 1.0
 
             # Convert cosine distance to cosine similarity
             similarity_score = max(0.0, min(1.0, 1.0 - dist))
 
+            raw_page = meta.get("page")
+            page_num: int | None = int(raw_page) if isinstance(raw_page, int) else None
+
             passages.append(Passage(
-                chunk_id=chunk_id,
+                chunk_id=str(chunk_id),
                 text=doc_text,
                 source=str(meta.get("source", "unknown")),
                 section=str(meta.get("section", "General")),
-                page=meta.get("page") if isinstance(meta.get("page"), int) else None,
+                page=page_num,
                 score=round(similarity_score, 4),
             ))
 
