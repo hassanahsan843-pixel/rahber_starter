@@ -177,11 +177,20 @@ jobs:
           kubectl apply -k k8s/overlays/dev
           kubectl create secret generic rahbar-secret -n rahbar --from-literal=LLM_API_KEY="ci-dummy-key" --dry-run=client -o yaml | kubectl apply -f -
 
-      - name: Run Indexer Job on Fixture Corpus
+      - name: Seed Chroma with dummy index (CI)
         run: |
           kubectl wait --for=condition=ready pod -l app=chroma -n rahbar --timeout=120s
-          kubectl create job --from=cronjob/reindex fixture-indexer-job -n rahbar
-          kubectl wait --for=condition=complete job/fixture-indexer-job -n rahbar --timeout=180s
+          kubectl run indexer-seed -n rahbar \
+            --image=rahbar-indexer:dev \
+            --image-pull-policy=IfNotPresent \
+            --restart=Never \
+            --env="CHROMA_HOST=chroma" \
+            --env="CHROMA_PORT=8000" \
+            --env="CHROMA_COLLECTION=rahbar" \
+            --env="EMBED_MODEL=dummy-768" \
+            -- python -m pipeline.run --dummy
+          kubectl wait --for=condition=ready=false pod/indexer-seed -n rahbar --timeout=180s || true
+          kubectl wait --for=jsonpath='{.status.phase}'=Succeeded pod/indexer-seed -n rahbar --timeout=180s
 
       - name: Wait for API Rollout
         run: |
