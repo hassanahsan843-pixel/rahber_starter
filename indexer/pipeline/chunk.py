@@ -59,8 +59,26 @@ def chunk(doc: Document, size: int = 400, overlap: int = 50) -> list[Chunk]:
             first_line = para.split("\n", 1)[0].strip()
             heading_match = HEADING_REGEX.match(first_line)
             if heading_match:
-                # Update current active section
-                current_section = first_line.lstrip("#").strip()
+                new_sec = first_line.lstrip("#").strip()
+                # If we were already building a chunk under a previous section, flush it under that section first
+                if current_words and new_sec != current_section:
+                    chunk_text = " ".join(current_words)
+                    chunk_counter += 1
+                    stable_id = hashlib.sha256(
+                        f"{doc.source}:{p.page}:{current_section}:{chunk_counter}".encode()
+                    ).hexdigest()[:16]
+
+                    chunks.append(Chunk(
+                        id=f"{doc.source[:12]}-{stable_id}",
+                        text=chunk_text,
+                        source=doc.source,
+                        section=current_section,
+                        page=p.page,
+                        doc_version=doc.doc_version,
+                        superseded=doc.superseded,
+                    ))
+                    current_words = []
+                current_section = new_sec
 
             para_words = _tokenize_words(para)
 

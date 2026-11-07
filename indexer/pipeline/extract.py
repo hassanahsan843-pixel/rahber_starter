@@ -5,26 +5,28 @@ from __future__ import annotations
 import re
 from html.parser import HTMLParser
 from pathlib import Path
+from typing import Any
 
 from .models import Document, Page
 
 # Optional imports for PDF and OCR extraction
+pypdf: Any = None
 try:
     import pypdf
 except ImportError:
-    pypdf = None
+    pass
 
+pdfplumber: Any = None
 try:
     import pdfplumber
 except ImportError:
-    pdfplumber = None
+    pass
 
+pytesseract: Any = None
 try:
     import pytesseract
-
 except ImportError:
-    pytesseract = None
-
+    pass
 
 
 class _SimpleHTMLTableParser(HTMLParser):
@@ -129,8 +131,8 @@ def _extract_pdf(path: Path, source_name: str) -> list[Page]:
     if pypdf is not None:
         try:
             reader = pypdf.PdfReader(str(path))
-            for idx, page in enumerate(reader.pages, start=1):
-                txt = page.extract_text() or ""
+            for idx, pdf_page in enumerate(reader.pages, start=1):
+                txt = pdf_page.extract_text() or ""
                 pages.append(Page(source=source_name, page=idx, text=txt.strip(), ocr=False))
             if pages:
                 return pages
