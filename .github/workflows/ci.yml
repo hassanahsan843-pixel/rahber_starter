@@ -81,13 +81,17 @@ jobs:
 
       - name: Install Kustomize
         run: |
-          curl -sL https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.4.3/kustomize_v5.4.3_linux_amd64.tar.gz | tar xz
+          curl -sLo kustomize.tar.gz https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.4.3/kustomize_v5.4.3_linux_amd64.tar.gz
+          tar -xzf kustomize.tar.gz
           sudo mv kustomize /usr/local/bin/
+          rm -f kustomize.tar.gz
 
       - name: Install Kubeconform
         run: |
-          curl -sL https://github.com/yannh/kubeconform/releases/download/v0.6.7/kubeconform-linux-amd64.tar.gz | tar xz
+          curl -sLo kubeconform.tar.gz https://github.com/yannh/kubeconform/releases/download/v0.6.7/kubeconform-linux-amd64.tar.gz
+          tar -xzf kubeconform.tar.gz
           sudo mv kubeconform /usr/local/bin/
+          rm -f kubeconform.tar.gz
 
       - name: Validate Manifests with Kubeconform
         run: |
@@ -179,9 +183,10 @@ jobs:
           kubectl apply -k k8s/overlays/dev
           kubectl create secret generic rahbar-secret -n rahbar --from-literal=LLM_API_KEY="ci-dummy-key" --dry-run=client -o yaml | kubectl apply -f -
 
-      - name: Seed Chroma with dummy index (CI)
+      - name: Seed Chroma with fixture index (CI)
         run: |
           kubectl wait --for=condition=ready pod -l app=chroma -n rahbar --timeout=120s
+          kubectl create configmap fixture-corpus --from-file=eval/fixtures/ -n rahbar
           kubectl apply -f k8s/ci/indexer-seed-job.yaml
           kubectl wait job/indexer-seed -n rahbar --for=condition=complete --timeout=180s
           kubectl logs -n rahbar -l app=rahbar-indexer --tail=50 || true
@@ -194,4 +199,4 @@ jobs:
         run: |
           kubectl port-forward svc/rahbar-api 8000:8000 -n rahbar &
           sleep 5
-          python eval/run_eval.py --api http://localhost:8000 --golden eval/fixtures/golden.fixture.yaml
+          python eval/run_eval.py --api http://localhost:8000 --golden eval/fixtures/golden.fixture.yaml --baseline eval/fixtures/baseline.fixture.json
