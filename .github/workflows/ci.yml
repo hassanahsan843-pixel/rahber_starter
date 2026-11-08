@@ -182,20 +182,44 @@ jobs:
         run: |
           kubectl apply -k k8s/overlays/dev
           kubectl create secret generic rahbar-secret -n rahbar --from-literal=LLM_API_KEY="ci-dummy-key" --dry-run=client -o yaml | kubectl apply -f -
-          kubectl patch configmap rahbar-config -n rahbar --type merge -p '{"data":{"OLLAMA_URL":"offline"}}'
+          # Patch for CI: offline embeddings, stub LLM, zero relevance floor so eval gate is deterministic
+          kubectl patch configmap rahbar-config -n rahbar --type merge -p '{"data":{"OLLAMA_URL":"offline","LLM_PROVIDER":"stub","RELEVANCE_FLOOR":"0.0"}}'
 
       - name: Seed Chroma with fixture index (CI)
         run: |
-          kubectl wait --for=condition=ready pod -l app=chroma -n rahbar --timeout=120s
-          kubectl port-forward svc/chroma 9000:8000 -n rahbar --address 127.0.0.1 > /tmp/pf-chroma.log 2>&1 &
-          PF_PID=$!
-          for i in {1..30}; do
-            if curl -s http://127.0.0.1:9000/api/v2/heartbeat > /dev/null 2>&1; then
-              echo "Chroma port-forward ready on attempt $i"
+          # Wait for Chroma pod to be Running (no readiness probe, so we poll the container status)
+          echo "Waiting for Chroma pod to reach Running state..."
+          for i in {1..60}; do
+            STATUS=$(kubectl get pods -l app=chroma -n rahbar -o jsonpath='{.items[0].status.phase}' 2>/dev/null || echo "")
+            echo "  attempt $i: pod phase='$STATUS'"
+            if [ "$STATUS" = "Running" ]; then
+              echo "Chroma pod is Running"
               break
             fi
-            sleep 1
+            sleep 3
           done
+          # Give Chroma a moment to fully initialize its HTTP server
+          sleep 5
+          # Start port-forward and poll until Chroma heartbeat responds
+          kubectl port-forward svc/chroma 9000:8000 -n rahbar --address 127.0.0.1 > /tmp/pf-chroma.log 2>&1 &
+          PF_PID=$!
+          CHROMA_READY=0
+          for i in {1..40}; do
+            if curl -s http://127.0.0.1:9000/api/v2/heartbeat > /dev/null 2>&1; then
+              echo "Chroma port-forward ready on attempt $i"
+              CHROMA_READY=1
+              break
+            fi
+            sleep 2
+          done
+          if [ "$CHROMA_READY" != "1" ]; then
+            echo "ERROR: Chroma never became reachable. Port-forward log:"
+            cat /tmp/pf-chroma.log || true
+            echo "=== Pod status ==="
+            kubectl get pods -n rahbar
+            kubectl describe pods -l app=chroma -n rahbar
+            exit 1
+          fi
           echo "Running pipeline seed..."
           PYTHONPATH=indexer \
             CHROMA_HOST=127.0.0.1 \
@@ -209,7 +233,13 @@ jobs:
 
       - name: Wait for API Rollout
         run: |
-          if ! kubectl rollout status deployment/rahbar-api -n rahbar --timeout=180s; then
+          # Remove HPA so manual scale to 1 replica sticks in KinD
+          kubectl delete hpa rahbar-api-hpa -n rahbar --ignore-not-found
+          # Scale to 1 replica to minimise resource pressure in KinD
+          kubectl scale deployment rahbar-api --replicas=1 -n rahbar
+          # Restart pods to pick up the patched configmap (OLLAMA_URL, LLM_PROVIDER, RELEVANCE_FLOOR)
+          kubectl rollout restart deployment/rahbar-api -n rahbar
+          if ! kubectl rollout status deployment/rahbar-api -n rahbar --timeout=240s; then
             echo "=== API POD LOGS ==="
             kubectl logs -n rahbar -l app=rahbar-api --tail=100
             echo "=== DESCRIBE PODS ==="
@@ -221,12 +251,19 @@ jobs:
         run: |
           kubectl port-forward svc/rahbar-api 8000:8000 -n rahbar --address 127.0.0.1 > /tmp/pf-api.log 2>&1 &
           PF_PID=$!
-          for i in {1..30}; do
+          API_READY=0
+          for i in {1..40}; do
             if curl -s http://127.0.0.1:8000/healthz > /dev/null 2>&1; then
               echo "API port-forward ready on attempt $i"
+              API_READY=1
               break
             fi
-            sleep 1
+            sleep 2
           done
-          python eval/run_eval.py --api http://127.0.0.1:8000 --golden eval/fixtures/golden.fixture.yaml --baseline eval/fixtures/baseline.fixture.json
+          if [ "$API_READY" != "1" ]; then
+            echo "ERROR: API never became reachable. Port-forward log:"
+            cat /tmp/pf-api.log || true
+            exit 1
+          fi
+          python eval/run_eval.py --api http://127.0.0.1:8000 --golden eval/fixtures/ci.golden.yaml --baseline eval/fixtures/ci.baseline.json
           kill $PF_PID || true

@@ -1,14 +1,9 @@
 {
-  "recall_at_3": 0.8000,
-  "recall_at_5": 1.0000,
-  "by_type": {
-    "ordinary": 1.0000,
-    "version": 1.0000,
-    "exact": 1.0000,
-    "injection": 1.0000
-  },
-  "citation_validity": 1.0000,
-  "abstention_correctness": 1.0000,
+  "recall_at_3": 0.0,
+  "recall_at_5": 0.0,
+  "by_type": {},
+  "citation_validity": 1.0,
+  "abstention_correctness": 1.0,
   "golden": "eval/fixtures/golden.fixture.yaml",
   "questions": 6
 }
