@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: indexer-seed
+  namespace: rahbar
+spec:
+  ttlSecondsAfterFinished: 300
+  backoffLimit: 0
+  template:
+    metadata:
+      labels:
+        app: rahbar-indexer
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: indexer-seed
+          image: rahbar-indexer:dev
+          imagePullPolicy: IfNotPresent
+          command: ["python", "-m", "pipeline.run", "--dummy"]
+          env:
+            - name: CHROMA_HOST
+              value: chroma
+            - name: CHROMA_PORT
+              value: "8000"
+            - name: CHROMA_COLLECTION
+              value: rahbar
+            - name: EMBED_MODEL
+              value: dummy-768

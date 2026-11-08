@@ -79,8 +79,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Kustomize
-        uses: imranismail/setup-kustomize@v3
+      - name: Install Kustomize
+        run: |
+          curl -sL https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.4.3/kustomize_v5.4.3_linux_amd64.tar.gz | tar xz
+          sudo mv kustomize /usr/local/bin/
 
       - name: Install Kubeconform
         run: |
@@ -180,17 +182,9 @@ jobs:
       - name: Seed Chroma with dummy index (CI)
         run: |
           kubectl wait --for=condition=ready pod -l app=chroma -n rahbar --timeout=120s
-          kubectl run indexer-seed -n rahbar \
-            --image=rahbar-indexer:dev \
-            --image-pull-policy=IfNotPresent \
-            --restart=Never \
-            --rm=true \
-            --attach=true \
-            --env="CHROMA_HOST=chroma" \
-            --env="CHROMA_PORT=8000" \
-            --env="CHROMA_COLLECTION=rahbar" \
-            --env="EMBED_MODEL=dummy-768" \
-            -- python -m pipeline.run --dummy
+          kubectl apply -f k8s/ci/indexer-seed-job.yaml
+          kubectl wait job/indexer-seed -n rahbar --for=condition=complete --timeout=180s
+          kubectl logs -n rahbar -l app=rahbar-indexer --tail=50 || true
 
       - name: Wait for API Rollout
         run: |
