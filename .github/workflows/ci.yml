@@ -171,16 +171,12 @@ jobs:
           docker build -t rahbar-api:dev api
           docker build -t rahbar-indexer:dev indexer
           docker build -t rahbar-ui:dev ui
-          docker pull chromadb/chroma:0.5.23
-          docker pull redis:7.2-alpine
 
       - name: Load images into KinD
         run: |
           kind load docker-image rahbar-api:dev --name kind-e2e
           kind load docker-image rahbar-indexer:dev --name kind-e2e
           kind load docker-image rahbar-ui:dev --name kind-e2e
-          kind load docker-image chromadb/chroma:0.5.23 --name kind-e2e
-          kind load docker-image redis:7.2-alpine --name kind-e2e
 
       - name: Deploy Kubernetes stack
         run: |
@@ -194,7 +190,7 @@ jobs:
       - name: Seed Chroma with fixture index (CI)
         run: |
           echo "Waiting for Chroma pod to reach Running state..."
-          for i in {1..30}; do
+          for i in {1..60}; do
             STATUS=$(kubectl get pod chroma-0 -n rahbar -o jsonpath='{.status.phase}' 2>/dev/null || echo "")
             echo "  attempt $i: chroma-0 phase='$STATUS'"
             if [ "$STATUS" = "Running" ]; then
@@ -203,12 +199,12 @@ jobs:
             fi
             sleep 2
           done
-          sleep 3
+          sleep 5
           # Forward directly to pod/chroma-0 so we don't depend on Service Endpoints
           kubectl port-forward pod/chroma-0 9000:8000 -n rahbar --address 127.0.0.1 > /tmp/pf-chroma.log 2>&1 &
           PF_PID=$!
           CHROMA_READY=0
-          for i in {1..30}; do
+          for i in {1..40}; do
             if curl -s http://127.0.0.1:9000/api/v2/heartbeat > /dev/null 2>&1; then
               echo "Chroma port-forward ready on attempt $i"
               CHROMA_READY=1
