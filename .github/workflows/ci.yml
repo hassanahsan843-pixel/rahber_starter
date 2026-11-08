@@ -184,13 +184,13 @@ jobs:
             --image=rahbar-indexer:dev \
             --image-pull-policy=IfNotPresent \
             --restart=Never \
+            --rm=true \
+            --attach=true \
             --env="CHROMA_HOST=chroma" \
             --env="CHROMA_PORT=8000" \
             --env="CHROMA_COLLECTION=rahbar" \
             --env="EMBED_MODEL=dummy-768" \
             -- python -m pipeline.run --dummy
-          kubectl wait --for=condition=ready=false pod/indexer-seed -n rahbar --timeout=180s || true
-          kubectl wait --for=jsonpath='{.status.phase}'=Succeeded pod/indexer-seed -n rahbar --timeout=180s
 
       - name: Wait for API Rollout
         run: |
