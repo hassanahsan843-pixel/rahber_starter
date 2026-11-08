@@ -171,7 +171,7 @@ jobs:
           docker build -t rahbar-api:dev api
           docker build -t rahbar-indexer:dev indexer
           docker build -t rahbar-ui:dev ui
-          docker pull chromadb/chroma:1.0.12
+          docker pull chromadb/chroma:0.5.23
           docker pull redis:7.2-alpine
 
       - name: Load images into KinD
@@ -179,7 +179,7 @@ jobs:
           kind load docker-image rahbar-api:dev --name kind-e2e
           kind load docker-image rahbar-indexer:dev --name kind-e2e
           kind load docker-image rahbar-ui:dev --name kind-e2e
-          kind load docker-image chromadb/chroma:1.0.12 --name kind-e2e
+          kind load docker-image chromadb/chroma:0.5.23 --name kind-e2e
           kind load docker-image redis:7.2-alpine --name kind-e2e
 
       - name: Deploy Kubernetes stack
