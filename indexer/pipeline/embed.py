@@ -31,13 +31,17 @@ def embed(texts: list[str], settings: IndexerSettings) -> list[list[float]]:
     if not texts:
         return []
 
+    # Fast offline / CI path
+    if not settings.ollama_url or any(x in settings.ollama_url.lower() for x in ("offline", "disabled", "stub", "none")):
+        return [_deterministic_stub_vector(txt, dim=768) for txt in texts]
+
     batch_size = 32
     embeddings: list[list[float]] = []
 
     for i in range(0, len(texts), batch_size):
         batch = texts[i : i + batch_size]
         try:
-            with httpx.Client(timeout=60.0) as client:
+            with httpx.Client(timeout=3.0) as client:
                 res = client.post(
                     f"{settings.ollama_url.rstrip('/')}/api/embed",
                     json={"model": settings.embed_model, "input": batch},

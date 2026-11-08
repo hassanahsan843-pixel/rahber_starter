@@ -39,8 +39,11 @@ class ChromaRetriever:
         )
 
     def _embed_query(self, text: str) -> list[float]:
+        # Fast offline / CI path
+        if not self.settings.ollama_url or any(x in self.settings.ollama_url.lower() for x in ("offline", "disabled", "stub", "none")):
+            return _fallback_embedding(text, dim=768)
         try:
-            with httpx.Client(timeout=10.0) as client:
+            with httpx.Client(timeout=3.0) as client:
                 res = client.post(
                     f"{self.settings.ollama_url.rstrip('/')}/api/embed",
                     json={"model": self.settings.embed_model, "input": [text]},

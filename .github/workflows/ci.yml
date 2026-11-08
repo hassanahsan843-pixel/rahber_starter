@@ -182,6 +182,7 @@ jobs:
         run: |
           kubectl apply -k k8s/overlays/dev
           kubectl create secret generic rahbar-secret -n rahbar --from-literal=LLM_API_KEY="ci-dummy-key" --dry-run=client -o yaml | kubectl apply -f -
+          kubectl patch configmap rahbar-config -n rahbar --type merge -p '{"data":{"OLLAMA_URL":"offline"}}'
 
       - name: Seed Chroma with fixture index (CI)
         run: |
