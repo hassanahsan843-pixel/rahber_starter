@@ -171,12 +171,16 @@ jobs:
           docker build -t rahbar-api:dev api
           docker build -t rahbar-indexer:dev indexer
           docker build -t rahbar-ui:dev ui
+          docker pull chromadb/chroma:1.0.12
+          docker pull redis:7.2-alpine
 
       - name: Load images into KinD
         run: |
           kind load docker-image rahbar-api:dev --name kind-e2e
           kind load docker-image rahbar-indexer:dev --name kind-e2e
           kind load docker-image rahbar-ui:dev --name kind-e2e
+          kind load docker-image chromadb/chroma:1.0.12 --name kind-e2e
+          kind load docker-image redis:7.2-alpine --name kind-e2e
 
       - name: Deploy Kubernetes stack
         run: |
@@ -189,24 +193,22 @@ jobs:
 
       - name: Seed Chroma with fixture index (CI)
         run: |
-          # Wait for Chroma pod to be Running (no readiness probe, so we poll the container status)
           echo "Waiting for Chroma pod to reach Running state..."
-          for i in {1..60}; do
-            STATUS=$(kubectl get pods -l app=chroma -n rahbar -o jsonpath='{.items[0].status.phase}' 2>/dev/null || echo "")
-            echo "  attempt $i: pod phase='$STATUS'"
+          for i in {1..30}; do
+            STATUS=$(kubectl get pod chroma-0 -n rahbar -o jsonpath='{.status.phase}' 2>/dev/null || echo "")
+            echo "  attempt $i: chroma-0 phase='$STATUS'"
             if [ "$STATUS" = "Running" ]; then
-              echo "Chroma pod is Running"
+              echo "chroma-0 is Running"
               break
             fi
-            sleep 3
+            sleep 2
           done
-          # Give Chroma a moment to fully initialize its HTTP server
-          sleep 5
-          # Start port-forward and poll until Chroma heartbeat responds
-          kubectl port-forward svc/chroma 9000:8000 -n rahbar --address 127.0.0.1 > /tmp/pf-chroma.log 2>&1 &
+          sleep 3
+          # Forward directly to pod/chroma-0 so we don't depend on Service Endpoints
+          kubectl port-forward pod/chroma-0 9000:8000 -n rahbar --address 127.0.0.1 > /tmp/pf-chroma.log 2>&1 &
           PF_PID=$!
           CHROMA_READY=0
-          for i in {1..40}; do
+          for i in {1..30}; do
             if curl -s http://127.0.0.1:9000/api/v2/heartbeat > /dev/null 2>&1; then
               echo "Chroma port-forward ready on attempt $i"
               CHROMA_READY=1
@@ -219,7 +221,7 @@ jobs:
             cat /tmp/pf-chroma.log || true
             echo "=== Pod status ==="
             kubectl get pods -n rahbar
-            kubectl describe pods -l app=chroma -n rahbar
+            kubectl describe pods -n rahbar -l app=chroma
             exit 1
           fi
           echo "Running pipeline seed..."
@@ -251,10 +253,10 @@ jobs:
 
       - name: Port-forward API & Run eval gate
         run: |
-          kubectl port-forward svc/rahbar-api 8000:8000 -n rahbar --address 127.0.0.1 > /tmp/pf-api.log 2>&1 &
+          kubectl port-forward deployment/rahbar-api 8000:8000 -n rahbar --address 127.0.0.1 > /tmp/pf-api.log 2>&1 &
           PF_PID=$!
           API_READY=0
-          for i in {1..40}; do
+          for i in {1..30}; do
             if curl -s http://127.0.0.1:8000/healthz > /dev/null 2>&1; then
               echo "API port-forward ready on attempt $i"
               API_READY=1
