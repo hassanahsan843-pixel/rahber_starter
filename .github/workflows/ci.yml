@@ -187,10 +187,24 @@ jobs:
       - name: Seed Chroma with fixture index (CI)
         run: |
           kubectl wait --for=condition=ready pod -l app=chroma -n rahbar --timeout=120s
-          kubectl port-forward svc/chroma 8000:8000 -n rahbar &
+          kubectl port-forward svc/chroma 9000:8000 -n rahbar --address 127.0.0.1 > /tmp/pf-chroma.log 2>&1 &
           PF_PID=$!
-          sleep 4
-          PYTHONPATH=indexer CHROMA_HOST=localhost CHROMA_PORT=8000 CHROMA_COLLECTION=rahbar EMBED_MODEL=nomic-embed-text CORPUS_DIR=eval/fixtures OLLAMA_URL=offline python -m pipeline.run
+          for i in {1..30}; do
+            if curl -s http://127.0.0.1:9000/api/v2/heartbeat > /dev/null 2>&1; then
+              echo "Chroma port-forward ready on attempt $i"
+              break
+            fi
+            sleep 1
+          done
+          echo "Running pipeline seed..."
+          PYTHONPATH=indexer \
+            CHROMA_HOST=127.0.0.1 \
+            CHROMA_PORT=9000 \
+            CHROMA_COLLECTION=rahbar \
+            EMBED_MODEL=nomic-embed-text \
+            CORPUS_DIR=eval/fixtures \
+            OLLAMA_URL=offline \
+            python -m pipeline.run
           kill $PF_PID || true
 
       - name: Wait for API Rollout
@@ -198,11 +212,21 @@ jobs:
           if ! kubectl rollout status deployment/rahbar-api -n rahbar --timeout=180s; then
             echo "=== API POD LOGS ==="
             kubectl logs -n rahbar -l app=rahbar-api --tail=100
+            echo "=== DESCRIBE PODS ==="
+            kubectl describe pods -n rahbar -l app=rahbar-api
             exit 1
           fi
 
       - name: Port-forward API & Run eval gate
         run: |
-          kubectl port-forward svc/rahbar-api 8000:8000 -n rahbar &
-          sleep 5
-          python eval/run_eval.py --api http://localhost:8000 --golden eval/fixtures/golden.fixture.yaml --baseline eval/fixtures/baseline.fixture.json
+          kubectl port-forward svc/rahbar-api 8000:8000 -n rahbar --address 127.0.0.1 > /tmp/pf-api.log 2>&1 &
+          PF_PID=$!
+          for i in {1..30}; do
+            if curl -s http://127.0.0.1:8000/healthz > /dev/null 2>&1; then
+              echo "API port-forward ready on attempt $i"
+              break
+            fi
+            sleep 1
+          done
+          python eval/run_eval.py --api http://127.0.0.1:8000 --golden eval/fixtures/golden.fixture.yaml --baseline eval/fixtures/baseline.fixture.json
+          kill $PF_PID || true
