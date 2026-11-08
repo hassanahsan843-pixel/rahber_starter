@@ -186,14 +186,25 @@ jobs:
       - name: Seed Chroma with fixture index (CI)
         run: |
           kubectl wait --for=condition=ready pod -l app=chroma -n rahbar --timeout=120s
+          sleep 5
           kubectl create configmap fixture-corpus --from-file=eval/fixtures/ -n rahbar
           kubectl apply -f k8s/ci/indexer-seed-job.yaml
-          kubectl wait job/indexer-seed -n rahbar --for=condition=complete --timeout=180s
+          if ! kubectl wait job/indexer-seed -n rahbar --for=condition=complete --timeout=180s; then
+            echo "=== INDEXER JOB LOGS ==="
+            kubectl logs -n rahbar -l app=rahbar-indexer --tail=100
+            echo "=== CHROMA LOGS ==="
+            kubectl logs -n rahbar -l app=chroma --tail=100
+            exit 1
+          fi
           kubectl logs -n rahbar -l app=rahbar-indexer --tail=50 || true
 
       - name: Wait for API Rollout
         run: |
-          kubectl rollout status deployment/rahbar-api -n rahbar --timeout=180s
+          if ! kubectl rollout status deployment/rahbar-api -n rahbar --timeout=180s; then
+            echo "=== API POD LOGS ==="
+            kubectl logs -n rahbar -l app=rahbar-api --tail=100
+            exit 1
+          fi
 
       - name: Port-forward API & Run eval gate
         run: |
