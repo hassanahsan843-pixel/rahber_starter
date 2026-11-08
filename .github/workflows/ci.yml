@@ -189,6 +189,7 @@ jobs:
 
       - name: Seed Chroma with fixture index (CI)
         run: |
+          set -x
           echo "Waiting for Chroma pod to reach Running state..."
           for i in {1..60}; do
             STATUS=$(kubectl get pod chroma-0 -n rahbar -o jsonpath='{.status.phase}' 2>/dev/null || echo "")
@@ -205,7 +206,7 @@ jobs:
           PF_PID=$!
           CHROMA_READY=0
           for i in {1..40}; do
-            if curl -s http://127.0.0.1:9000/api/v2/heartbeat > /dev/null 2>&1; then
+            if curl -sf http://127.0.0.1:9000/api/v2/heartbeat || curl -sf http://127.0.0.1:9000/api/v1/heartbeat; then
               echo "Chroma port-forward ready on attempt $i"
               CHROMA_READY=1
               break
@@ -267,3 +268,17 @@ jobs:
           fi
           python eval/run_eval.py --api http://127.0.0.1:8000 --golden eval/fixtures/ci.golden.yaml --baseline eval/fixtures/ci.baseline.json
           kill $PF_PID || true
+
+      - name: Diagnostic Dump on Failure
+        if: always()
+        run: |
+          echo "=== PODS IN NAMESPACE ==="
+          kubectl get pods -n rahbar -o wide || true
+          echo "=== CHROMA POD LOGS ==="
+          kubectl logs chroma-0 -n rahbar --tail=100 || true
+          echo "=== API POD LOGS ==="
+          kubectl logs -n rahbar -l app=rahbar-api --tail=100 || true
+          echo "=== PORT FORWARD CHROMA LOG ==="
+          cat /tmp/pf-chroma.log || true
+          echo "=== PORT FORWARD API LOG ==="
+          cat /tmp/pf-api.log || true

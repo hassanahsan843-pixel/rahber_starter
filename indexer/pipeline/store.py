@@ -47,10 +47,16 @@ def store(chunks: list[Chunk], vectors: list[list[float]], settings: IndexerSett
         pass
 
     # Get or create collection with embedding metadata pinned
-    collection = client.get_or_create_collection(
-        name=settings.collection,
-        metadata=metadata,
-    )
+    try:
+        collection = client.get_or_create_collection(
+            name=settings.collection,
+            metadata=metadata,
+        )
+    except Exception:
+        collection = client.create_collection(
+            name=settings.collection,
+            metadata=metadata,
+        )
 
     # Batch upsert chunks into Chroma
     batch_size = 100
@@ -64,11 +70,19 @@ def store(chunks: list[Chunk], vectors: list[list[float]], settings: IndexerSett
         documents = [c.text for c in sub_chunks]
         metadatas = [c.metadata() for c in sub_chunks]
 
-        collection.upsert(
-            ids=ids,
-            embeddings=sub_vectors,
-            documents=documents,
-            metadatas=metadatas,
-        )
+        try:
+            collection.upsert(
+                ids=ids,
+                embeddings=sub_vectors,
+                documents=documents,
+                metadatas=metadatas,
+            )
+        except Exception:
+            collection.add(
+                ids=ids,
+                embeddings=sub_vectors,
+                documents=documents,
+                metadatas=metadatas,
+            )
 
     return total
