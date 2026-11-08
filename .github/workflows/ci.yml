@@ -184,6 +184,8 @@ jobs:
           kubectl create secret generic rahbar-secret -n rahbar --from-literal=LLM_API_KEY="ci-dummy-key" --dry-run=client -o yaml | kubectl apply -f -
           # Patch for CI: offline embeddings, stub LLM, zero relevance floor so eval gate is deterministic
           kubectl patch configmap rahbar-config -n rahbar --type merge -p '{"data":{"OLLAMA_URL":"offline","LLM_PROVIDER":"stub","RELEVANCE_FLOOR":"0.0"}}'
+          # Remove the indexer Job (it has no /corpus volume in KinD; we seed via port-forward below)
+          kubectl delete job rahbar-indexer -n rahbar --ignore-not-found
 
       - name: Seed Chroma with fixture index (CI)
         run: |
