@@ -159,7 +159,7 @@ jobs:
       - name: Install evaluation dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install httpx pyyaml
+          pip install httpx pyyaml -r indexer/requirements.txt
 
       - name: Create KinD Cluster
         uses: helm/kind-action@v1.12.0
@@ -187,17 +187,11 @@ jobs:
       - name: Seed Chroma with fixture index (CI)
         run: |
           kubectl wait --for=condition=ready pod -l app=chroma -n rahbar --timeout=120s
-          sleep 5
-          kubectl create configmap fixture-corpus --from-file=eval/fixtures/ -n rahbar
-          kubectl apply -f k8s/ci/indexer-seed-job.yaml
-          if ! kubectl wait job/indexer-seed -n rahbar --for=condition=complete --timeout=180s; then
-            echo "=== INDEXER JOB LOGS ==="
-            kubectl logs -n rahbar -l app=rahbar-indexer --tail=100
-            echo "=== CHROMA LOGS ==="
-            kubectl logs -n rahbar -l app=chroma --tail=100
-            exit 1
-          fi
-          kubectl logs -n rahbar -l app=rahbar-indexer --tail=50 || true
+          kubectl port-forward svc/chroma 8000:8000 -n rahbar &
+          PF_PID=$!
+          sleep 4
+          PYTHONPATH=indexer CHROMA_HOST=localhost CHROMA_PORT=8000 CHROMA_COLLECTION=rahbar EMBED_MODEL=nomic-embed-text CORPUS_DIR=eval/fixtures OLLAMA_URL=offline python -m pipeline.run
+          kill $PF_PID || true
 
       - name: Wait for API Rollout
         run: |

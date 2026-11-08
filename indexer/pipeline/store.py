@@ -40,6 +40,12 @@ def store(chunks: list[Chunk], vectors: list[list[float]], settings: IndexerSett
         "hnsw:space": "cosine",
     }
 
+    # Delete existing collection if present to guarantee clean metadata & contents
+    try:
+        client.delete_collection(settings.collection)
+    except Exception:
+        pass
+
     # Get or create collection with embedding metadata pinned
     collection = client.get_or_create_collection(
         name=settings.collection,
@@ -64,11 +70,5 @@ def store(chunks: list[Chunk], vectors: list[list[float]], settings: IndexerSett
             documents=documents,
             metadatas=metadatas,
         )
-
-    # Ensure metadata is updated even if collection pre-existed
-    try:
-        collection.modify(metadata=metadata)
-    except Exception:
-        pass
 
     return total
