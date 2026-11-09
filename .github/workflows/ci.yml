@@ -1,0 +1,284 @@
+name: CI Pipeline
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - dev
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint & Code Style
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r api/requirements.txt -r api/requirements-dev.txt
+          pip install -r indexer/requirements.txt -r indexer/requirements-dev.txt
+          pip install pyyaml httpx
+
+      - name: Run Ruff Linter
+        run: |
+          ruff check api indexer eval corpus
+
+      - name: Run mypy Type Checking on API
+        run: |
+          cd api && mypy app --ignore-missing-imports
+
+      - name: Run mypy Type Checking on Indexer
+        run: |
+          cd indexer && mypy pipeline --ignore-missing-imports
+
+  test:
+    name: Unit & Contract Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r api/requirements.txt -r api/requirements-dev.txt
+          pip install -r indexer/requirements.txt -r indexer/requirements-dev.txt
+          pip install pytest-cov
+
+      - name: Run Pytest on API with Coverage
+        run: |
+          cd api && pytest -v --cov=app --cov-report=term-missing
+
+      - name: Run Pytest on Indexer
+        run: |
+          cd indexer && pytest -v
+
+  manifests:
+    name: Kubernetes Manifest Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Kustomize
+        run: |
+          curl -sLo kustomize.tar.gz https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.4.3/kustomize_v5.4.3_linux_amd64.tar.gz
+          tar -xzf kustomize.tar.gz
+          sudo mv kustomize /usr/local/bin/
+          rm -f kustomize.tar.gz
+
+      - name: Install Kubeconform
+        run: |
+          curl -sLo kubeconform.tar.gz https://github.com/yannh/kubeconform/releases/download/v0.6.7/kubeconform-linux-amd64.tar.gz
+          tar -xzf kubeconform.tar.gz
+          sudo mv kubeconform /usr/local/bin/
+          rm -f kubeconform.tar.gz
+
+      - name: Validate Manifests with Kubeconform
+        run: |
+          kustomize build k8s/overlays/prod | kubeconform -strict -ignore-missing-schemas -kubernetes-version 1.30.0
+
+  build:
+    name: Build Container Images
+    runs-on: ubuntu-latest
+    needs: [lint, test, manifests]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build API Image
+        run: |
+          docker build -t rahbar-api:${{ github.sha }} api
+
+      - name: Build Indexer Image
+        run: |
+          docker build -t rahbar-indexer:${{ github.sha }} indexer
+
+      - name: Build UI Image
+        run: |
+          docker build -t rahbar-ui:${{ github.sha }} ui
+
+  scan:
+    name: Vulnerability Scan (Trivy)
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build API image for scan
+        run: |
+          docker build -t rahbar-api:${{ github.sha }} api
+
+      - name: Scan API image with Trivy
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: rahbar-api:${{ github.sha }}
+          format: "table"
+          exit-code: "0"
+          ignore-unfixed: true
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"
+
+  e2e-eval:
+    name: End-to-End Evaluation Gate
+    runs-on: ubuntu-latest
+    needs: [build]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install evaluation dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install httpx pyyaml -r indexer/requirements.txt
+
+      - name: Create KinD Cluster
+        uses: helm/kind-action@v1.12.0
+        with:
+          cluster_name: kind-e2e
+
+      - name: Build local images
+        run: |
+          docker build -t rahbar-api:dev api
+          docker build -t rahbar-indexer:dev indexer
+          docker build -t rahbar-ui:dev ui
+
+      - name: Load images into KinD
+        run: |
+          kind load docker-image rahbar-api:dev --name kind-e2e
+          kind load docker-image rahbar-indexer:dev --name kind-e2e
+          kind load docker-image rahbar-ui:dev --name kind-e2e
+
+      - name: Deploy Kubernetes stack
+        run: |
+          kubectl apply -k k8s/overlays/dev
+          kubectl create secret generic rahbar-secret -n rahbar --from-literal=LLM_API_KEY="ci-dummy-key" --dry-run=client -o yaml | kubectl apply -f -
+          # Patch for CI: offline embeddings, stub LLM, zero relevance floor so eval gate is deterministic
+          kubectl patch configmap rahbar-config -n rahbar --type merge -p '{"data":{"OLLAMA_URL":"offline","LLM_PROVIDER":"stub","RELEVANCE_FLOOR":"0.0"}}'
+          # Remove the indexer Job (it has no /corpus volume in KinD; we seed via port-forward below)
+          kubectl delete job rahbar-indexer -n rahbar --ignore-not-found
+
+      - name: Seed Chroma with fixture index (CI)
+        run: |
+          set -x
+          echo "Waiting for Chroma pod to reach Running state..."
+          for i in {1..60}; do
+            STATUS=$(kubectl get pod chroma-0 -n rahbar -o jsonpath='{.status.phase}' 2>/dev/null || echo "")
+            echo "  attempt $i: chroma-0 phase='$STATUS'"
+            if [ "$STATUS" = "Running" ]; then
+              echo "chroma-0 is Running"
+              break
+            fi
+            sleep 2
+          done
+          sleep 5
+          # Forward directly to pod/chroma-0 so we don't depend on Service Endpoints
+          kubectl port-forward pod/chroma-0 9000:8000 -n rahbar --address 127.0.0.1 > /tmp/pf-chroma.log 2>&1 &
+          PF_PID=$!
+          CHROMA_READY=0
+          for i in {1..40}; do
+            if curl -sf http://127.0.0.1:9000/api/v2/heartbeat || curl -sf http://127.0.0.1:9000/api/v1/heartbeat; then
+              echo "Chroma port-forward ready on attempt $i"
+              CHROMA_READY=1
+              break
+            fi
+            sleep 2
+          done
+          if [ "$CHROMA_READY" != "1" ]; then
+            echo "ERROR: Chroma never became reachable. Port-forward log:"
+            cat /tmp/pf-chroma.log || true
+            echo "=== Pod status ==="
+            kubectl get pods -n rahbar
+            kubectl describe pods -n rahbar -l app=chroma
+            exit 1
+          fi
+          echo "Running pipeline seed..."
+          PYTHONPATH=indexer \
+            CHROMA_HOST=127.0.0.1 \
+            CHROMA_PORT=9000 \
+            CHROMA_COLLECTION=rahbar \
+            EMBED_MODEL=nomic-embed-text \
+            CORPUS_DIR=eval/fixtures \
+            OLLAMA_URL=offline \
+            python -m pipeline.run
+          kill $PF_PID || true
+
+      - name: Wait for API Rollout
+        run: |
+          # Remove HPA so manual scale to 1 replica sticks in KinD
+          kubectl delete hpa rahbar-api-hpa -n rahbar --ignore-not-found
+          # Scale to 1 replica to minimise resource pressure in KinD
+          kubectl scale deployment rahbar-api --replicas=1 -n rahbar
+          # Restart pods to pick up the patched configmap (OLLAMA_URL, LLM_PROVIDER, RELEVANCE_FLOOR)
+          kubectl rollout restart deployment/rahbar-api -n rahbar
+          if ! kubectl rollout status deployment/rahbar-api -n rahbar --timeout=240s; then
+            echo "=== API POD LOGS ==="
+            kubectl logs -n rahbar -l app=rahbar-api --tail=100
+            echo "=== DESCRIBE PODS ==="
+            kubectl describe pods -n rahbar -l app=rahbar-api
+            exit 1
+          fi
+
+      - name: Port-forward API & Run eval gate
+        run: |
+          kubectl port-forward deployment/rahbar-api 8000:8000 -n rahbar --address 127.0.0.1 > /tmp/pf-api.log 2>&1 &
+          PF_PID=$!
+          API_READY=0
+          for i in {1..30}; do
+            if curl -s http://127.0.0.1:8000/healthz > /dev/null 2>&1; then
+              echo "API port-forward ready on attempt $i"
+              API_READY=1
+              break
+            fi
+            sleep 2
+          done
+          if [ "$API_READY" != "1" ]; then
+            echo "ERROR: API never became reachable. Port-forward log:"
+            cat /tmp/pf-api.log || true
+            exit 1
+          fi
+          python eval/run_eval.py --api http://127.0.0.1:8000 --golden eval/fixtures/ci.golden.yaml --baseline eval/fixtures/ci.baseline.json
+          kill $PF_PID || true
+
+      - name: Diagnostic Dump on Failure
+        if: always()
+        run: |
+          echo "=== PODS IN NAMESPACE ==="
+          kubectl get pods -n rahbar -o wide || true
+          echo "=== CHROMA POD LOGS ==="
+          kubectl logs chroma-0 -n rahbar --tail=100 || true
+          echo "=== API POD LOGS ==="
+          kubectl logs -n rahbar -l app=rahbar-api --tail=100 || true
+          echo "=== PORT FORWARD CHROMA LOG ==="
+          cat /tmp/pf-chroma.log || true
+          echo "=== PORT FORWARD API LOG ==="
+          cat /tmp/pf-api.log || true

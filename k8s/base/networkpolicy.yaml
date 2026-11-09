@@ -1,0 +1,181 @@
+# 1. Default-deny all Ingress and Egress in namespace rahbar (section 4.7)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: rahbar
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+# 2. Allow CoreDNS egress on port 53 (UDP and TCP) for all pods (section 9)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns-egress
+  namespace: rahbar
+spec:
+  podSelector: {}
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+---
+# 3. UI NetworkPolicy: ingress from Ingress controller; egress to API only (section 4.7)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ui
+  namespace: rahbar
+spec:
+  podSelector:
+    matchLabels:
+      app: rahbar-ui
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - ports:
+        - protocol: TCP
+          port: 8080
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: rahbar-api
+      ports:
+        - protocol: TCP
+          port: 8000
+---
+# 4. API NetworkPolicy: ingress from UI & Ingress; egress to Chroma, Redis & LLM host (section 4.7)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-api
+  namespace: rahbar
+spec:
+  podSelector:
+    matchLabels:
+      app: rahbar-api
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: rahbar-ui
+      ports:
+        - protocol: TCP
+          port: 8000
+    - ports:
+        - protocol: TCP
+          port: 8000
+  egress:
+    # Allow API -> Chroma (port 8000)
+    - to:
+        - podSelector:
+            matchLabels:
+              app: chroma
+      ports:
+        - protocol: TCP
+          port: 8000
+    # Allow API -> Redis (port 6379)
+    - to:
+        - podSelector:
+            matchLabels:
+              app: redis
+      ports:
+        - protocol: TCP
+          port: 6379
+    # Allow API -> LLM Provider / Ollama host (port 11434 and HTTPS 443)
+    - ports:
+        - protocol: TCP
+          port: 11434
+        - protocol: TCP
+          port: 443
+        - protocol: TCP
+          port: 80
+---
+# 5. Chroma NetworkPolicy: ingress from API and Indexer ONLY (UI strictly isolated) (section 4.7)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-chroma
+  namespace: rahbar
+spec:
+  podSelector:
+    matchLabels:
+      app: chroma
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: rahbar-api
+        - podSelector:
+            matchLabels:
+              app: rahbar-indexer
+      ports:
+        - protocol: TCP
+          port: 8000
+---
+# 6. Redis NetworkPolicy: ingress from API ONLY (section 4.7)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-redis
+  namespace: rahbar
+spec:
+  podSelector:
+    matchLabels:
+      app: redis
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: rahbar-api
+      ports:
+        - protocol: TCP
+          port: 6379
+---
+# 7. Indexer NetworkPolicy: egress to Chroma and Ollama host (section 4.7)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-indexer
+  namespace: rahbar
+spec:
+  podSelector:
+    matchLabels:
+      app: rahbar-indexer
+  policyTypes:
+    - Egress
+  egress:
+    # Allow Indexer -> Chroma
+    - to:
+        - podSelector:
+            matchLabels:
+              app: chroma
+      ports:
+        - protocol: TCP
+          port: 8000
+    # Allow Indexer -> Ollama host for embeddings
+    - ports:
+        - protocol: TCP
+          port: 11434
+        - protocol: TCP
+          port: 443
+        - protocol: TCP
+          port: 80
