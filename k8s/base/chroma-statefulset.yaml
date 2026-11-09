@@ -21,7 +21,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: chroma
-          image: chromadb/chroma:0.5.23
+          image: chromadb/chroma:1.0.12
           imagePullPolicy: IfNotPresent
           env:
             - name: IS_PERSISTENT
