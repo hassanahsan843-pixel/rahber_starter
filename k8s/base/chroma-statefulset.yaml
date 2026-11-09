@@ -16,6 +16,7 @@ spec:
       labels:
         app: chroma
     spec:
+      enableServiceLinks: false
       terminationGracePeriodSeconds: 30
       securityContext:
         fsGroup: 1000
