@@ -60,6 +60,9 @@ class HostedProvider:
         self.settings = settings
 
     def _call_api(self, prompt: str, schema_retry: bool = False) -> str:
+        if not self.settings.llm_api_key or self.settings.llm_api_key == "REPLACE_ME":
+            raise ValueError("LLM_API_KEY must be configured with a valid secret key for hosted LLM provider")
+
         base_url = self.settings.hosted_base_url.rstrip("/") or "https://api.groq.com/openai/v1"
         url = f"{base_url}/chat/completions"
 

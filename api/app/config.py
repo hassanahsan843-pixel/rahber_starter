@@ -22,8 +22,8 @@ def _float(name: str, default: float) -> float:
 @dataclass(frozen=True)
 class Settings:
     # Which implementations to load. "stub" needs no cluster, no model, no network.
-    retriever: str = "stub"          # RETRIEVER: stub | chroma
-    llm_provider: str = "stub"       # LLM_PROVIDER: stub | ollama-host | ollama-incluster | hosted
+    retriever: str = "chroma"        # RETRIEVER: stub | chroma
+    llm_provider: str = "hosted"     # LLM_PROVIDER: stub | ollama-host | ollama-incluster | hosted
 
     # The embedding pin (section 4.4). The indexer reads the same ConfigMap key.
     embed_model: str = "nomic-embed-text"
@@ -52,8 +52,8 @@ class Settings:
 
 def get_settings() -> Settings:
     return Settings(
-        retriever=os.environ.get("RETRIEVER", "stub"),
-        llm_provider=os.environ.get("LLM_PROVIDER", "stub"),
+        retriever=os.environ.get("RETRIEVER", "chroma"),
+        llm_provider=os.environ.get("LLM_PROVIDER", "hosted"),
         embed_model=os.environ.get("EMBED_MODEL", "nomic-embed-text"),
         chroma_host=os.environ.get("CHROMA_HOST", "chroma"),
         chroma_port=_int("CHROMA_PORT", 8000),
