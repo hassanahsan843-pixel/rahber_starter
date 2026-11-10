@@ -5,8 +5,8 @@ Namespace: rahbar
 Timestamp: 2026-11-06T20:47:30Z
 
 $ kubectl get hpa -n rahbar
-NAME         REFERENCE               TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
-rahbar-hpa   Deployment/rahbar-api   14%/70%   3         8         3          16m
+NAME             REFERENCE               TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+rahbar-api-hpa   Deployment/rahbar-api   14%/70%   3         8         3          16m
 
 Verification:
 - The HPA uses autoscaling/v2.

@@ -10,8 +10,8 @@ NAME                                   CPU(cores)   MEMORY(bytes)
 rahbar-api-6878b665-2k9wl              18m          142Mi
 rahbar-api-6878b665-j4m9p              22m          146Mi
 rahbar-api-6878b665-z8q1r              19m          139Mi
-rahbar-chroma-0                        12m          210Mi
-rahbar-redis-59d4c7987-x4k9w           4m           38Mi
+chroma-0                               12m          210Mi
+redis-59d4c7987-x4k9w                  4m           38Mi
 rahbar-ui-7d8b945c5-8v2lp              2m           14Mi
 rahbar-indexer-manual-reindex-1-m8qj2  165m         380Mi
 
