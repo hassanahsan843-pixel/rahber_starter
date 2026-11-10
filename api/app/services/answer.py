@@ -14,12 +14,20 @@ Executes the complete 8-step production pipeline:
 from __future__ import annotations
 
 import logging
-
+import time
 
 from ..config import Settings
 from ..logjson import request_id_var
 from ..providers.llm.base import LLMProvider
 from ..retrieval.base import Retriever
+from ..routes.metrics import (
+    ABSTENTIONS,
+    CACHE_HITS,
+    FALLBACKS,
+    GENERATION_LATENCY,
+    RETRIEVAL_LATENCY,
+    TOKENS,
+)
 from ..schemas import AskResponse, Citation, Passage, RetrievedRef
 from .cache import get_cache
 
@@ -51,6 +59,7 @@ def answer_question(
     # Step 1: Input length validation
     cleaned_q = question.strip()
     if len(cleaned_q) < 3 or len(cleaned_q) > 500:
+        ABSTENTIONS.labels(reason="input_length").inc()
         return AskResponse(
             request_id=rid,
             answer="Question must be between 3 and 500 characters.",
@@ -74,13 +83,17 @@ def answer_question(
             query_vector = retriever._embed_query(cleaned_q)
             cached_resp = cache.lookup(query_vector, is_followup=is_followup)
             if cached_resp is not None:
+                CACHE_HITS.labels(result="hit").inc()
                 log.info("serving response from semantic cache", extra={"request_id": rid})
                 return cached_resp
+            CACHE_HITS.labels(result="miss").inc()
         except Exception as exc:
             log.warning("semantic cache lookup failed: %s", exc)
 
     # Step 3: Retrieve top-k passages from vector store
+    retrieval_start = time.perf_counter()
     passages = retriever.retrieve(cleaned_q, k=settings.top_k)
+    RETRIEVAL_LATENCY.observe(time.perf_counter() - retrieval_start)
 
     retrieved_refs = [
         RetrievedRef(
@@ -108,6 +121,8 @@ def answer_question(
     )
 
     if not passages or max_score < settings.relevance_floor:
+        reason = "no_passages" if not passages else "relevance_floor"
+        ABSTENTIONS.labels(reason=reason).inc()
         log.info("honest abstention triggered: score below relevance floor", extra={"max_score": round(max_score, 4)})
         return AskResponse(
             request_id=rid,
@@ -120,7 +135,18 @@ def answer_question(
         )
 
     # Step 5: Generate schema-constrained answer
+    gen_start = time.perf_counter()
     answer = provider.generate(cleaned_q, passages)
+    GENERATION_LATENCY.observe(time.perf_counter() - gen_start)
+
+    # Estimate and track token counts
+    prompt_tokens = len(cleaned_q.split()) + sum(len(p.text.split()) for p in passages)
+    completion_tokens = len(answer.answer.split()) + len(answer.reasoning.split())
+    TOKENS.labels(kind="prompt").inc(prompt_tokens)
+    TOKENS.labels(kind="completion").inc(completion_tokens)
+
+    if answer.confidence == "low" and not answer.citations and not answer.answered_from_context:
+        FALLBACKS.inc()
 
     # Step 6: Validate citations against retrieved passages
     valid_citations = [
