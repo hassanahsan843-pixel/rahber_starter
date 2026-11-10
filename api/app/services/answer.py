@@ -78,9 +78,10 @@ def answer_question(
     )
     # Generate query vector for semantic cache if retriever has embedding capability
     query_vector: list[float] = []
-    if hasattr(retriever, "_embed_query"):
+    _embed_fn = getattr(retriever, "_embed_query", None)
+    if _embed_fn is not None:
         try:
-            query_vector = retriever._embed_query(cleaned_q)
+            query_vector = _embed_fn(cleaned_q)
             cached_resp = cache.lookup(query_vector, is_followup=is_followup)
             if cached_resp is not None:
                 CACHE_HITS.labels(result="hit").inc()

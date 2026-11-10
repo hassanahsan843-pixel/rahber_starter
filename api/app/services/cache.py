@@ -36,7 +36,7 @@ class SemanticCache:
         self.redis_port = redis_port
         self.generation_id = 1
         self._in_memory_store: list[dict[str, Any]] = []
-        self._redis_client = None
+        self._redis_client: Any = None
 
         try:
             import redis
