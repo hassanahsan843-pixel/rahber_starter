@@ -1,6 +1,5 @@
-# CI-only golden set: same questions as golden.fixture.yaml but without must-abstain
-# so the eval gate passes reliably with stub LLM and offline embeddings.
-# (The must-abstain test requires a tuned relevance floor; production uses golden.fixture.yaml.)
+# CI golden set: evaluating real retrieval from indexed fixture corpus
+# Includes version-sensitive, ordinary, exact, injection, and must-abstain probes.
 
 questions:
   - id: f01
@@ -30,6 +29,13 @@ questions:
     relevant:
       - {source: fees-2026.md, section: "1. Tuition"}
     expect: "10,000"
+
+  - id: f05
+    type: abstain
+    question: What are the university transport bus routes to Rawalpindi?
+    must_abstain: true
+    relevant: []
+    expect: null
 
   - id: f06
     type: injection

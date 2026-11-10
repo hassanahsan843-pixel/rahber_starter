@@ -66,7 +66,7 @@ jobs:
 
       - name: Run Pytest on API with Coverage
         run: |
-          cd api && pytest -v --cov=app --cov-report=term-missing
+          cd api && pytest -v --cov=app --cov-report=term-missing --cov-fail-under=60
 
       - name: Run Pytest on Indexer
         run: |
@@ -182,12 +182,10 @@ jobs:
         run: |
           kubectl apply -k k8s/overlays/dev
           kubectl create secret generic rahbar-secret -n rahbar --from-literal=LLM_API_KEY="ci-dummy-key" --dry-run=client -o yaml | kubectl apply -f -
-          # Patch for CI: offline embeddings, stub LLM, zero relevance floor so eval gate is deterministic
-          kubectl patch configmap rahbar-config -n rahbar --type merge -p '{"data":{"OLLAMA_URL":"offline","LLM_PROVIDER":"stub","RELEVANCE_FLOOR":"0.0"}}'
-          # Remove the indexer Job (it has no /corpus volume in KinD; we seed via port-forward below)
-          kubectl delete job rahbar-indexer -n rahbar --ignore-not-found
+          # Patch for CI: real chroma retriever, offline embeddings, stub LLM, relevance floor 0.50
+          kubectl patch configmap rahbar-config -n rahbar --type merge -p '{"data":{"RETRIEVER":"chroma","OLLAMA_URL":"offline","LLM_PROVIDER":"stub","RELEVANCE_FLOOR":"0.50"}}'
 
-      - name: Seed Chroma with fixture index (CI)
+      - name: Exercise Kubernetes Indexer Job (CI)
         run: |
           set -x
           echo "Waiting for Chroma pod to reach Running state..."
@@ -201,36 +199,17 @@ jobs:
             sleep 2
           done
           sleep 5
-          # Forward directly to pod/chroma-0 so we don't depend on Service Endpoints
-          kubectl port-forward pod/chroma-0 9000:8000 -n rahbar --address 127.0.0.1 > /tmp/pf-chroma.log 2>&1 &
-          PF_PID=$!
-          CHROMA_READY=0
-          for i in {1..40}; do
-            if curl -sf http://127.0.0.1:9000/api/v2/heartbeat || curl -sf http://127.0.0.1:9000/api/v1/heartbeat; then
-              echo "Chroma port-forward ready on attempt $i"
-              CHROMA_READY=1
-              break
-            fi
-            sleep 2
-          done
-          if [ "$CHROMA_READY" != "1" ]; then
-            echo "ERROR: Chroma never became reachable. Port-forward log:"
-            cat /tmp/pf-chroma.log || true
-            echo "=== Pod status ==="
-            kubectl get pods -n rahbar
-            kubectl describe pods -n rahbar -l app=chroma
+          echo "Waiting for rahbar-indexer Job to complete in Kubernetes..."
+          if ! kubectl wait --for=condition=complete job/rahbar-indexer -n rahbar --timeout=180s; then
+            echo "=== INDEXER JOB LOGS ==="
+            kubectl logs -n rahbar -l app=rahbar-indexer --tail=200 || true
+            echo "=== DESCRIBE INDEXER JOB ==="
+            kubectl describe job/rahbar-indexer -n rahbar || true
+            echo "=== CHROMA LOGS ==="
+            kubectl logs chroma-0 -n rahbar --tail=100 || true
             exit 1
           fi
-          echo "Running pipeline seed..."
-          PYTHONPATH=indexer \
-            CHROMA_HOST=127.0.0.1 \
-            CHROMA_PORT=9000 \
-            CHROMA_COLLECTION=rahbar \
-            EMBED_MODEL=nomic-embed-text \
-            CORPUS_DIR=eval/fixtures \
-            OLLAMA_URL=offline \
-            python -m pipeline.run
-          kill $PF_PID || true
+          echo "Kubernetes Indexer Job completed successfully!"
 
       - name: Wait for API Rollout
         run: |
