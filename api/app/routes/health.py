@@ -52,14 +52,21 @@ def readyz(request: Request, response: Response) -> dict[str, object]:
             else:
                 checks["chroma"] = f"ok ({total_items} items)"
 
-            # Guardrail: embedding model pin verification
+            # Guardrail: embedding model pin and dimension verification (section 4.4)
             meta = collection.metadata or {}
             stored_model = meta.get("embed_model")
+            stored_dim = meta.get("dimension")
+            expected_dim = 768 if "nomic" in settings.embed_model else 384
             if stored_model and stored_model != settings.embed_model:
                 msg = f"embed_model mismatch: collection uses '{stored_model}' but EMBED_MODEL is '{settings.embed_model}'"
                 log.error(msg)
                 checks["embed_model_pin"] = msg
                 failed_dependencies.append("embed_model_mismatch")
+            elif stored_dim and int(stored_dim) != expected_dim:
+                msg = f"vector dimension mismatch: collection dimension is {stored_dim} but expected {expected_dim}"
+                log.error(msg)
+                checks["embed_model_pin"] = msg
+                failed_dependencies.append("vector_dimension_mismatch")
             else:
                 checks["embed_model_pin"] = "ok"
 
