@@ -20,11 +20,12 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Copy indexer pipeline source code
+# Copy indexer pipeline source code and default corpus
 COPY pipeline ./pipeline
+COPY corpus /corpus
 
 # Set ownership
-RUN chown -R appuser:appuser /app
+RUN chown -R appuser:appuser /app /corpus
 
 # Switch to non-root user (section 4.7)
 USER appuser

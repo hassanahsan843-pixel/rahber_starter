@@ -46,6 +46,11 @@ spec:
               volumeMounts:
                 - name: tmp-dir
                   mountPath: /tmp
+                - name: corpus-volume
+                  mountPath: /corpus
           volumes:
             - name: tmp-dir
               emptyDir: {}
+            - name: corpus-volume
+              configMap:
+                name: rahbar-corpus
