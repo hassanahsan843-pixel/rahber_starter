@@ -62,10 +62,10 @@ The API service exposes the following endpoints:
 
 | Method | Path | Purpose | Probing & Security |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/healthz` | **Liveness Probe**: Confirms the FastAPI process is alive. Does not touch dependencies. | Kubelet restart probe |
-| `GET` | `/readyz` | **Readiness Probe**: Returns `200` only if Chroma is reachable, the collection is non-empty, Redis is responsive, and `EMBED_MODEL` matches metadata. Otherwise returns `503`. | Traffic routing probe |
-| `GET` | `/metrics` | **Prometheus Metrics**: Exposes latency histograms, token counters, cache hit ratios, and abstentions. | Prometheus scrape |
-| `POST` | `/api/ask` | **Query Endpoint**: Accepts `{"question": "..."}` and returns a validated `AskResponse` with citations. | User traffic |
+| GET | `/healthz` | **Liveness Probe**: Confirms the FastAPI process is alive. Does not touch dependencies. | Kubelet restart probe |
+| GET | `/readyz` | **Readiness Probe**: Returns `200` only if Chroma is reachable, the collection is non-empty, Redis is responsive, and `EMBED_MODEL` matches metadata. Otherwise returns `503`. | Traffic routing probe |
+| GET | `/metrics` | **Prometheus Metrics**: Exposes latency histograms, token counters, cache hit ratios, and abstentions. | Prometheus scrape |
+| POST | `/api/ask` | **Query Endpoint**: Accepts `{"question": "..."}` and returns a validated `AskResponse` with citations. | User traffic |
 
 ### Sample Question Payload
 ```bash
