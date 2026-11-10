@@ -56,18 +56,37 @@ class SemanticCache:
                 return bool(self._redis_client.ping())
             except Exception:
                 return False
-        return True
+        return False
 
     def lookup(self, query_vector: list[float], is_followup: bool = False) -> AskResponse | None:
         """Lookup query in cache. Never check or return cache for follow-up questions."""
         if is_followup or not query_vector:
             return None
 
+        candidates: list[dict[str, Any]] = list(self._in_memory_store)
+
+        # Retrieve entries from Redis across cluster replicas (section 3.3)
+        if self._redis_client:
+            try:
+                pattern = f"cache:v{self.generation_id}:*"
+                keys = self._redis_client.keys(pattern)
+                if keys:
+                    values = self._redis_client.mget(keys[:100])
+                    for val in values:
+                        if val:
+                            try:
+                                entry = json.loads(val)
+                                candidates.append(entry)
+                            except Exception:
+                                pass
+            except Exception as exc:
+                log.warning("redis cache lookup scan error: %s", exc)
+
         best_score = 0.0
         best_hit: dict[str, Any] | None = None
 
-        # Check in-memory store (or Redis entries)
-        for item in self._in_memory_store:
+        # Check in-memory store and Redis entries
+        for item in candidates:
             stored_vector = item.get("vector")
             if not stored_vector:
                 continue

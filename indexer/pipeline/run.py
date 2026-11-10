@@ -83,6 +83,27 @@ def run_pipeline(settings: IndexerSettings) -> int:
     return store(all_chunks, vectors, settings)
 
 
+def invalidate_cache(settings: IndexerSettings) -> None:
+    """Invalidate semantic cache across the cluster after indexing completes (section 3.3)."""
+    try:
+        import redis
+        redis_host = os.environ.get("REDIS_HOST", "redis")
+        redis_port = int(os.environ.get("REDIS_PORT", "6379"))
+        r = redis.Redis(host=redis_host, port=redis_port, socket_connect_timeout=2.0)
+        r.flushdb()
+        log("redis cache flushed successfully")
+    except Exception as exc:
+        log("redis flush skipped or failed", error=str(exc))
+
+    try:
+        import httpx
+        api_url = os.environ.get("API_URL", "http://rahbar-api:8000")
+        httpx.post(f"{api_url}/api/cache/invalidate", timeout=3.0)
+        log("api cache invalidation endpoint called")
+    except Exception:
+        pass
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Build the RAHBAR index, then exit.")
     parser.add_argument("--dummy", action="store_true", help="write three fake chunks")
@@ -100,6 +121,8 @@ def main() -> int:
             count = write_dummy_index(settings, get_client(settings))
         else:
             count = run_pipeline(settings)
+        # Invalidate semantic cache so no stale answers are served from prior indexes
+        invalidate_cache(settings)
     except NotImplementedError as exc:
         log("indexer stage not implemented yet", error=str(exc))
         return 2
