@@ -1,5 +1,7 @@
 # RAHBAR Indexing and Retrieval Pipeline Report
 
+> Measurement note: these chunking and cache-threshold figures are carried forward from the prior project work. They were not reproduced during the current hardening pass; rerun them against the live cluster and current corpus before treating them as verified results.
+
 This document reports the empirical measurements, configuration tuning, extraction challenges, and semantic caching thresholds across the 5-stage indexing and query pipeline.
 
 ---

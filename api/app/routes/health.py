@@ -10,6 +10,7 @@ log = logging.getLogger("rahbar.health")
 
 
 @router.get("/healthz")
+@router.get("/api/healthz", include_in_schema=False)
 def healthz() -> dict[str, str]:
     """Is the process alive? Must never touch Chroma, Redis or the LLM.
     
@@ -57,7 +58,12 @@ def readyz(request: Request, response: Response) -> dict[str, object]:
             stored_model = meta.get("embed_model")
             stored_dim = meta.get("dimension")
             expected_dim = 768 if "nomic" in settings.embed_model else 384
-            if stored_model and stored_model != settings.embed_model:
+            if not stored_model or stored_dim is None:
+                msg = "embedding metadata missing: expected embed_model and vector dimension"
+                log.error(msg)
+                checks["embed_model_pin"] = msg
+                failed_dependencies.append("embedding_metadata_missing")
+            elif stored_model != settings.embed_model:
                 msg = f"embed_model mismatch: collection uses '{stored_model}' but EMBED_MODEL is '{settings.embed_model}'"
                 log.error(msg)
                 checks["embed_model_pin"] = msg

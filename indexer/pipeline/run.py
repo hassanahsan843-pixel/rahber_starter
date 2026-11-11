@@ -85,23 +85,27 @@ def run_pipeline(settings: IndexerSettings) -> int:
 
 def invalidate_cache(settings: IndexerSettings) -> None:
     """Invalidate semantic cache across the cluster after indexing completes (section 3.3)."""
-    try:
-        import redis
-        redis_host = os.environ.get("REDIS_HOST", "redis")
-        redis_port = int(os.environ.get("REDIS_PORT", "6379"))
-        r = redis.Redis(host=redis_host, port=redis_port, socket_connect_timeout=2.0)
-        r.flushdb()
-        log("redis cache flushed successfully")
-    except Exception as exc:
-        log("redis flush skipped or failed", error=str(exc))
+    import httpx
 
-    try:
-        import httpx
-        api_url = os.environ.get("API_URL", "http://rahbar-api:8000")
-        httpx.post(f"{api_url}/api/cache/invalidate", timeout=3.0)
-        log("api cache invalidation endpoint called")
-    except Exception:
-        pass
+    api_url = os.environ.get("API_URL", "http://rahbar-api:8000")
+    token = os.environ.get("CACHE_INVALIDATION_TOKEN", "")
+    if not token:
+        raise RuntimeError("CACHE_INVALIDATION_TOKEN is not configured")
+    for attempt in range(1, 13):
+        try:
+            response = httpx.post(
+                f"{api_url}/api/cache/invalidate",
+                headers={"X-Cache-Invalidation-Token": token},
+                timeout=4.0,
+            )
+            response.raise_for_status()
+            log("api cache invalidation completed", attempt=attempt)
+            return
+        except httpx.HTTPError as exc:
+            if attempt == 12:
+                raise RuntimeError("cache invalidation did not complete after indexing") from exc
+            log("waiting for API cache invalidation", attempt=attempt, error=str(exc))
+            time.sleep(2)
 
 
 def main() -> int:

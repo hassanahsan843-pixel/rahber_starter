@@ -33,10 +33,15 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     app.state.settings = settings
     app.state.retriever = get_retriever(settings)
     app.state.provider = get_provider(settings)
-    app.state.cache = get_cache(
-        threshold=settings.cache_threshold,
-        redis_host=settings.redis_host,
-        redis_port=settings.redis_port,
+    app.state.cache = (
+        get_cache(
+            threshold=settings.cache_threshold,
+            redis_host=settings.redis_host,
+            redis_port=settings.redis_port,
+            allow_memory_fallback=False,
+        )
+        if settings.retriever == "chroma"
+        else None
     )
 
     # Embedding-model metadata guardrail check (section 4.4)

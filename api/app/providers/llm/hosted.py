@@ -7,10 +7,8 @@ and provides a safe fallback.
 
 from __future__ import annotations
 
-import json
 import logging
 import httpx
-from pydantic import ValidationError
 
 from ...config import Settings
 from ...schemas import Answer, Passage
@@ -26,7 +24,7 @@ If the evidence does not answer the question, set answered_from_context to false
 
 You must respond in valid JSON matching this schema:
 {
-  "reasoning": "step-by-step thinking",
+  "reasoning": "brief evidence summary; do not include hidden chain-of-thought",
   "answer": "grounded response citing [source / section]",
   "citations": [{"source": "str", "section": "str", "page": int or null}],
   "answered_from_context": true or false,
@@ -41,6 +39,35 @@ SAFE_FALLBACK = Answer(
     answered_from_context=False,
     confidence="low",
 )
+
+ANSWER_JSON_SCHEMA = {
+    "name": "rahbar_answer",
+    "strict": True,
+    "schema": {
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {
+            "reasoning": {"type": "string"},
+            "answer": {"type": "string"},
+            "citations": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "additionalProperties": False,
+                    "properties": {
+                        "source": {"type": "string"},
+                        "section": {"type": "string"},
+                        "page": {"type": ["integer", "null"]},
+                    },
+                    "required": ["source", "section", "page"],
+                },
+            },
+            "answered_from_context": {"type": "boolean"},
+            "confidence": {"type": "string", "enum": ["high", "medium", "low"]},
+        },
+        "required": ["reasoning", "answer", "citations", "answered_from_context", "confidence"],
+    },
+}
 
 
 def _build_prompt(question: str, passages: list[Passage]) -> str:
@@ -77,9 +104,9 @@ class HostedProvider:
         }
 
         payload = {
-            "model": self.settings.llm_model or "llama-3.1-8b-instant",
+            "model": self.settings.llm_model or "openai/gpt-oss-20b",
             "messages": messages,
-            "response_format": {"type": "json_object"},
+            "response_format": {"type": "json_schema", "json_schema": ANSWER_JSON_SCHEMA},
             "temperature": self.settings.temperature,
         }
 
@@ -105,13 +132,13 @@ class HostedProvider:
         try:
             raw_text = self._call_api(prompt, schema_retry=False)
             return Answer.model_validate_json(raw_text)
-        except (ValidationError, json.JSONDecodeError, httpx.HTTPError) as err1:
+        except Exception as err1:
             log.warning("Hosted generation attempt 1 failed validation: %s. Retrying once.", err1)
 
         # Retry once
         try:
             retry_text = self._call_api(prompt, schema_retry=True)
             return Answer.model_validate_json(retry_text)
-        except (ValidationError, json.JSONDecodeError, httpx.HTTPError) as err2:
+        except Exception as err2:
             log.error("Hosted generation retry failed validation: %s. Returning fallback.", err2)
             return SAFE_FALLBACK

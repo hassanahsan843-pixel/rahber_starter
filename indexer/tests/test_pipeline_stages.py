@@ -70,7 +70,8 @@ def test_deterministic_vectors() -> None:
     assert math.isclose(norm, 1.0, rel_tol=1e-5)
 
 
-def test_embed_fallback_offline() -> None:
+def test_embed_fallback_offline(monkeypatch) -> None:
+    monkeypatch.setenv("OLLAMA_URL", "offline")
     settings = get_settings()
     texts = ["Clause 1.21 attendance", "Fee structure tuition"]
     embeddings = embed(texts, settings)

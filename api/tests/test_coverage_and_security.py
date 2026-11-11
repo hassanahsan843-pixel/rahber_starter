@@ -28,6 +28,7 @@ from app.services.cache import SemanticCache
 def client(monkeypatch: pytest.MonkeyPatch) -> TestClient:
     monkeypatch.setenv("RETRIEVER", "stub")
     monkeypatch.setenv("LLM_PROVIDER", "stub")
+    monkeypatch.setenv("CACHE_INVALIDATION_TOKEN", "unit-test-token")
     with TestClient(app) as c:
         yield c
 
@@ -37,6 +38,26 @@ def test_readyz_endpoint(client: TestClient) -> None:
     r = client.get("/readyz")
     assert r.status_code == 200
     assert r.json().get("status") == "ready"
+
+
+def test_api_health_alias_and_protected_cache_invalidation(client: TestClient) -> None:
+    assert client.get("/api/healthz").status_code == 200
+    denied = client.post("/api/cache/invalidate", headers={"X-Cache-Invalidation-Token": "wrong"})
+    assert denied.status_code == 403
+    allowed = client.post("/api/cache/invalidate", headers={"X-Cache-Invalidation-Token": "unit-test-token"})
+    assert allowed.status_code == 200
+
+
+def test_readyz_withholds_traffic_when_cache_is_unavailable(client: TestClient) -> None:
+    class UnavailableCache:
+        @staticmethod
+        def ping() -> bool:
+            return False
+
+    client.app.state.cache = UnavailableCache()
+    response = client.get("/readyz")
+    assert response.status_code == 503
+    assert "redis" in response.json()["failed_dependencies"]
 
 
 def test_config_parsing(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -141,6 +162,18 @@ def test_relevance_floor_triggers_honest_abstention() -> None:
     assert "do not contain information" in resp.answer
 
 
+def test_retrieval_failure_returns_safe_response() -> None:
+    class BrokenRetriever:
+        name = "broken"
+        def retrieve(self, question: str, k: int) -> list[Passage]:
+            raise RuntimeError("embedding service unavailable")
+
+    resp = answer_question("What is the rule?", BrokenRetriever(), StubProvider(), Settings())
+    assert resp.answered_from_context is False
+    assert resp.citations == []
+    assert "try again shortly" in resp.answer
+
+
 def test_citation_validity_filters_hallucinations() -> None:
     """Citations that do not match retrieved passages are discarded."""
     passages = [Passage(chunk_id="c1", text="text", source="handbook.pdf", section="1.21 Attendance", score=0.9)]
@@ -191,6 +224,51 @@ def test_semantic_cache_operations() -> None:
     # Invalidation on re-index
     cache.invalidate()
     assert cache.lookup(q_vec, is_followup=False) is None
+
+
+def test_semantic_cache_uses_shared_generation_and_skips_stale_writes() -> None:
+    class FakeRedis:
+        def __init__(self) -> None:
+            self.values: dict[str, str] = {"cache:generation": "2"}
+
+        def get(self, key: str) -> str | None:
+            return self.values.get(key)
+
+        def set(self, key: str, value: str, ex: int) -> None:
+            self.values[key] = value
+
+        def incr(self, key: str) -> int:
+            value = int(self.values.get(key, "0")) + 1
+            self.values[key] = str(value)
+            return value
+
+        def scan_iter(self, match: str, count: int):
+            prefix = match.removesuffix("*")
+            return (key for key in self.values if key.startswith(prefix))
+
+        def mget(self, keys: list[str]) -> list[str | None]:
+            return [self.values.get(key) for key in keys]
+
+    cache = SemanticCache(threshold=0.88)
+    fake_redis = FakeRedis()
+    cache._redis_client = fake_redis
+    response = AskResponse(
+        request_id="shared-1",
+        answer="Shared grounded answer",
+        citations=[Citation(source="doc.pdf", section="Sec 1")],
+        answered_from_context=True,
+        confidence="high",
+        retrieved=[],
+        provider="stub",
+    )
+    assert cache.current_generation() == 2
+    cache.store("stale query", [1.0, 0.0], response, expected_generation=1)
+    assert not any(key.startswith("cache:v2:") for key in fake_redis.values)
+
+    cache.store("current query", [1.0, 0.0], response, expected_generation=2)
+    assert cache.lookup([1.0, 0.0]) is not None
+    cache.invalidate()
+    assert cache.current_generation() == 3
 
 
 def test_answer_question_service_integration() -> None:

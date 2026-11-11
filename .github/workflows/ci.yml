@@ -137,7 +137,7 @@ jobs:
         with:
           image-ref: rahbar-api:${{ github.sha }}
           format: "table"
-          exit-code: "0"
+          exit-code: "1"
           ignore-unfixed: true
           vuln-type: "os,library"
           severity: "CRITICAL,HIGH"
@@ -181,9 +181,7 @@ jobs:
       - name: Deploy Kubernetes stack
         run: |
           kubectl apply -k k8s/overlays/dev
-          kubectl create secret generic rahbar-secret -n rahbar --from-literal=LLM_API_KEY="ci-dummy-key" --dry-run=client -o yaml | kubectl apply -f -
-          # Patch for CI: real chroma retriever, offline embeddings, stub LLM, relevance floor 0.50
-          kubectl patch configmap rahbar-config -n rahbar --type merge -p '{"data":{"RETRIEVER":"chroma","OLLAMA_URL":"offline","LLM_PROVIDER":"stub","RELEVANCE_FLOOR":"0.50"}}'
+          kubectl create secret generic rahbar-secret -n rahbar --from-literal=LLM_API_KEY="ci-dummy-key" --from-literal=CACHE_INVALIDATION_TOKEN="ci-cache-token" --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Exercise Kubernetes Indexer Job (CI)
         run: |
@@ -217,8 +215,6 @@ jobs:
           kubectl delete hpa rahbar-api-hpa -n rahbar --ignore-not-found
           # Scale to 1 replica to minimise resource pressure in KinD
           kubectl scale deployment rahbar-api --replicas=1 -n rahbar
-          # Restart pods to pick up the patched configmap (OLLAMA_URL, LLM_PROVIDER, RELEVANCE_FLOOR)
-          kubectl rollout restart deployment/rahbar-api -n rahbar
           if ! kubectl rollout status deployment/rahbar-api -n rahbar --timeout=240s; then
             echo "=== API POD LOGS ==="
             kubectl logs -n rahbar -l app=rahbar-api --tail=100

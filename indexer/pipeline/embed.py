@@ -25,8 +25,9 @@ def embed(texts: list[str], settings: IndexerSettings) -> list[list[float]]:
 
     With Ollama: POST {ollama_url}/api/embed with {"model": embed_model, "input": texts}
     returns {"embeddings": [[...], ...]}. Batches requests in chunks of 32.
-    If Ollama is unreachable in offline/CI environments, produces a deterministic
-    unit-normalized vector so testing remains 100% offline-compatible.
+    Deterministic vectors are used only when CI explicitly sets OLLAMA_URL=offline.
+    A production connection or response failure stops indexing; it must never label
+    synthetic vectors as the pinned embedding model.
     """
     if not texts:
         return []
@@ -41,22 +42,23 @@ def embed(texts: list[str], settings: IndexerSettings) -> list[list[float]]:
     for i in range(0, len(texts), batch_size):
         batch = texts[i : i + batch_size]
         try:
-            with httpx.Client(timeout=3.0) as client:
+            with httpx.Client(timeout=30.0) as client:
                 res = client.post(
                     f"{settings.ollama_url.rstrip('/')}/api/embed",
                     json={"model": settings.embed_model, "input": batch},
                 )
-                if res.status_code == 200:
-                    data = res.json()
-                    embs = data.get("embeddings") or []
-                    if len(embs) == len(batch):
-                        embeddings.extend(embs)
-                        continue
-        except Exception:
-            pass
-
-        # Offline / test fallback
-        for txt in batch:
-            embeddings.append(_deterministic_stub_vector(txt, dim=768))
+                res.raise_for_status()
+                data = res.json()
+                embs = data.get("embeddings") or []
+                if len(embs) != len(batch) or any(not vector for vector in embs):
+                    raise RuntimeError("embedding provider returned an incomplete batch")
+                dimensions = {len(vector) for vector in embs}
+                if len(dimensions) != 1:
+                    raise RuntimeError("embedding provider returned inconsistent dimensions")
+                if "nomic" in settings.embed_model and dimensions != {768}:
+                    raise RuntimeError(f"{settings.embed_model} must return 768-dimension vectors")
+                embeddings.extend(embs)
+        except (httpx.HTTPError, ValueError) as exc:
+            raise RuntimeError(f"embedding request failed for model {settings.embed_model}") from exc
 
     return embeddings

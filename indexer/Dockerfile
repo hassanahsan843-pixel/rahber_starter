@@ -20,12 +20,12 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Copy indexer pipeline source code and default corpus
+# Copy the indexer pipeline. Kubernetes supplies the corpus through a read-only
+# ConfigMap in CI/dev or a PVC in prod.
 COPY pipeline ./pipeline
-COPY corpus /corpus
 
 # Set ownership
-RUN chown -R appuser:appuser /app /corpus
+RUN chown -R appuser:appuser /app
 
 # Switch to non-root user (section 4.7)
 USER appuser

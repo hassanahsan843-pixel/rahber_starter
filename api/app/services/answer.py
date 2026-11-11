@@ -29,7 +29,7 @@ from ..routes.metrics import (
     TOKENS,
 )
 from ..schemas import AskResponse, Citation, Passage, RetrievedRef
-from .cache import get_cache
+from .cache import SemanticCache, get_cache
 
 log = logging.getLogger("rahbar.answer")
 
@@ -71,15 +71,18 @@ def answer_question(
         )
 
     # Step 2: Semantic cache check
-    cache = get_cache(
-        threshold=settings.cache_threshold,
-        redis_host=settings.redis_host,
-        redis_port=settings.redis_port,
-    )
     # Generate query vector for semantic cache if retriever has embedding capability
     query_vector: list[float] = []
+    cache: SemanticCache | None = None
+    cache_generation: int | None = None
     _embed_fn = getattr(retriever, "_embed_query", None)
     if _embed_fn is not None:
+        cache = get_cache(
+            threshold=settings.cache_threshold,
+            redis_host=settings.redis_host,
+            redis_port=settings.redis_port,
+            allow_memory_fallback=settings.retriever != "chroma",
+        )
         try:
             query_vector = _embed_fn(cleaned_q)
             cached_resp = cache.lookup(query_vector, is_followup=is_followup)
@@ -87,13 +90,28 @@ def answer_question(
                 CACHE_HITS.labels(result="hit").inc()
                 log.info("serving response from semantic cache", extra={"request_id": rid})
                 return cached_resp
+            cache_generation = cache.current_generation()
             CACHE_HITS.labels(result="miss").inc()
         except Exception as exc:
             log.warning("semantic cache lookup failed: %s", exc)
 
     # Step 3: Retrieve top-k passages from vector store
     retrieval_start = time.perf_counter()
-    passages = retriever.retrieve(cleaned_q, k=settings.top_k)
+    try:
+        passages = retriever.retrieve(cleaned_q, k=settings.top_k)
+    except Exception as exc:
+        RETRIEVAL_LATENCY.observe(time.perf_counter() - retrieval_start)
+        FALLBACKS.inc()
+        log.error("retrieval failed; returning safe fallback", extra={"request_id": rid, "error": str(exc)})
+        return AskResponse(
+            request_id=rid,
+            answer="I could not retrieve the university documents right now. Please try again shortly.",
+            citations=[],
+            answered_from_context=False,
+            confidence="low",
+            retrieved=[],
+            provider=provider.name,
+        )
     RETRIEVAL_LATENCY.observe(time.perf_counter() - retrieval_start)
 
     retrieved_refs = [
@@ -178,8 +196,14 @@ def answer_question(
     )
 
     # Step 7: Store in semantic cache if safe
-    if query_vector and answered_context:
-        cache.store(cleaned_q, query_vector, response, is_followup=is_followup)
+    if query_vector and cache is not None and answered_context:
+        cache.store(
+            cleaned_q,
+            query_vector,
+            response,
+            is_followup=is_followup,
+            expected_generation=cache_generation,
+        )
 
     # Step 8: Log observability line and return
     log.info(

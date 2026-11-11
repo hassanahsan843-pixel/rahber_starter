@@ -43,19 +43,21 @@ class ChromaRetriever:
         if not self.settings.ollama_url or any(x in self.settings.ollama_url.lower() for x in ("offline", "disabled", "stub", "none")):
             return _fallback_embedding(text, dim=768)
         try:
-            with httpx.Client(timeout=3.0) as client:
+            with httpx.Client(timeout=10.0) as client:
                 res = client.post(
                     f"{self.settings.ollama_url.rstrip('/')}/api/embed",
                     json={"model": self.settings.embed_model, "input": [text]},
                 )
-                if res.status_code == 200:
-                    data = res.json()
-                    embs = data.get("embeddings") or []
-                    if embs:
-                        return embs[0]
-        except Exception:
-            pass
-        return _fallback_embedding(text, dim=768)
+                res.raise_for_status()
+                data = res.json()
+                embs = data.get("embeddings") or []
+                if not embs or not embs[0]:
+                    raise RuntimeError("embedding provider returned an empty vector")
+                if "nomic" in self.settings.embed_model and len(embs[0]) != 768:
+                    raise RuntimeError("nomic-embed-text must return a 768-dimension query vector")
+                return embs[0]
+        except httpx.HTTPError as exc:
+            raise RuntimeError(f"embedding request failed for model {self.settings.embed_model}") from exc
 
     def retrieve(self, question: str, k: int) -> list[Passage]:
         """Embed the question with settings.embed_model (the same model the indexer used),
