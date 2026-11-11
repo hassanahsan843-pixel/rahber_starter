@@ -7,11 +7,13 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 # Install system dependencies for PDF processing & OCR (poppler-utils, tesseract-ocr)
-RUN apt-get update && apt-get upgrade -y --no-install-recommends && \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends --only-upgrade zlib1g && \
+    apt-get upgrade -y --no-install-recommends && \
     apt-get install -y --no-install-recommends \
     tesseract-ocr \
     poppler-utils \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Create a dedicated non-root user and group
 RUN groupadd -r appuser && useradd -r -g appuser -d /app -s /sbin/nologin appuser

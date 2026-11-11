@@ -9,8 +9,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 # Refresh Debian security updates in the slim base image (including zlib).
-RUN apt-get update && apt-get upgrade -y --no-install-recommends && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends --only-upgrade zlib1g && \
+    apt-get upgrade -y --no-install-recommends && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Create a dedicated non-root user and group
 RUN groupadd -r appuser && useradd -r -g appuser -d /app -s /sbin/nologin appuser
