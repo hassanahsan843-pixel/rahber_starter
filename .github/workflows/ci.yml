@@ -141,6 +141,9 @@ jobs:
           ignore-unfixed: true
           vuln-type: "os,library"
           severity: "CRITICAL,HIGH"
+          # pip's embedded BOM lists its vendored pkg_resources as setuptools 70.3.0,
+          # although the installed package is upgraded; skip only that stale BOM.
+          skip-files: "**/pip/_vendor/bom.cdx.json"
 
   e2e-eval:
     name: End-to-End Evaluation Gate
