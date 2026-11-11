@@ -19,8 +19,13 @@ RUN groupadd -r appuser && useradd -r -g appuser -d /app -s /sbin/nologin appuse
 
 # Install dependencies first for efficient layer caching
 COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip "setuptools==78.1.1" && \
-    pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade \
+        pip \
+        "setuptools==84.2.1" \
+        "wheel==0.48.0" \
+        "jaraco.context==6.1.2" && \
+    pip install --no-cache-dir -r requirements.txt && \
+    pip check
 
 # Copy application source
 COPY app ./app
