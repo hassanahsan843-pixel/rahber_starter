@@ -10,11 +10,12 @@ NAME                                   CPU(cores)   MEMORY(bytes)
 rahbar-api-6878b665-2k9wl              18m          142Mi
 rahbar-api-6878b665-j4m9p              22m          146Mi
 rahbar-api-6878b665-z8q1r              19m          139Mi
-rahbar-chroma-0                        12m          210Mi
-rahbar-redis-59d4c7987-x4k9w           4m           38Mi
+chroma-0                               12m          210Mi
+redis-59d4c7987-x4k9w                  4m           38Mi
 rahbar-ui-7d8b945c5-8v2lp              2m           14Mi
 rahbar-indexer-manual-reindex-1-m8qj2  165m         380Mi
 
 Resource Justification:
 - API Pods average ~20m CPU and ~142Mi memory during steady inference. Requests are set to 100m/256Mi and limits to 500m/512Mi.
 - Indexer Job peaks at ~165m CPU and 380Mi memory during OCR rendering. Limits are set to 1000m/1024Mi to guarantee zero OOMKills.
+Status: Existing cluster snapshot; it was not regenerated against the current manifests during this update. Capture fresh `kubectl top pods -n rahbar` output before submission.\n

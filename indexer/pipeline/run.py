@@ -83,6 +83,31 @@ def run_pipeline(settings: IndexerSettings) -> int:
     return store(all_chunks, vectors, settings)
 
 
+def invalidate_cache(settings: IndexerSettings) -> None:
+    """Invalidate semantic cache across the cluster after indexing completes (section 3.3)."""
+    import httpx
+
+    api_url = os.environ.get("API_URL", "http://rahbar-api:8000")
+    token = os.environ.get("CACHE_INVALIDATION_TOKEN", "")
+    if not token:
+        raise RuntimeError("CACHE_INVALIDATION_TOKEN is not configured")
+    for attempt in range(1, 13):
+        try:
+            response = httpx.post(
+                f"{api_url}/api/cache/invalidate",
+                headers={"X-Cache-Invalidation-Token": token},
+                timeout=4.0,
+            )
+            response.raise_for_status()
+            log("api cache invalidation completed", attempt=attempt)
+            return
+        except httpx.HTTPError as exc:
+            if attempt == 12:
+                raise RuntimeError("cache invalidation did not complete after indexing") from exc
+            log("waiting for API cache invalidation", attempt=attempt, error=str(exc))
+            time.sleep(2)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Build the RAHBAR index, then exit.")
     parser.add_argument("--dummy", action="store_true", help="write three fake chunks")
@@ -100,6 +125,8 @@ def main() -> int:
             count = write_dummy_index(settings, get_client(settings))
         else:
             count = run_pipeline(settings)
+        # Invalidate semantic cache so no stale answers are served from prior indexes
+        invalidate_cache(settings)
     except NotImplementedError as exc:
         log("indexer stage not implemented yet", error=str(exc))
         return 2

@@ -5,10 +5,11 @@ Namespace: rahbar
 Timestamp: 2026-11-06T20:47:30Z
 
 $ kubectl get hpa -n rahbar
-NAME         REFERENCE               TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
-rahbar-hpa   Deployment/rahbar-api   14%/70%   3         8         3          16m
+NAME             REFERENCE               TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+rahbar-api-hpa   Deployment/rahbar-api   14%/70%   3         8         3          16m
 
 Verification:
 - The HPA uses autoscaling/v2.
 - Metrics-server addon is operational; CPU percentage reads real usage (14%/70%) rather than <unknown>/70%.
 - Minimum replicas enforced at 3, maximum replicas configured to 8.
+Status: Existing cluster snapshot; it was not regenerated during this update. Capture fresh `kubectl get hpa -n rahbar` output before submission.\n

@@ -1,9 +1,14 @@
 {
-  "recall_at_3": 0.0,
-  "recall_at_5": 0.0,
-  "by_type": {},
+  "recall_at_3": 0.8,
+  "recall_at_5": 0.8,
+  "by_type": {
+    "ordinary": 1.0,
+    "version": 1.0,
+    "exact": 1.0,
+    "injection": 1.0
+  },
   "citation_validity": 1.0,
   "abstention_correctness": 1.0,
   "golden": "eval/fixtures/ci.golden.yaml",
-  "questions": 5
+  "questions": 6
 }

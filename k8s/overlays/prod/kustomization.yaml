@@ -5,3 +5,42 @@ namespace: rahbar
 
 resources:
   - ../../base
+  - corpus-pvc.yaml
+
+patches:
+  - target:
+      version: v1
+      kind: ConfigMap
+      name: rahbar-config
+    patch: |-
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: rahbar-config
+      data:
+        LLM_PROVIDER: hosted
+        OLLAMA_URL: http://host.minikube.internal:11434
+  - target:
+      group: batch
+      version: v1
+      kind: Job
+      name: rahbar-indexer
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/volumes/1
+        value:
+          name: corpus-volume
+          persistentVolumeClaim:
+            claimName: rahbar-corpus
+  - target:
+      group: batch
+      version: v1
+      kind: CronJob
+      name: reindex
+    patch: |-
+      - op: replace
+        path: /spec/jobTemplate/spec/template/spec/volumes/1
+        value:
+          name: corpus-volume
+          persistentVolumeClaim:
+            claimName: rahbar-corpus

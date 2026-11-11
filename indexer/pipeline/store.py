@@ -53,10 +53,20 @@ def store(chunks: list[Chunk], vectors: list[list[float]], settings: IndexerSett
             metadata=metadata,
         )
     except Exception:
-        collection = client.create_collection(
-            name=settings.collection,
-            metadata=metadata,
-        )
+        try:
+            import httpx
+
+            httpx.post(
+                f"http://{settings.chroma_host}:{settings.chroma_port}/api/v1/collections",
+                json={"name": settings.collection, "metadata": metadata, "get_or_create": True},
+                timeout=5.0,
+            )
+            collection = client.get_collection(settings.collection)
+        except Exception:
+            collection = client.create_collection(
+                name=settings.collection,
+                metadata=metadata,
+            )
 
     # Batch upsert chunks into Chroma
     batch_size = 100

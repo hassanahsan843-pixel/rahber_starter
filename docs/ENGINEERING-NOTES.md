@@ -15,7 +15,7 @@ If indexing is triggered during API container startup (e.g., inside FastAPI's st
 4. **Coupled Re-indexing and Redeployment**: Re-indexing when a document changes requires rebuilding and redeploying the API container, violating separation of concerns.
 
 - **The Object That Prevents It**: A standalone Kubernetes batch `Job` (`k8s/base/indexer-job.yaml`) and scheduled `CronJob` (`k8s/base/reindex-cronjob.yaml`).
-- **The Manifest & Line**: In [k8s/base/indexer-job.yaml](file:///c:/Users/MUEED/Desktop/RAHBAR/rahber_starter/k8s/base/indexer-job.yaml#L2-L13), `kind: Job` with `restartPolicy: OnFailure` and `backoffLimit: 3` guarantees that indexing runs exactly once as an isolated one-shot batch process, while the API deployment in [k8s/base/api-deployment.yaml](file:///c:/Users/MUEED/Desktop/RAHBAR/rahber_starter/k8s/base/api-deployment.yaml#L1-L85) operates strictly as a read-only consumer.
+- **The Manifest & Line**: In [k8s/base/indexer-job.yaml](../k8s/base/indexer-job.yaml), `kind: Job` with `restartPolicy: OnFailure` and `backoffLimit: 3` guarantees that indexing runs exactly once as an isolated one-shot batch process, while the API deployment in [k8s/base/api-deployment.yaml](../k8s/base/api-deployment.yaml) operates strictly as a read-only consumer.
 
 ---
 
@@ -24,8 +24,8 @@ If indexing is triggered during API container startup (e.g., inside FastAPI's st
 
 **Analysis & Answer**:
 - **Current Architecture**:
-  - `/healthz` (Liveness, [api/app/routes/health.py](file:///c:/Users/MUEED/Desktop/RAHBAR/rahber_starter/api/app/routes/health.py#L10-L14)): Validates process health only (event loop responsive, port open). It touches **no** external dependencies (no Chroma, no Redis, no LLM).
-  - `/readyz` (Readiness, [api/app/routes/health.py](file:///c:/Users/MUEED/Desktop/RAHBAR/rahber_starter/api/app/routes/health.py#L16-L80)): Deeply probes Chroma reachability, collection count > 0, Redis ping, and embedding model pin.
+  - `/healthz` (Liveness, [api/app/routes/health.py](../api/app/routes/health.py)): Validates process health only (event loop responsive, port open). It touches **no** external dependencies (no Chroma, no Redis, no LLM).
+  - `/readyz` (Readiness, [api/app/routes/health.py](../api/app/routes/health.py)): Deeply probes Chroma reachability, collection count > 0, Redis ping, embedding model pin, and vector dimension verification.
 - **What Happens If Swapped**:
   If the liveness probe is wired to check Chroma:
   1. When Chroma becomes slow for 90 seconds (due to compaction, heavy indexing, or memory pressure), all 3 API replicas' liveness checks fail (`periodSeconds: 20`, `failureThreshold: 3` = 60s failure window).
@@ -42,7 +42,7 @@ If indexing is triggered during API container startup (e.g., inside FastAPI's st
 **Analysis & Answer**:
 - **What CPU-Based HPA Measures**:
   While the API waits for LLM generation (via HTTP to Ollama or hosted endpoints), the API pod is completely **I/O-bound**. The Python process sits idle awaiting network socket response (`httpx` request). The CPU usage stays below 5-8% during active inference.
-  Therefore, a CPU-based HPA (`k8s/base/hpa.yaml` configured with `targetCPUUtilizationPercentage: 70%`) does **not** measure generation load; it only measures serialization/parsing spikes and request routing throughput.
+  Therefore, a CPU-based HPA (`k8s/base/hpa.yaml` configured with `autoscaling/v2` `Resource` `averageUtilization: 70%`) does **not** measure generation load; it only measures serialization/parsing spikes and request routing throughput.
 - **Which Signal Should Scale the Service**:
   The generation service should scale on **Concurrent In-Flight Requests** or **Queue Depth / Request Latency (p95 latency)**.
 - **What Would Need to Be Built**:
@@ -56,13 +56,13 @@ If indexing is triggered during API container startup (e.g., inside FastAPI's st
 **Question**: *`kubectl top pods` shows your indexer's peak memory. What is your limit, what is your margin, and which exit code do you get if you set it wrong?*
 
 **Analysis & Answer**:
-- **Observed Peak Usage**: Running `kubectl top pods -n rahbar` during a full indexing run of the 9-document corpus (including PDF rendering, OCR processing of scanned pages via `pytesseract`, and embedding generation) showed peak memory usage of **380 MiB**.
+- **Observed Peak Usage**: Running `kubectl top pods -n rahbar` during a full indexing run of the corpus (including PDF rendering, OCR processing of scanned pages via `pytesseract`, and embedding generation) showed peak memory usage of **380 MiB**.
 - **Configured Requests & Limits**:
-  In [k8s/base/indexer-job.yaml](file:///c:/Users/MUEED/Desktop/RAHBAR/rahber_starter/k8s/base/indexer-job.yaml#L33-L38):
+  In [k8s/base/indexer-job.yaml](../k8s/base/indexer-job.yaml):
   ```yaml
   resources:
     requests:
-      cpu: 250m
+      cpu: 200m
       memory: 512Mi
     limits:
       cpu: 1000m
@@ -99,8 +99,8 @@ If indexing is triggered during API container startup (e.g., inside FastAPI's st
 - **What It Would Have Done Without Guardrail**:
   ChromaDB stores high-dimensional dense vectors without understanding the upstream model architecture. If the API queries with vectors from `all-minilm-l6-v2` (384-d or mismatched space) against a Chroma collection built with `nomic-embed-text` (768-d), either Chroma raises an unhandled dimension exception, or worse, silently computes meaningless inner products between incompatible vector spaces, returning random garbage passages with zero indication of failure.
 - **What Our System Does**:
-  1. The Indexer stores `embed_model` and `dimension` in collection metadata ([indexer/pipeline/store.py](file:///c:/Users/MUEED/Desktop/RAHBAR/rahber_starter/indexer/pipeline/store.py#L38-L43)).
-  2. The API compares collection metadata against its own `settings.embed_model` in [api/app/routes/health.py](file:///c:/Users/MUEED/Desktop/RAHBAR/rahber_starter/api/app/routes/health.py#L50-L58).
+  1. The Indexer stores `embed_model` and `dimension` in collection metadata ([indexer/pipeline/store.py](../indexer/pipeline/store.py)).
+  2. The API compares collection metadata against its own `settings.embed_model` and expected vector dimension in [api/app/routes/health.py](../api/app/routes/health.py).
   3. On mismatch, `/readyz` immediately returns **HTTP 503 Service Unavailable** with:
      ```json
      {"status": "not_ready", "failed_dependencies": ["embed_model_mismatch"], "checks": {"embed_model_pin": "embed_model mismatch: collection uses 'nomic-embed-text' but EMBED_MODEL is 'all-minilm-l6-v2'"}}

@@ -62,10 +62,11 @@ The API service exposes the following endpoints:
 
 | Method | Path | Purpose | Probing & Security |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/healthz` | **Liveness Probe**: Confirms the FastAPI process is alive. Does not touch dependencies. | Kubelet restart probe |
-| `GET` | `/readyz` | **Readiness Probe**: Returns `200` only if Chroma is reachable, the collection is non-empty, Redis is responsive, and `EMBED_MODEL` matches metadata. Otherwise returns `503`. | Traffic routing probe |
-| `GET` | `/metrics` | **Prometheus Metrics**: Exposes latency histograms, token counters, cache hit ratios, and abstentions. | Prometheus scrape |
-| `POST` | `/api/ask` | **Query Endpoint**: Accepts `{"question": "..."}` and returns a validated `AskResponse` with citations. | User traffic |
+| GET | `/healthz` | **Liveness Probe**: Confirms the FastAPI process is alive. Does not touch dependencies. | Kubelet restart probe |
+| GET | `/api/healthz` | API health route used by the Ingress smoke test. | Deployment smoke test |
+| GET | `/readyz` | **Readiness Probe**: Returns `200` only if Chroma is reachable, the collection is non-empty, Redis is responsive, and `EMBED_MODEL` matches metadata. Otherwise returns `503`. | Traffic routing probe |
+| GET | `/metrics` | **Prometheus Metrics**: Exposes latency histograms, token counters, cache hit ratios, and abstentions. | Prometheus scrape |
+| POST | `/api/ask` | **Query Endpoint**: Accepts `{"question": "..."}` and returns a validated `AskResponse` with citations. | User traffic |
 
 ### Sample Question Payload
 ```bash
@@ -78,16 +79,15 @@ curl -X POST "http://rahbar.local/api/ask" \
 
 ## Local Cluster Quickstart (Minikube)
 
-Follow these steps from a clean clone to deploy the complete system:
+Follow these steps from a clean clone to deploy against the verified FAST-NUCES corpus. The `dev` overlay is for the tiny synthetic CI fixture corpus; it is not the real university corpus.
 
 ### 1. Prerequisites
 - Docker Engine & Minikube
 - `kubectl` & `kustomize`
-- Ollama running locally (for default host inference mode):
+- A Groq API key for hosted answer generation, and Ollama running locally for embeddings:
   ```bash
   export OLLAMA_HOST=0.0.0.0
   ollama serve
-  ollama pull llama3.2:3b
   ollama pull nomic-embed-text
   ```
 
@@ -110,37 +110,55 @@ minikube image load rahbar-indexer:dev
 minikube image load rahbar-ui:dev
 ```
 
-### 4. Manifest Apply Order
-Apply the manifests from the repository root in the exact documented order:
+### 4. Download and verify the public corpus
+
+The PDFs are not committed. Download them locally, verify their checksums, then stage them into the production overlay's PVC:
 
 ```bash
-# Step 1: Create namespace
-kubectl apply -f k8s/base/namespace.yaml
+python -m pip install httpx pyyaml
+python corpus/fetch.py
+python corpus/fetch.py --verify
 
-# Step 2: Create runtime Secret from command line (NEVER commit real keys)
+kubectl apply -f k8s/base/namespace.yaml
+kubectl apply -f k8s/overlays/prod/corpus-pvc.yaml
+kubectl apply -f scripts/corpus-loader-pod.yaml
+kubectl wait --for=condition=Ready pod/rahbar-corpus-loader -n rahbar --timeout=120s
+kubectl cp corpus/raw/. rahbar/rahbar-corpus-loader:/corpus
+kubectl delete pod rahbar-corpus-loader -n rahbar --wait=true
+```
+
+The corpus is stored on a PVC because Kubernetes ConfigMaps cannot hold this document set. The Indexer Job and weekly CronJob mount that PVC read-only.
+
+### 5. Create the runtime Secret and apply manifests
+
+Set `LLM_API_KEY` to your hosted provider key and `CACHE_INVALIDATION_TOKEN` to a private random value in your shell. Then apply the production overlay:
+
+```bash
+export CACHE_INVALIDATION_TOKEN="$(openssl rand -hex 32)"
+# Create runtime Secret from shell variables (NEVER commit real keys)
 kubectl create secret generic rahbar-secret -n rahbar \
-  --from-literal=LLM_API_KEY="dev-key-placeholder" \
+  --from-literal=LLM_API_KEY="$LLM_API_KEY" \
+  --from-literal=CACHE_INVALIDATION_TOKEN="$CACHE_INVALIDATION_TOKEN" \
   --dry-run=client -o yaml | kubectl apply -f -
 
-# Step 3: Apply the complete Kustomize overlay
-kubectl apply -k k8s/overlays/dev
+# Apply production manifests: the Indexer Job runs once against the staged corpus.
+kubectl apply -k k8s/overlays/prod
 
-# Step 4: Verify stateful services are healthy
+# Wait for stateful services and the real index build.
 kubectl wait --for=condition=ready pod -l app=chroma -n rahbar --timeout=120s
 kubectl wait --for=condition=ready pod -l app=redis -n rahbar --timeout=120s
+kubectl wait --for=condition=complete job/rahbar-indexer -n rahbar --timeout=900s
 ```
 
-### 5. Run the Indexer Job
-To build the initial vector index, run the standalone indexer Job:
+### 6. Run the Indexer Job again when documents change
+
+The initial apply creates the `rahbar-indexer` Job. For later re-indexing, first stage the updated files into the PVC with the loader pod above, then run:
 ```bash
-# Execute batch indexing Job from CronJob template
 kubectl create job --from=cronjob/reindex manual-indexer-1 -n rahbar
-
-# Watch until completion
-kubectl wait --for=condition=complete job/manual-indexer-1 -n rahbar --timeout=300s
+kubectl wait --for=condition=complete job/manual-indexer-1 -n rahbar --timeout=900s
 ```
 
-### 6. Verify Rollout & Scaling
+### 7. Verify Rollout & Scaling
 ```bash
 # Ensure API deployment has rolled out successfully across all 3 replicas
 kubectl rollout status deployment/rahbar-api -n rahbar --timeout=180s

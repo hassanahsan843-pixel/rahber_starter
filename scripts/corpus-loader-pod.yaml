@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: rahbar-corpus-loader
+  namespace: rahbar
+spec:
+  restartPolicy: Never
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+    runAsGroup: 10001
+    fsGroup: 10001
+  containers:
+    - name: loader
+      image: busybox:1.36
+      command: ["sh", "-c", "mkdir -p /corpus && chmod 0770 /corpus && sleep 3600"]
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop: ["ALL"]
+      volumeMounts:
+        - name: corpus-volume
+          mountPath: /corpus
+  volumes:
+    - name: corpus-volume
+      persistentVolumeClaim:
+        claimName: rahbar-corpus

@@ -36,6 +36,13 @@ spec:
               envFrom:
                 - configMapRef:
                     name: rahbar-config
+              env:
+                - name: CACHE_INVALIDATION_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: rahbar-secret
+                      key: CACHE_INVALIDATION_TOKEN
+                      optional: false
               resources:
                 requests:
                   cpu: 200m
@@ -46,6 +53,12 @@ spec:
               volumeMounts:
                 - name: tmp-dir
                   mountPath: /tmp
+                - name: corpus-volume
+                  mountPath: /corpus
+                  readOnly: true
           volumes:
             - name: tmp-dir
               emptyDir: {}
+            - name: corpus-volume
+              configMap:
+                name: rahbar-corpus

@@ -191,7 +191,15 @@ def main() -> int:
                 "response": response,
                 "seconds": round(time.perf_counter() - started, 2),
             })
-            print(f"  {q['id']:<5} {rows[-1]['seconds']:>6.2f}s  {q['question'][:60]}")
+            retrieved = response.get("retrieved") or []
+            ranked = ", ".join(
+                f"{item.get('source', '?')}::{item.get('section', '?')}"
+                for item in retrieved[:5]
+            )
+            print(
+                f"  {q['id']:<5} {rows[-1]['seconds']:>6.2f}s  "
+                f"{q['question'][:60]}  retrieved=[{ranked}]"
+            )
 
     results = summarise(rows)
     baseline = json.loads(args.baseline.read_text(encoding="utf-8")) if args.baseline.exists() else None

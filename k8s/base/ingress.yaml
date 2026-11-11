@@ -28,19 +28,3 @@ spec:
                 name: rahbar-ui
                 port:
                   number: 80
-    - http:
-        paths:
-          - path: /api
-            pathType: Prefix
-            backend:
-              service:
-                name: rahbar-api
-                port:
-                  number: 8000
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: rahbar-ui
-                port:
-                  number: 80
