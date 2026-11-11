@@ -4,6 +4,9 @@
 
 This document reports the empirical measurements, configuration tuning, extraction challenges, and semantic caching thresholds across the 5-stage indexing and query pipeline.
 
+### Deterministic CI retrieval
+The KinD evaluation uses `OLLAMA_URL=offline`, so it does not claim to measure the production Nomic embedding model. The offline path uses normalized lexical features, retrieves the complete small fixture candidate set, and reranks it by query-term coverage. Production continues to use the pinned Nomic embeddings and Chroma cosine distance. The CI gate therefore checks the deployed indexer/API contract deterministically without making a live model call.
+
 ---
 
 ## 1. Stage 1: Extraction & Cleaning Analysis

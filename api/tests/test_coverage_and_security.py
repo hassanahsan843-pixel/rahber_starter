@@ -18,10 +18,26 @@ from app.providers.llm.stub import StubProvider
 from app.providers.llm.ollama import SAFE_FALLBACK as OLLAMA_FALLBACK
 from app.providers.llm.hosted import SAFE_FALLBACK as HOSTED_FALLBACK
 from app.retrieval import get_retriever
+from app.retrieval.chroma import _fallback_embedding, _lexical_relevance
 from app.retrieval.stub import StubRetriever
 from app.schemas import Answer, AskRequest, AskResponse, Citation, Passage
 from app.services.answer import answer_question, _is_valid_citation
 from app.services.cache import SemanticCache
+
+
+def test_offline_embeddings_normalize_words_like_the_indexer() -> None:
+    assert _fallback_embedding("ATTENDANCE? 80%") == _fallback_embedding("attendance 80")
+    assert _fallback_embedding("repeating courses") == _fallback_embedding("repeat course")
+
+
+def test_ci_lexical_ranking_prefers_the_relevant_fixture_section() -> None:
+    question = "What is the minimum attendance needed to sit the final exam?"
+    attendance = (
+        "1. Attendance 1.1 A student must attend at least 80 percent "
+        "of lectures to be allowed to sit the final examination."
+    )
+    warning = "2. Academic warning. A student whose CGPA falls below 2.00 is warned."
+    assert _lexical_relevance(question, attendance) > _lexical_relevance(question, warning)
 
 
 @pytest.fixture()

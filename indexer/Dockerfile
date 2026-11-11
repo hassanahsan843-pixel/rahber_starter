@@ -7,7 +7,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 # Install system dependencies for PDF processing & OCR (poppler-utils, tesseract-ocr)
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get upgrade -y --no-install-recommends && \
+    apt-get install -y --no-install-recommends \
     tesseract-ocr \
     poppler-utils \
     && rm -rf /var/lib/apt/lists/*
@@ -17,7 +18,7 @@ RUN groupadd -r appuser && useradd -r -g appuser -d /app -s /sbin/nologin appuse
 
 # Install Python dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip && \
+RUN pip install --no-cache-dir --upgrade pip "setuptools==78.1.1" && \
     pip install --no-cache-dir -r requirements.txt
 
 # Copy the indexer pipeline. Kubernetes supplies the corpus through a read-only

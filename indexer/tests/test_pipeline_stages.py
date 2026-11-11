@@ -70,6 +70,15 @@ def test_deterministic_vectors() -> None:
     assert math.isclose(norm, 1.0, rel_tol=1e-5)
 
 
+def test_offline_vectors_normalize_punctuation_and_inflection() -> None:
+    punctuation = _deterministic_stub_vector("ATTENDANCE? 80%")
+    plain = _deterministic_stub_vector("attendance 80")
+    inflected = _deterministic_stub_vector("repeating courses")
+    base = _deterministic_stub_vector("repeat course")
+    assert punctuation == plain
+    assert inflected == base
+
+
 def test_embed_fallback_offline(monkeypatch) -> None:
     monkeypatch.setenv("OLLAMA_URL", "offline")
     settings = get_settings()
