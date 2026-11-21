@@ -1,0 +1,18 @@
+# Release gate thresholds for Part C2
+# Edit this ConfigMap-mounted file to change gate outcomes without rebuilding images.
+
+# Retrieval quality
+recall_at_5_min_drop: 0.05       # recall@5 may fall at most 5 pp below baseline
+recall_at_3_min: 0.50            # absolute floor for recall@3
+
+# Answer quality
+faithfulness_min: 0.60           # faithfulness must stay above 60%
+citation_validity_min: 0.90      # at least 90% of citations must match retrieved passages
+abstention_correctness_min: 1.0  # 100% of must-abstain questions must be declined
+
+# Latency
+latency_p95_max_s: 10.0          # p95 latency must stay below 10 seconds
+
+# Ranking quality
+mrr_min: 0.40                    # MRR must not drop below 0.40
+ndcg_at_5_min: 0.40              # nDCG@5 must not drop below 0.40
