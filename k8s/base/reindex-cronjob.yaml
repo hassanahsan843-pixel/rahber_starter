@@ -48,9 +48,29 @@ spec:
                   mountPath: /tmp
                 - name: corpus-volume
                   mountPath: /corpus
+                - name: datalake
+                  mountPath: /data_lake
+                - name: quarantine
+                  mountPath: /quarantine
+                - name: archive
+                  mountPath: /archive
+                - name: traces
+                  mountPath: /traces
           volumes:
             - name: tmp-dir
               emptyDir: {}
             - name: corpus-volume
               configMap:
                 name: rahbar-corpus
+            - name: datalake
+              persistentVolumeClaim:
+                claimName: datalake-pvc
+            - name: quarantine
+              persistentVolumeClaim:
+                claimName: quarantine-pvc
+            - name: archive
+              persistentVolumeClaim:
+                claimName: archive-pvc
+            - name: traces
+              persistentVolumeClaim:
+                claimName: traces-pvc

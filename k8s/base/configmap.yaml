@@ -34,3 +34,14 @@ data:
   CHUNK_OVERLAP: "50"
   CORPUS_DIR: "/corpus"
   LOG_LEVEL: "INFO"
+
+  # A03: RAGOps paths (sections A, D, E)
+  DATA_LAKE_DIR: "/data_lake"
+  QUARANTINE_DIR: "/quarantine"
+  ARCHIVE_DIR: "/archive"
+  TRACE_FILE: "/traces/traces.jsonl"
+  TRACE_ENABLED: "true"
+
+  # A03: Verification thresholds
+  NEAR_DUPLICATE_THRESHOLD: "0.97"
+  COVERAGE_THRESHOLD: "0.65"
