@@ -1,0 +1,15 @@
+PLANTED PROBLEM: Missing metadata (no front matter, no title, no date, no version)
+
+This document has no YAML front matter. The verification stage should detect:
+  - completeness_title: FAIL
+  - completeness_date: FAIL (doc_version will default to "unknown")
+
+Content: FAST-NUCES Scholarship Policy
+
+Merit scholarships are awarded to students who achieve a CGPA of 3.5 or above.
+The scholarship covers 50% of tuition fees for one semester and is renewed if
+the student maintains the qualifying CGPA. Need-based aid is available through
+the financial assistance office. Applications must be submitted before the end
+of the first week of each semester. Supporting documents including fee challans,
+income certificates and academic transcripts are required. Students receiving
+scholarships must not have any disciplinary actions on their record.
