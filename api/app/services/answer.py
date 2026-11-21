@@ -8,13 +8,15 @@ Executes the complete 8-step production pipeline:
 5. Generate schema-constrained Answer via pluggable LLM provider
 6. Strictly validate citations against retrieved passages (strip hallucinations)
 7. Update semantic cache (with strict never-cache guardrails)
-8. Return structured AskResponse with request tracing and metrics logging
+8. Return structured AskResponse with request tracing and metrics (D1: write trace)
 """
 
 from __future__ import annotations
 
 import logging
+import re
 import time
+from typing import Any
 
 from ..config import Settings
 from ..logjson import request_id_var
@@ -32,6 +34,24 @@ from ..schemas import AskResponse, Citation, Passage, RetrievedRef
 from .cache import get_cache
 
 log = logging.getLogger("rahbar.answer")
+
+# D4 – Guardrail: injection patterns to detect in both query and retrieved text
+_INJECTION_PATTERNS = [
+    re.compile(r"ignore\s+(all\s+)?previous\s+instructions", re.IGNORECASE),
+    re.compile(r"disregard\s+(all\s+)?(system\s+)?prompts?", re.IGNORECASE),
+    re.compile(r"you\s+are\s+now\s+in\s+(administrator|admin|root)\s+mode", re.IGNORECASE),
+    re.compile(r"output\s*:\s*['\"]?system[_\s]compromised", re.IGNORECASE),
+    re.compile(r"reveal\s+(your\s+)?system\s+instructions", re.IGNORECASE),
+]
+
+
+def _detect_injection(text: str) -> list[str]:
+    """Return list of triggered guardrail pattern names."""
+    triggered = []
+    for pat in _INJECTION_PATTERNS:
+        if pat.search(text):
+            triggered.append(f"injection_pattern:{pat.pattern[:40]}")
+    return triggered
 
 
 def _is_valid_citation(citation: Citation, passages: list[Passage]) -> bool:
@@ -55,6 +75,7 @@ def answer_question(
     is_followup: bool = False,
 ) -> AskResponse:
     rid = request_id_var.get()
+    pipeline_start = time.perf_counter()
 
     # Step 1: Input length validation
     cleaned_q = question.strip()
@@ -70,14 +91,22 @@ def answer_question(
             provider=provider.name,
         )
 
+    # D4: Check query for prompt-injection attempts
+    guardrail_actions: list[str] = []
+    query_injection = _detect_injection(cleaned_q)
+    if query_injection:
+        guardrail_actions.extend(query_injection)
+        log.warning("prompt injection detected in query", extra={"patterns": query_injection})
+
     # Step 2: Semantic cache check
+    cache_start = time.perf_counter()
     cache = get_cache(
         threshold=settings.cache_threshold,
         redis_host=settings.redis_host,
         redis_port=settings.redis_port,
     )
-    # Generate query vector for semantic cache if retriever has embedding capability
     query_vector: list[float] = []
+    cache_hit = False
     _embed_fn = getattr(retriever, "_embed_query", None)
     if _embed_fn is not None:
         try:
@@ -85,16 +114,27 @@ def answer_question(
             cached_resp = cache.lookup(query_vector, is_followup=is_followup)
             if cached_resp is not None:
                 CACHE_HITS.labels(result="hit").inc()
+                cache_hit = True
                 log.info("serving response from semantic cache", extra={"request_id": rid})
                 return cached_resp
             CACHE_HITS.labels(result="miss").inc()
         except Exception as exc:
             log.warning("semantic cache lookup failed: %s", exc)
+    cache_ms = (time.perf_counter() - cache_start) * 1000
 
-    # Step 3: Retrieve top-k passages from vector store
+    # Step 3: Retrieve top-k passages
     retrieval_start = time.perf_counter()
     passages = retriever.retrieve(cleaned_q, k=settings.top_k)
-    RETRIEVAL_LATENCY.observe(time.perf_counter() - retrieval_start)
+    retrieval_ms = (time.perf_counter() - retrieval_start) * 1000
+    RETRIEVAL_LATENCY.observe(retrieval_ms / 1000)
+
+    # D4: Check retrieved text for injected instructions
+    for p in passages:
+        retrieved_injection = _detect_injection(p.text)
+        if retrieved_injection:
+            guardrail_actions.extend([f"retrieved_injection:{a}" for a in retrieved_injection])
+            log.warning("injection pattern found in retrieved chunk", extra={
+                "chunk_id": p.chunk_id, "patterns": retrieved_injection})
 
     retrieved_refs = [
         RetrievedRef(
@@ -124,8 +164,8 @@ def answer_question(
     if not passages or max_score < settings.relevance_floor:
         reason = "no_passages" if not passages else "relevance_floor"
         ABSTENTIONS.labels(reason=reason).inc()
-        log.info("honest abstention triggered: score below relevance floor", extra={"max_score": round(max_score, 4)})
-        return AskResponse(
+        log.info("honest abstention triggered", extra={"max_score": round(max_score, 4)})
+        abstain_resp = AskResponse(
             request_id=rid,
             answer="The university documents in the corpus do not contain information to answer this question.",
             citations=[],
@@ -134,13 +174,17 @@ def answer_question(
             retrieved=retrieved_refs,
             provider=provider.name,
         )
+        _write_trace(rid, cleaned_q, settings, passages, retrieved_refs, "",
+                     abstain_resp, guardrail_actions, retrieval_ms, 0.0, cache_ms,
+                     cache_hit, provider.name, pipeline_start)
+        return abstain_resp
 
     # Step 5: Generate schema-constrained answer
     gen_start = time.perf_counter()
     answer = provider.generate(cleaned_q, passages)
-    GENERATION_LATENCY.observe(time.perf_counter() - gen_start)
+    generation_ms = (time.perf_counter() - gen_start) * 1000
+    GENERATION_LATENCY.observe(generation_ms / 1000)
 
-    # Estimate and track token counts
     prompt_tokens = len(cleaned_q.split()) + sum(len(p.text.split()) for p in passages)
     completion_tokens = len(answer.answer.split()) + len(answer.reasoning.split())
     TOKENS.labels(kind="prompt").inc(prompt_tokens)
@@ -149,20 +193,14 @@ def answer_question(
     if answer.confidence == "low" and not answer.citations and not answer.answered_from_context:
         FALLBACKS.inc()
 
-    # Step 6: Validate citations against retrieved passages
+    # Step 6: Validate citations
     valid_citations = [
         cit for cit in answer.citations if _is_valid_citation(cit, passages)
     ]
     if len(valid_citations) < len(answer.citations):
-        log.warning(
-            "dropped hallucinated citations",
-            extra={
-                "original": len(answer.citations),
-                "valid": len(valid_citations),
-            },
-        )
+        log.warning("dropped hallucinated citations", extra={
+            "original": len(answer.citations), "valid": len(valid_citations)})
 
-    # If the model claimed context but provided no valid citations, mark answered_from_context False
     answered_context = answer.answered_from_context
     if answered_context and not valid_citations:
         answered_context = False
@@ -177,11 +215,11 @@ def answer_question(
         provider=provider.name,
     )
 
-    # Step 7: Store in semantic cache if safe
+    # Step 7: Cache
     if query_vector and answered_context:
         cache.store(cleaned_q, query_vector, response, is_followup=is_followup)
 
-    # Step 8: Log observability line and return
+    # Step 8: Log + write trace
     log.info(
         "answered",
         extra={
@@ -193,7 +231,67 @@ def answer_question(
             "scores": [round(p.score, 4) for p in passages],
             "answered_from_context": response.answered_from_context,
             "citations_count": len(response.citations),
+            "guardrail_actions": guardrail_actions,
         },
     )
 
+    # Build prompt text for hash (approximate)
+    prompt_text = cleaned_q + " ".join(p.text[:100] for p in passages)
+    _write_trace(rid, cleaned_q, settings, passages, retrieved_refs, prompt_text,
+                 response, guardrail_actions, retrieval_ms, generation_ms, cache_ms,
+                 cache_hit, provider.name, pipeline_start)
+
     return response
+
+
+def _write_trace(
+    rid: str,
+    query: str,
+    settings: Any,
+    passages: list[Passage],
+    retrieved_refs: list[RetrievedRef],
+    prompt_text: str,
+    response: AskResponse,
+    guardrail_actions: list[str],
+    retrieval_ms: float,
+    generation_ms: float,
+    cache_ms: float,
+    cache_hit: bool,
+    provider_name: str,
+    pipeline_start: float,
+) -> None:
+    try:
+        from .trace import write_trace
+        retrieved_dicts = [
+            {
+                "chunk_id": r.chunk_id,
+                "source": r.source,
+                "section": r.section,
+                "page": r.page,
+                "score": r.score,
+            }
+            for r in retrieved_refs
+        ]
+        citations_dicts = [
+            {"source": c.source, "section": c.section, "page": c.page}
+            for c in response.citations
+        ]
+        write_trace(
+            trace_id=rid,
+            query=query,
+            settings=settings,
+            retrieved=retrieved_dicts,
+            prompt=prompt_text,
+            response_text=response.answer,
+            citations=citations_dicts,
+            answered_from_context=response.answered_from_context,
+            confidence=response.confidence,
+            provider_name=provider_name,
+            guardrail_actions=guardrail_actions,
+            latency_retrieval_ms=retrieval_ms,
+            latency_generation_ms=generation_ms,
+            latency_cache_ms=cache_ms,
+            cache_hit=cache_hit,
+        )
+    except Exception as exc:
+        log.warning("trace write failed: %s", exc)
