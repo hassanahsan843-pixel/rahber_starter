@@ -53,11 +53,13 @@ def ask(client: httpx.Client, api: str, question: str) -> dict:
 
 
 def _match(rel: dict, ret: dict) -> bool:
-    rel_src = str(rel.get("ground_truth_doc", rel.get("source", ""))).lower()
-    ret_src = str(ret.get("source", "")).lower()
-    src_match = rel_src in ret_src or ret_src in rel_src
-    # For golden.jsonl we don't require section match – source is sufficient
-    return src_match and src_match
+    rel_src = str(rel.get("ground_truth_doc", rel.get("source", ""))).lower().strip()
+    ret_src = str(ret.get("source", "")).lower().strip()
+
+    if not rel_src or not ret_src:
+        return False
+
+    return rel_src in ret_src or ret_src in rel_src
 
 
 def recall_at_k(q: dict, retrieved: list[dict], k: int) -> float | None:
@@ -82,13 +84,14 @@ def mrr(q: dict, retrieved: list[dict]) -> float | None:
 def ndcg_at_k(q: dict, retrieved: list[dict], k: int) -> float | None:
     if q.get("must_abstain") or not q.get("ground_truth_doc"):
         return None
-    dcg = 0.0
+
     for i, r in enumerate(retrieved[:k], start=1):
-        rel = 1.0 if _match({"ground_truth_doc": q["ground_truth_doc"]}, r) else 0.0
-        dcg += rel / math.log2(i + 1)
-    # Ideal DCG: the relevant doc is at position 1
-    idcg = 1.0 / math.log2(2)  # = 1.0
-    return dcg / idcg if idcg > 0 else 0.0
+        if _match({"ground_truth_doc": q["ground_truth_doc"]}, r):
+            dcg = 1.0 / math.log2(i + 1)
+            idcg = 1.0
+            return dcg / idcg
+
+    return 0.0
 
 
 def _add_typos(text: str, seed: int = 42) -> str:

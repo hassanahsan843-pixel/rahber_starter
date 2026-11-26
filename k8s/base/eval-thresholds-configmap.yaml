@@ -8,15 +8,11 @@ metadata:
     component: eval
 data:
   thresholds.yaml: |
-    # Release gate thresholds (Part C2)
-    # Candidate must beat baseline by no more than these drops.
-    recall_at_5_max_drop: 0.05
-    mrr_max_drop: 0.05
-    ndcg_max_drop: 0.05
+    recall_at_5_min_drop: 0.05
+    recall_at_3_min: 0.50
+    mrr_min: 0.40
+    ndcg_at_5_min: 0.40
     faithfulness_min: 0.60
-    abstention_rate_max: 0.30
-    p95_latency_max_seconds: 10.0
-    # Embedding quality
-    paraphrase_similarity_min: 0.80
-    unrelated_similarity_max: 0.30
-    embed_determinism: true
+    citation_validity_min: 0.90
+    abstention_correctness_min: 1.0
+    latency_p95_max_s: 10.0

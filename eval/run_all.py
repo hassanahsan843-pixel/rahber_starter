@@ -34,7 +34,7 @@ def print_banner(title: str) -> None:
 
 
 def run_all(api: str, golden_path: Path, skip_embed: bool = False,
-            seed: int = 42) -> dict:
+            seed: int = 42, out_path: Path | None = None) -> dict:
     stamp = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime())
     results_dir = HERE / "results"
     results_dir.mkdir(parents=True, exist_ok=True)
@@ -98,7 +98,8 @@ def run_all(api: str, golden_path: Path, skip_embed: bool = False,
         print(f"  {name:<{col_w}}  {val}")
 
     # Save combined result file
-    combined_out = results_dir / f"all_{stamp}.json"
+    combined_out = out_path or results_dir / f"all_{stamp}.json"
+    combined_out.parent.mkdir(parents=True, exist_ok=True)
     combined_out.write_text(json.dumps(all_results, indent=2), encoding="utf-8")
     print(f"\n  Combined results saved to {combined_out}")
 
@@ -112,5 +113,7 @@ if __name__ == "__main__":
     parser.add_argument("--skip-embed", action="store_true",
                         help="Skip B1 embedding eval (no indexer virtualenv needed)")
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--out", type=Path, default=None)
     args = parser.parse_args()
-    run_all(args.api, args.golden, skip_embed=args.skip_embed, seed=args.seed)
+    run_all(args.api, args.golden, skip_embed=args.skip_embed,
+        seed=args.seed, out_path=args.out)

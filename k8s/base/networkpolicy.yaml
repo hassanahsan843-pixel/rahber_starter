@@ -74,8 +74,12 @@ metadata:
   namespace: rahbar
 spec:
   podSelector:
-    matchLabels:
-      app: rahbar-api
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - rahbar-api
+          - rahbar-api-candidate
   policyTypes:
     - Ingress
     - Egress
@@ -108,6 +112,13 @@ spec:
       ports:
         - protocol: TCP
           port: 8000
+    - from:
+        - podSelector:
+            matchLabels:
+              app: rahbar-eval
+      ports:
+        - port: 8000
+          protocol: TCP
   egress:
     # Allow API -> Chroma (port 8000)
     - to:
@@ -153,7 +164,13 @@ spec:
               app: rahbar-api
         - podSelector:
             matchLabels:
+              app: rahbar-api-candidate
+        - podSelector:
+            matchLabels:
               app: rahbar-indexer
+        - podSelector:
+            matchLabels:
+              app: rahbar-candidate-indexer
       ports:
         - protocol: TCP
           port: 8000
@@ -173,8 +190,12 @@ spec:
   ingress:
     - from:
         - podSelector:
-            matchLabels:
-              app: rahbar-api
+            matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - rahbar-api
+                  - rahbar-api-candidate
       ports:
         - protocol: TCP
           port: 6379
@@ -187,8 +208,12 @@ metadata:
   namespace: rahbar
 spec:
   podSelector:
-    matchLabels:
-      app: rahbar-indexer
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - rahbar-indexer
+          - rahbar-candidate-indexer
   policyTypes:
     - Egress
   egress:
@@ -208,3 +233,27 @@ spec:
           port: 443
         - protocol: TCP
           port: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-eval-egress
+  namespace: rahbar
+spec:
+  podSelector:
+    matchLabels:
+      app: rahbar-eval
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - podSelector:
+            matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - rahbar-api
+                  - rahbar-api-candidate
+      ports:
+        - protocol: TCP
+          port: 8000

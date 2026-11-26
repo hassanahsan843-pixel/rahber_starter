@@ -11,7 +11,6 @@ env/
 .pytest_cache
 .mypy_cache
 .ruff_cache
-corpus
 eval
 k8s
 ui
