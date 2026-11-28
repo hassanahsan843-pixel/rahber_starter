@@ -1,0 +1,29 @@
+PLANTED PROBLEM: Truncated document (ends abruptly mid-sentence)
+
+---
+title: FAST-NUCES Examination Policy 2026
+doc_version: 2026-06
+date: 2026-06-01
+---
+
+# Examination Policy 2026
+
+## 1. Eligibility
+
+Students must fulfill the minimum attendance requirement and have no outstanding
+dues to be eligible to sit examinations.
+
+## 2. Conduct
+
+Mobile phones and electronic devices are strictly prohibited in examination halls.
+Students found with prohibited items will face immediate disqualification.
+
+## 3. Grading
+
+The grading policy follows a standard scale: A (90-100), B+ (85-89), B (80-84),
+C+ (75-79), C (70-74), D (60-69), F (below 60).
+
+## 4. Appeals
+
+Students may appeal examination results within 10 working days. The appeal must be
+submitted in writing with supporting

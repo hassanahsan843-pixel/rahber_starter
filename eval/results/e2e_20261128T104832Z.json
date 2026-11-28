@@ -1,0 +1,456 @@
+{
+  "faithfulness_mean": 0.9615,
+  "faithfulness_judge": "passage-text",
+  "faithfulness_judged": 26,
+  "answer_rate": 0.8387,
+  "citation_validity_mean": 1.0,
+  "abstention_correctness": 0.9231,
+  "abstain_correct": 12,
+  "abstain_total": 13,
+  "latency_p50_s": 0.083,
+  "latency_p95_s": 3.626,
+  "judge_agreement_rate": 0.75,
+  "questions_evaluated": 44,
+  "rows": [
+    {
+      "id": "q01",
+      "latency_s": 0.045,
+      "faithfulness": 0.0,
+      "support_ratio": 0.333,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "must_abstain": false,
+      "answer": "75% [source: academic-rules-2027.md, Section: 1. Attendance, Page: 1]"
+    },
+    {
+      "id": "q02",
+      "latency_s": 0.038,
+      "faithfulness": 1.0,
+      "support_ratio": 1.0,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "must_abstain": false,
+      "answer": "A student is placed on Academic Warning when their CGPA falls below 1.75 at the end of any regular semester."
+    },
+    {
+      "id": "q03",
+      "latency_s": 0.041,
+      "faithfulness": 1.0,
+      "support_ratio": 1.0,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "must_abstain": false,
+      "answer": "10,000"
+    },
+    {
+      "id": "q04",
+      "latency_s": 0.04,
+      "faithfulness": 1.0,
+      "support_ratio": 1.0,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "must_abstain": false,
+      "answer": "The most recent grade is used in GPA calculations when a course is repeated."
+    },
+    {
+      "id": "q05",
+      "latency_s": 0.039,
+      "faithfulness": 1.0,
+      "support_ratio": 0.933,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "must_abstain": false,
+      "answer": "A student whose attendance falls below the required threshold of 75% will be barred from the final examination and awarded a grade of F."
+    },
+    {
+      "id": "q06",
+      "latency_s": 0.04,
+      "faithfulness": 1.0,
+      "support_ratio": 0.7,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "must_abstain": false,
+      "answer": "The hostel curfew time on weekdays is 10:00 PM, as stated in section 1 of the hostel rules."
+    },
+    {
+      "id": "q07",
+      "latency_s": 0.06,
+      "faithfulness": 1.0,
+      "support_ratio": 0.643,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "must_abstain": false,
+      "answer": "Students may borrow up to 5 books at a time. [Source: library-policy-2026.txt, Section: Borrowing Limit, Page: 1]"
+    },
+    {
+      "id": "q08",
+      "latency_s": 0.041,
+      "faithfulness": 1.0,
+      "support_ratio": 1.0,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "must_abstain": false,
+      "answer": "The library fine for overdue books is Rs. 10 per day per book."
+    },
+    {
+      "id": "q09",
+      "latency_s": 0.083,
+      "faithfulness": 1.0,
+      "support_ratio": 1.0,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "must_abstain": false,
+      "answer": "Below 1.75"
+    },
+    {
+      "id": "q10",
+      "latency_s": 0.082,
+      "faithfulness": 1.0,
+      "support_ratio": 0.692,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "must_abstain": false,
+      "answer": "No, students are not allowed to use personal email accounts for submitting assignments or academic documents, as stated in section 3 of the IT policy."
+    },
+    {
+      "id": "q11",
+      "latency_s": 0.079,
+      "faithfulness": 1.0,
+      "support_ratio": 0.583,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "must_abstain": false,
+      "answer": "The monthly transport fee for the university transport service is Rs. 2,500 per route, as stated in Section 1 of the transport-routes-2026.md document."
+    },
+    {
+      "id": "q12",
+      "latency_s": 0.076,
+      "faithfulness": 1.0,
+      "support_ratio": 1.0,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "must_abstain": false,
+      "answer": "Route A: Rawalpindi (Saddar) \u2192 FAST-NUCES (morning and evening)"
+    },
+    {
+      "id": "q13",
+      "latency_s": 0.083,
+      "faithfulness": 1.0,
+      "support_ratio": 0.75,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "must_abstain": false,
+      "answer": "The library book loan period is 14 days, and it can be renewed once."
+    },
+    {
+      "id": "q14",
+      "latency_s": 2.135,
+      "faithfulness": null,
+      "support_ratio": 0.0,
+      "citation_validity": 1.0,
+      "answered_from_context": false,
+      "must_abstain": false,
+      "answer": "Not specified"
+    },
+    {
+      "id": "q15",
+      "latency_s": 0.057,
+      "faithfulness": 1.0,
+      "support_ratio": 1.0,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "must_abstain": false,
+      "answer": "The minimum number of credit hours required for BS degree completion is 130."
+    },
+    {
+      "id": "q16",
+      "latency_s": 0.091,
+      "faithfulness": null,
+      "support_ratio": 0.125,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "must_abstain": true,
+      "answer": "The university documents in the corpus do not contain information to answer this question."
+    },
+    {
+      "id": "q17",
+      "latency_s": 1.46,
+      "faithfulness": null,
+      "support_ratio": 0.0,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "must_abstain": true,
+      "answer": "Not specified in the provided evidence passages."
+    },
+    {
+      "id": "q18",
+      "latency_s": 0.091,
+      "faithfulness": null,
+      "support_ratio": 0.375,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "must_abstain": true,
+      "answer": "The university documents in the corpus do not contain information to answer this question."
+    },
+    {
+      "id": "q19",
+      "latency_s": 0.092,
+      "faithfulness": null,
+      "support_ratio": 0.375,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "must_abstain": true,
+      "answer": "The university documents in the corpus do not contain information to answer this question."
+    },
+    {
+      "id": "q20",
+      "latency_s": 1.979,
+      "faithfulness": null,
+      "support_ratio": 0.333,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "must_abstain": true,
+      "answer": "Not specified in the provided passages. The process for transferring to another university mid-degree is not mentioned."
+    },
+    {
+      "id": "q21",
+      "latency_s": 5.304,
+      "faithfulness": 1.0,
+      "support_ratio": 0.65,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "must_abstain": false,
+      "answer": "No, they are not considered on Academic Warning. According to [2], a student is placed on Academic Warning when their CGPA falls below 2.00 at the end of a regular semester. Since the student improved their GPA to 2.00 exactly, they are no longer on Academic Warning."
+    },
+    {
+      "id": "q22",
+      "latency_s": 2.783,
+      "faithfulness": null,
+      "support_ratio": 0.474,
+      "citation_validity": 1.0,
+      "answered_from_context": false,
+      "must_abstain": false,
+      "answer": "No, the student is not eligible to sit the final exam because their attendance falls below the 75% threshold. [2] Source: academic-rules-2027.md, Section: 1. Attendance, Page: 1"
+    },
+    {
+      "id": "q23",
+      "latency_s": 2.882,
+      "faithfulness": null,
+      "support_ratio": 0.724,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "must_abstain": false,
+      "answer": "According to the 2023 edition, there is no specific attendance requirement mentioned. However, the 2026 edition states that students must maintain a minimum of 75% attendance in every course to be eligible for the final examination. This replaces the 80% threshold from earlier versions."
+    },
+    {
+      "id": "q24",
+      "latency_s": 8.073,
+      "faithfulness": null,
+      "support_ratio": 0.529,
+      "citation_validity": 1.0,
+      "answered_from_context": false,
+      "must_abstain": false,
+      "answer": "The new attendance threshold for the 2027 rule is 75%, which is the same as the 2026 rule. The 2027 rule is superseded by the 2026 rule, so the 2027 rule does not have a new attendance threshold. [source: academic-rules-2026.md, Section: 1. Attendance, Page: 1]"
+    },
+    {
+      "id": "q25",
+      "latency_s": 0.105,
+      "faithfulness": 1.0,
+      "support_ratio": 0.632,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "must_abstain": false,
+      "answer": "No, a student who registered for university transport cannot change their route mid-semester because changes to routes require a 30-day notice, as stated in section 3 of the transport-routes-2026.md."
+    },
+    {
+      "id": "q26",
+      "latency_s": 2.404,
+      "faithfulness": null,
+      "support_ratio": 0.889,
+      "citation_validity": 1.0,
+      "answered_from_context": false,
+      "must_abstain": false,
+      "answer": "Students may repeat a maximum of three courses under the 2027 academic rules."
+    },
+    {
+      "id": "q27",
+      "latency_s": 0.059,
+      "faithfulness": 1.0,
+      "support_ratio": 0.867,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "must_abstain": false,
+      "answer": "A student must register their personally owned device with the IT department and provide their student ID and device MAC address before connecting to the university network."
+    },
+    {
+      "id": "q28",
+      "latency_s": 0.074,
+      "faithfulness": 1.0,
+      "support_ratio": 1.0,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "must_abstain": false,
+      "answer": "Accounts found to be shared will be suspended immediately and disciplinary action will be taken."
+    },
+    {
+      "id": "q29",
+      "latency_s": 0.061,
+      "faithfulness": 1.0,
+      "support_ratio": 0.6,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "must_abstain": false,
+      "answer": "No, a hostel resident cannot have a visitor stay the night without prior written approval from the hostel warden, as stated in section 2 of the FAST-NUCES Hostel Rules 2026."
+    },
+    {
+      "id": "q30",
+      "latency_s": 0.047,
+      "faithfulness": 1.0,
+      "support_ratio": 1.0,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "must_abstain": false,
+      "answer": "Weekly"
+    },
+    {
+      "id": "q31",
+      "latency_s": 0.078,
+      "faithfulness": 1.0,
+      "support_ratio": 0.857,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "must_abstain": false,
+      "answer": "Dinner is served from 7:30 PM to 9:00 PM."
+    },
+    {
+      "id": "q32",
+      "latency_s": 0.077,
+      "faithfulness": 1.0,
+      "support_ratio": 1.0,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "must_abstain": false,
+      "answer": "By 11:00 PM on weekends."
+    },
+    {
+      "id": "q33",
+      "latency_s": 0.08,
+      "faithfulness": 1.0,
+      "support_ratio": 0.667,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "must_abstain": false,
+      "answer": "No, reference books are not available for borrowing according to section 2 of the library policy."
+    },
+    {
+      "id": "q34",
+      "latency_s": 0.083,
+      "faithfulness": 1.0,
+      "support_ratio": 1.0,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "must_abstain": false,
+      "answer": "IEEE Xplore, ACM Digital Library and Springer"
+    },
+    {
+      "id": "q35",
+      "latency_s": 0.086,
+      "faithfulness": 1.0,
+      "support_ratio": 0.75,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "must_abstain": false,
+      "answer": "According to the transport-routes-2026.md, the university bus departs from designated stops at 7:30 AM in the morning."
+    },
+    {
+      "id": "q36",
+      "latency_s": 0.049,
+      "faithfulness": 1.0,
+      "support_ratio": 0.667,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "must_abstain": false,
+      "answer": "A student must have a CGPA of 2.00 by the end of the fourth semester to stay in the program."
+    },
+    {
+      "id": "q37",
+      "latency_s": 0.045,
+      "faithfulness": 1.0,
+      "support_ratio": 0.875,
+      "citation_validity": 1.0,
+      "answered_from_context": true,
+      "must_abstain": true,
+      "answer": "No, students must silence their mobile phones in all reading areas."
+    },
+    {
+      "id": "q38",
+      "latency_s": 1.333,
+      "faithfulness": null,
+      "support_ratio": 0.0,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "must_abstain": true,
+      "answer": "Not specified"
+    },
+    {
+      "id": "q39",
+      "latency_s": 1.211,
+      "faithfulness": null,
+      "support_ratio": 0.0,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "must_abstain": true,
+      "answer": "Not mentioned in the provided passages."
+    },
+    {
+      "id": "q40",
+      "latency_s": 1.307,
+      "faithfulness": null,
+      "support_ratio": 0.0,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "must_abstain": true,
+      "answer": "Not specified"
+    },
+    {
+      "id": "q41",
+      "latency_s": 1.533,
+      "faithfulness": null,
+      "support_ratio": 0.091,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "must_abstain": true,
+      "answer": "Not mentioned in the provided passages. The procedure to replace a lost student ID card is not specified in the given evidence passages."
+    },
+    {
+      "id": "q42",
+      "latency_s": 1.477,
+      "faithfulness": null,
+      "support_ratio": 0.0,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "must_abstain": true,
+      "answer": "Not mentioned in the provided passages."
+    },
+    {
+      "id": "q43",
+      "latency_s": 3.626,
+      "faithfulness": null,
+      "support_ratio": 0.333,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "must_abstain": true,
+      "answer": "Changing from one degree programme to another is not explicitly mentioned in the provided passage. The procedure for changing programmes is not specified."
+    },
+    {
+      "id": "q44",
+      "latency_s": 2.712,
+      "faithfulness": null,
+      "support_ratio": 0.333,
+      "citation_validity": null,
+      "answered_from_context": false,
+      "must_abstain": true,
+      "answer": "Not specified in the provided passages."
+    }
+  ]
+}

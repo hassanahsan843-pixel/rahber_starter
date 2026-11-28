@@ -172,6 +172,55 @@ kubectl get hpa -n rahbar
 
 ---
 
+## Assignment 03 (RAGOps): exact commands
+
+Python commands run from the repository root with the dependencies in
+`api/requirements-dev.txt` and `indexer/requirements-dev.txt`. Evaluation commands
+need a running API (`--api`) and, for B1/coverage, Ollama with `nomic-embed-text`.
+Kubernetes steps are in [`k8s/README.md`](k8s/README.md) (overlays: `dev` = offline CI,
+`local` = kind/Minikube with Ollama on the host, `prod` = Groq + real corpus PVC).
+
+**Part A – data management** (indexer; `DATA_LAKE_DIR`, `QUARANTINE_DIR`, `ARCHIVE_DIR` set the folders)
+```bash
+cd indexer
+python -m pipeline.run                                   # Batch A (CORPUS_DIR)
+python -m pipeline.run --corpus-dir ../corpus/batch_b --batch batch_b   # Batch B, keeps Batch A
+python -m pipeline.run                                   # unchanged re-run: zero chunks embedded
+pytest -q tests/test_batches_and_verification.py         # batches, duplicates, archive, restore
+```
+Each run writes `DATA_LAKE_DIR/reports/verification_report_<run_id>.json`.
+
+**Part B – offline evaluation** (one command, timestamped files in `eval/results/`)
+```bash
+python eval/run_all.py --api http://localhost:8000
+```
+
+**Part C – change experiment and release gate** (thresholds in `eval/config/thresholds.yaml`)
+```bash
+python eval/run_all.py --api http://<baseline-api> --golden eval/golden.yaml --out eval/results/partc_baseline_chunk400_results.json
+python eval/run_all.py --api http://<candidate-api> --golden eval/golden.yaml --skip-embed --out eval/results/partc_candidate_chunk200_results.json
+python eval/release_gate.py --baseline eval/results/partc_baseline_chunk400_results.json \
+  --candidate eval/results/partc_candidate_chunk200_results.json \
+  --thresholds eval/config/thresholds.yaml --out eval/results/partc_gate_result.json   # exit 0 PASS, 1 FAIL
+```
+
+**Part D – tracing** (each `/api/ask` appends to `TRACE_FILE`, default `/traces/traces.jsonl`)
+```bash
+python scripts/trace_inspect.py <trace_id> --file traces/sample_traces.jsonl   # context + exact prompt
+python scripts/trace_summary.py --file traces/sample_traces.jsonl --hours 100000
+```
+
+**Part E – coverage** (embedding similarity, cutoff and target from `COVERAGE_THRESHOLD`, 0.65)
+```bash
+python eval/coverage.py --out eval/results/coverage_report.json   # exit 1 below threshold
+python eval/coverage.py --method bow                              # offline bag-of-words variant
+```
+
+**Part F – Kubernetes**: see [`k8s/README.md`](k8s/README.md) for the deployment, ingestion and
+evaluation Jobs, ConfigMap threshold change, candidate, rollout and rollback.
+
+---
+
 ## Grounded RAG Pipeline
 
 1. **Extraction**: `pdfplumber` and `pypdf` extract clean text, while `pytesseract` handles scanned image PDFs.

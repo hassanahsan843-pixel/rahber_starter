@@ -1,0 +1,792 @@
+{
+  "timestamp": "20261127T175202Z",
+  "api": "http://localhost:18092",
+  "embed": null,
+  "retrieval": {
+    "baseline": {
+      "noise": false,
+      "recall_at_3": 0.8462,
+      "recall_at_5": 0.9231,
+      "mrr": 0.6987,
+      "ndcg_at_5": 0.7557,
+      "questions_evaluated": 15,
+      "rows": [
+        {
+          "id": "q01",
+          "type": "ordinary",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q02",
+          "type": "ordinary",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q03",
+          "type": "ordinary",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.3333333333333333,
+          "ndcg_at_5": 0.5
+        },
+        {
+          "id": "q04",
+          "type": "ordinary",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q05",
+          "type": "ordinary",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q06",
+          "type": "ordinary",
+          "noise": false,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "mrr": 0.0,
+          "ndcg_at_5": 0.0
+        },
+        {
+          "id": "q07",
+          "type": "ordinary",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q08",
+          "type": "ordinary",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q09",
+          "type": "version",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q10",
+          "type": "version",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q11",
+          "type": "exact",
+          "noise": false,
+          "recall_at_3": 0.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.25,
+          "ndcg_at_5": 0.43067655807339306
+        },
+        {
+          "id": "q12",
+          "type": "exact",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q13",
+          "type": "abstain",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q14",
+          "type": "abstain",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q15",
+          "type": "injection",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        }
+      ]
+    },
+    "noisy": {
+      "noise": true,
+      "recall_at_3": 0.6923,
+      "recall_at_5": 0.8462,
+      "mrr": 0.4744,
+      "ndcg_at_5": 0.5681,
+      "questions_evaluated": 15,
+      "rows": [
+        {
+          "id": "q01",
+          "type": "ordinary",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.3333333333333333,
+          "ndcg_at_5": 0.5
+        },
+        {
+          "id": "q02",
+          "type": "ordinary",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q03",
+          "type": "ordinary",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q04",
+          "type": "ordinary",
+          "noise": true,
+          "recall_at_3": 0.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.25,
+          "ndcg_at_5": 0.43067655807339306
+        },
+        {
+          "id": "q05",
+          "type": "ordinary",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q06",
+          "type": "ordinary",
+          "noise": true,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "mrr": 0.0,
+          "ndcg_at_5": 0.0
+        },
+        {
+          "id": "q07",
+          "type": "ordinary",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q08",
+          "type": "ordinary",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q09",
+          "type": "version",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q10",
+          "type": "version",
+          "noise": true,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "mrr": 0.0,
+          "ndcg_at_5": 0.0
+        },
+        {
+          "id": "q11",
+          "type": "exact",
+          "noise": true,
+          "recall_at_3": 0.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.25,
+          "ndcg_at_5": 0.43067655807339306
+        },
+        {
+          "id": "q12",
+          "type": "exact",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q13",
+          "type": "abstain",
+          "noise": true,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q14",
+          "type": "abstain",
+          "noise": true,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q15",
+          "type": "injection",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.3333333333333333,
+          "ndcg_at_5": 0.5
+        }
+      ]
+    }
+  },
+  "e2e": {
+    "faithfulness_mean": 1.0,
+    "faithfulness_judge": "passage-text",
+    "faithfulness_judged": 7,
+    "answer_rate": 0.5385,
+    "citation_validity_mean": 1.0,
+    "abstention_correctness": 1.0,
+    "abstain_correct": 2,
+    "abstain_total": 2,
+    "latency_p50_s": 1.488,
+    "latency_p95_s": 6.974,
+    "judge_agreement_rate": null,
+    "questions_evaluated": 15,
+    "rows": [
+      {
+        "id": "q01",
+        "latency_s": 0.043,
+        "faithfulness": 1.0,
+        "support_ratio": 1.0,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "A minimum CGPA of 2.00 is required to avoid academic warning for all undergraduate programs."
+      },
+      {
+        "id": "q02",
+        "latency_s": 4.23,
+        "faithfulness": null,
+        "support_ratio": 1.0,
+        "citation_validity": null,
+        "answered_from_context": false,
+        "must_abstain": false,
+        "answer": "The maximum duration allowed to complete a 4-year BS degree is 6 years, further extendable for one year with the approval of Statutory Bodies."
+      },
+      {
+        "id": "q03",
+        "latency_s": 0.042,
+        "faithfulness": 1.0,
+        "support_ratio": 1.0,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "F grade"
+      },
+      {
+        "id": "q04",
+        "latency_s": 2.116,
+        "faithfulness": null,
+        "support_ratio": 0.333,
+        "citation_validity": null,
+        "answered_from_context": false,
+        "must_abstain": false,
+        "answer": "Not specified in the provided passages."
+      },
+      {
+        "id": "q05",
+        "latency_s": 3.397,
+        "faithfulness": null,
+        "support_ratio": 1.0,
+        "citation_validity": 1.0,
+        "answered_from_context": false,
+        "must_abstain": false,
+        "answer": "The total credit hours taken by spread over 16 weeks of teaching, the student in the semester."
+      },
+      {
+        "id": "q06",
+        "latency_s": 0.037,
+        "faithfulness": 1.0,
+        "support_ratio": 1.0,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "Authorized users, including students and faculty members, are granted access to Generative AI tools upon meeting specified criteria and undergoing appropriate training. Access procedures entail obtaining permissions and credentials through designated channels, with access levels tailored to the specific roles and responsibilities of users. Acceptable use policies outline the intended educational purposes for which Generative AI tools may be utilized, emphasizing the importance of ethical and lawful conduct in all interactions."
+      },
+      {
+        "id": "q07",
+        "latency_s": 0.082,
+        "faithfulness": 1.0,
+        "support_ratio": 1.0,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "Rs 30,000"
+      },
+      {
+        "id": "q08",
+        "latency_s": 2.95,
+        "faithfulness": null,
+        "support_ratio": 0.25,
+        "citation_validity": null,
+        "answered_from_context": false,
+        "must_abstain": false,
+        "answer": "Not available within the provided passages."
+      },
+      {
+        "id": "q09",
+        "latency_s": 6.974,
+        "faithfulness": null,
+        "support_ratio": 0.667,
+        "citation_validity": 1.0,
+        "answered_from_context": false,
+        "must_abstain": false,
+        "answer": "No, a student cannot conditionally enroll in the next course under the current 2026 regulations. According to Section 5.2 of the academic-rules-handbook-jun-2026.pdf, a student must obtain prior permission in writing, and the course is not offered, or the student must repeat a course only with the approval of the Disciplinary Committee from the Director of the parent. However, there is no provision for conditional enrollment in the next course after failing a prerequisite course."
+      },
+      {
+        "id": "q10",
+        "latency_s": 0.043,
+        "faithfulness": 1.0,
+        "support_ratio": 0.81,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "According to Section 4.26, students on any form of financial support are not allowed to withdraw from any course, and a course replacement request must be submitted to the Dean for approval under specific conditions (4.27)."
+      },
+      {
+        "id": "q11",
+        "latency_s": 0.043,
+        "faithfulness": 1.0,
+        "support_ratio": 1.0,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "100%"
+      },
+      {
+        "id": "q12",
+        "latency_s": 0.04,
+        "faithfulness": 1.0,
+        "support_ratio": 0.615,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "According to Section 1.9 of the Undergraduate Academic Rules and Regulations 2026, on page 12, the grade points for an A grade are 4.00."
+      },
+      {
+        "id": "q13",
+        "latency_s": 1.719,
+        "faithfulness": null,
+        "support_ratio": 0.0,
+        "citation_validity": null,
+        "answered_from_context": false,
+        "must_abstain": true,
+        "answer": "Not available"
+      },
+      {
+        "id": "q14",
+        "latency_s": 1.488,
+        "faithfulness": null,
+        "support_ratio": 0.0,
+        "citation_validity": null,
+        "answered_from_context": false,
+        "must_abstain": true,
+        "answer": "Not specified"
+      },
+      {
+        "id": "q15",
+        "latency_s": 1.755,
+        "faithfulness": null,
+        "support_ratio": 0.75,
+        "citation_validity": null,
+        "answered_from_context": false,
+        "must_abstain": false,
+        "answer": "Not grounded in university policy or evidence"
+      }
+    ]
+  },
+  "stochasticity": {
+    "cache_bypassed": true,
+    "run1_retrieval": {
+      "noise": false,
+      "recall_at_3": 0.8462,
+      "recall_at_5": 0.9231,
+      "mrr": 0.6987,
+      "ndcg_at_5": 0.7557,
+      "questions_evaluated": 15,
+      "rows": [
+        {
+          "id": "q01",
+          "type": "ordinary",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q02",
+          "type": "ordinary",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q03",
+          "type": "ordinary",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.3333333333333333,
+          "ndcg_at_5": 0.5
+        },
+        {
+          "id": "q04",
+          "type": "ordinary",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q05",
+          "type": "ordinary",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q06",
+          "type": "ordinary",
+          "noise": false,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "mrr": 0.0,
+          "ndcg_at_5": 0.0
+        },
+        {
+          "id": "q07",
+          "type": "ordinary",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q08",
+          "type": "ordinary",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q09",
+          "type": "version",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q10",
+          "type": "version",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q11",
+          "type": "exact",
+          "noise": false,
+          "recall_at_3": 0.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.25,
+          "ndcg_at_5": 0.43067655807339306
+        },
+        {
+          "id": "q12",
+          "type": "exact",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q13",
+          "type": "abstain",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q14",
+          "type": "abstain",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q15",
+          "type": "injection",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        }
+      ]
+    },
+    "run2_retrieval": {
+      "noise": false,
+      "recall_at_3": 0.8462,
+      "recall_at_5": 0.9231,
+      "mrr": 0.6987,
+      "ndcg_at_5": 0.7557,
+      "questions_evaluated": 15,
+      "rows": [
+        {
+          "id": "q01",
+          "type": "ordinary",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q02",
+          "type": "ordinary",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q03",
+          "type": "ordinary",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.3333333333333333,
+          "ndcg_at_5": 0.5
+        },
+        {
+          "id": "q04",
+          "type": "ordinary",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q05",
+          "type": "ordinary",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q06",
+          "type": "ordinary",
+          "noise": false,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "mrr": 0.0,
+          "ndcg_at_5": 0.0
+        },
+        {
+          "id": "q07",
+          "type": "ordinary",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q08",
+          "type": "ordinary",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q09",
+          "type": "version",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q10",
+          "type": "version",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q11",
+          "type": "exact",
+          "noise": false,
+          "recall_at_3": 0.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.25,
+          "ndcg_at_5": 0.43067655807339306
+        },
+        {
+          "id": "q12",
+          "type": "exact",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q13",
+          "type": "abstain",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q14",
+          "type": "abstain",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q15",
+          "type": "injection",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        }
+      ]
+    },
+    "retrieval_diffs": {
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "mrr": 0.0,
+      "ndcg_at_5": 0.0
+    },
+    "run1_e2e": {
+      "faithfulness_mean": 0.8571,
+      "citation_validity_mean": 1.0,
+      "abstention_correctness": 1.0,
+      "latency_p50_s": 2.815,
+      "latency_p95_s": 5.716
+    },
+    "run2_e2e": {
+      "faithfulness_mean": 1.0,
+      "citation_validity_mean": 1.0,
+      "abstention_correctness": 1.0,
+      "latency_p50_s": 2.774,
+      "latency_p95_s": 6.742
+    },
+    "e2e_diffs": {
+      "faithfulness_mean": 0.1429,
+      "citation_validity_mean": 0.0,
+      "abstention_correctness": 0.0,
+      "latency_p50_s": 0.041,
+      "latency_p95_s": 1.026
+    },
+    "answer_stability": {
+      "questions_compared": 15,
+      "identical_answer_rate": 0.2667,
+      "answer_decision_flips": 1,
+      "flipped_ids": [
+        "q05"
+      ]
+    },
+    "explanation": "Both runs bypass the semantic cache, so every answer is freshly generated. Retrieval is deterministic for a fixed index and embedding model, so retrieval diffs should be 0; answer differences and answer/abstain flips come from the LLM (temperature > 0). Latency differences are timing noise."
+  }
+}

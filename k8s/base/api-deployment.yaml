@@ -53,13 +53,12 @@ spec:
                 secretKeyRef:
                   name: rahbar-secret
                   key: LLM_API_KEY
-                  optional: false
+                  optional: true
             - name: CACHE_INVALIDATION_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: rahbar-secret
                   key: CACHE_INVALIDATION_TOKEN
-                  optional: false
           resources:
             requests:
               cpu: 100m
@@ -88,6 +87,11 @@ spec:
           volumeMounts:
             - name: tmp-dir
               mountPath: /tmp
+            - name: traces
+              mountPath: /traces
       volumes:
         - name: tmp-dir
           emptyDir: {}
+        - name: traces
+          persistentVolumeClaim:
+            claimName: traces-pvc

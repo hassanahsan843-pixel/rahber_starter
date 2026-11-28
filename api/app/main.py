@@ -33,12 +33,16 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     app.state.settings = settings
     app.state.retriever = get_retriever(settings)
     app.state.provider = get_provider(settings)
+    # The shared semantic cache only exists in Chroma mode. There is no per-pod
+    # in-memory fallback: one replica's local cache could not be invalidated by
+    # a re-index request that the Service routed to a different replica.
     app.state.cache = (
         get_cache(
             threshold=settings.cache_threshold,
             redis_host=settings.redis_host,
             redis_port=settings.redis_port,
             allow_memory_fallback=False,
+            namespace=settings.collection,
         )
         if settings.retriever == "chroma"
         else None

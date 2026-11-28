@@ -1,0 +1,31 @@
+$ kubectl --context kind-rahbar-a03 wait --for=condition=ready pod -l app=chroma -n rahbar --timeout=600s
+pod/chroma-0 condition met
+
+$ kubectl --context kind-rahbar-a03 wait --for=condition=ready pod -l app=redis -n rahbar --timeout=300s
+pod/redis-6b88fc4c7f-l7hjh condition met
+
+$ kubectl --context kind-rahbar-a03 wait --for=condition=complete job/rahbar-indexer -n rahbar --timeout=1200s
+job.batch/rahbar-indexer condition met
+
+$ kubectl --context kind-rahbar-a03 get job rahbar-indexer -n rahbar
+NAME             STATUS     COMPLETIONS   DURATION   AGE
+rahbar-indexer   Complete   1/1           2m44s      2m44s
+
+$ kubectl --context kind-rahbar-a03 logs job/rahbar-indexer -n rahbar --all-containers --tail=-1 | grep -v '"chunked"'
+{"ts": "2026-11-28T10:56:33Z", "logger": "rahbar.indexer", "msg": "indexer starting", "dummy": false, "full_reindex": false, "embed_model": "nomic-embed-text", "collection": "rahbar", "chroma": "chroma:8000", "corpus_dir": "/corpus", "pod": "rahbar-indexer-d4tgb"}
+{"ts": "2026-11-28T10:56:33Z", "logger": "rahbar.indexer", "msg": "pipeline starting", "run_id": "fc13df2d", "full_reindex": false, "corpus_dir": "/corpus", "batch": "corpus"}
+{"ts": "2026-11-28T10:56:33Z", "logger": "rahbar.indexer", "msg": "discovered", "count": 3}
+{"ts": "2026-11-28T10:56:33Z", "logger": "rahbar.indexer", "msg": "registry loaded", "records": 0}
+{"ts": "2026-11-28T10:56:33Z", "logger": "rahbar.indexer", "msg": "near_dup_vectors", "method": "embedding", "model": "nomic-embed-text", "docs": 3, "newly_embedded": 0}
+{"ts": "2026-11-28T10:56:33Z", "logger": "rahbar.indexer", "msg": "verified_ok", "source": "academic-rules-2023.md"}
+{"ts": "2026-11-28T10:56:33Z", "logger": "rahbar.indexer", "msg": "verified_ok", "source": "academic-rules-2026.md"}
+{"ts": "2026-11-28T10:56:33Z", "logger": "rahbar.indexer", "msg": "verified_ok", "source": "fees-2026.md"}
+{"ts": "2026-11-28T10:56:33Z", "logger": "rahbar.indexer", "msg": "verification_report_written", "path": "/data_lake/reports/verification_report_fc13df2d.json", "summary": {"total": 3, "passed": 3, "quarantined": 0}}
+{"ts": "2026-11-28T10:56:33Z", "logger": "rahbar.indexer", "msg": "new_document", "source": "academic-rules-2023.md", "version": "2023"}
+{"ts": "2026-11-28T10:56:33Z", "logger": "rahbar.indexer", "msg": "new_document", "source": "academic-rules-2026.md", "version": "2026"}
+{"ts": "2026-11-28T10:56:33Z", "logger": "rahbar.indexer", "msg": "new_document", "source": "fees-2026.md", "version": "2026"}
+{"ts": "2026-11-28T10:56:35Z", "logger": "rahbar.indexer", "msg": "registry_saved", "records": 3}
+{"ts": "2026-11-28T10:56:39Z", "logger": "rahbar.indexer", "msg": "waiting for API cache invalidation", "attempt": 1, "error": "timed out"}
+{"ts": "2026-11-28T10:56:41Z", "logger": "rahbar.indexer", "msg": "api cache invalidation completed", "attempt": 2}
+{"ts": "2026-11-28T10:56:41Z", "logger": "rahbar.indexer", "msg": "indexer finished", "chunks": 24, "seconds": 8.4}
+

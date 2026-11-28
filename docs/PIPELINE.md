@@ -73,4 +73,4 @@ We tested three candidate cosine similarity thresholds:
 
 ### Never-Cache Guardrails & Invalidation
 - **Never Cache**: Follow-up questions, abstentions (`answered_from_context: false`), and low-confidence responses are strictly excluded from the cache.
-- **Cache Invalidation**: Whenever the indexing Job runs, `cache.invalidate()` increments `generation_id` and flushes Redis keys via `FLUSHDB`, ensuring stale answers are never served across re-indexing cycles.
+- **Cache Invalidation**: After a successful run, the indexing Job calls `POST /api/cache/invalidate` with the `X-Cache-Invalidation-Token` header (from the `rahbar-secret` Secret). The API checks the token with `hmac.compare_digest`, then `cache.invalidate()` atomically increments the shared `cache:generation` key in Redis (no `FLUSHDB`). Entries from older generations are never read again and expire through their TTL, so stale answers are never served across re-indexing cycles. If invalidation cannot be confirmed, the Job exits non-zero.

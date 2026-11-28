@@ -1,0 +1,67 @@
+# Release gate only (Part C2): re-runs eval/release_gate.py on the results the
+# rahbar-eval Job saved to traces-pvc, with the thresholds from the eval-thresholds
+# ConfigMap. Lets a threshold edit be demonstrated without re-running the whole suite:
+#
+#   kubectl edit configmap eval-thresholds -n rahbar
+#   kubectl delete job rahbar-release-gate -n rahbar --ignore-not-found
+#   kubectl apply -f k8s/base/release-gate-job.yaml
+#   kubectl logs -n rahbar job/rahbar-release-gate
+#
+# Applied on demand (not listed in kustomization.yaml), like the candidate indexer.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: rahbar-release-gate
+  namespace: rahbar
+  labels:
+    app: rahbar-eval
+    component: gate
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      labels:
+        app: rahbar-eval
+    spec:
+      serviceAccountName: rahbar-indexer-sa
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+      containers:
+        - name: gate
+          image: rahbar-eval:dev
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          command: ["python", "eval/release_gate.py",
+                    "--baseline", "/traces/baseline_results.json",
+                    "--candidate", "/traces/candidate_results.json",
+                    "--thresholds", "/etc/eval-thresholds/thresholds.yaml",
+                    "--out", "/traces/gate_result_latest.json"]
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          volumeMounts:
+            - name: traces
+              mountPath: /traces
+            - name: eval-thresholds
+              mountPath: /etc/eval-thresholds
+              readOnly: true
+      volumes:
+        - name: traces
+          persistentVolumeClaim:
+            claimName: traces-pvc
+        - name: eval-thresholds
+          configMap:
+            name: eval-thresholds

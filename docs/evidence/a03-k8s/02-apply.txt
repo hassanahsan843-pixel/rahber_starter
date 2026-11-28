@@ -1,0 +1,40 @@
+$ kubectl --context kind-rahbar-a03 apply -k k8s/overlays/local
+namespace/rahbar unchanged
+serviceaccount/rahbar-api-sa created
+serviceaccount/rahbar-indexer-sa created
+serviceaccount/rahbar-ui-sa created
+configmap/eval-thresholds created
+configmap/rahbar-config created
+configmap/rahbar-corpus created
+service/chroma created
+service/rahbar-api created
+service/rahbar-api-candidate created
+service/rahbar-ui created
+service/redis created
+persistentvolumeclaim/archive-pvc created
+persistentvolumeclaim/datalake-pvc created
+persistentvolumeclaim/quarantine-pvc created
+persistentvolumeclaim/redis-data created
+persistentvolumeclaim/traces-pvc created
+deployment.apps/rahbar-api created
+deployment.apps/rahbar-api-candidate created
+deployment.apps/rahbar-ui created
+deployment.apps/redis created
+statefulset.apps/chroma created
+cronjob.batch/reindex created
+horizontalpodautoscaler.autoscaling/rahbar-api-hpa created
+job.batch/rahbar-eval created
+job.batch/rahbar-indexer created
+ingress.networking.k8s.io/rahbar-ingress created
+networkpolicy.networking.k8s.io/allow-api created
+networkpolicy.networking.k8s.io/allow-chroma created
+networkpolicy.networking.k8s.io/allow-dns-egress created
+networkpolicy.networking.k8s.io/allow-eval-egress created
+networkpolicy.networking.k8s.io/allow-indexer created
+networkpolicy.networking.k8s.io/allow-redis created
+networkpolicy.networking.k8s.io/allow-ui created
+networkpolicy.networking.k8s.io/default-deny-all created
+
+$ kubectl --context kind-rahbar-a03 delete job rahbar-eval -n rahbar --wait=true
+job.batch "rahbar-eval" deleted from rahbar namespace
+

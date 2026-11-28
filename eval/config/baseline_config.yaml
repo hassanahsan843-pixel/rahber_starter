@@ -1,0 +1,7 @@
+# Baseline pipeline configuration (chunk_size=400, overlap=50)
+chunk_size: 400
+chunk_overlap: 50
+embed_model: nomic-embed-text
+top_k: 5
+collection: rahbar
+description: "Baseline configuration - A02 defaults"

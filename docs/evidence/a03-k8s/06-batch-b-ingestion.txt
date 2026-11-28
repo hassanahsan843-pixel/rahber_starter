@@ -1,0 +1,31 @@
+$ kubectl create job batch-b-1 --from=cronjob/reindex -n rahbar  (args: --corpus-dir=/corpus_b --batch=batch_b)
+$ kubectl --context kind-rahbar-a03 wait --for=condition=complete job/batch-b-1 -n rahbar --timeout=1200s
+job.batch/batch-b-1 condition met
+
+$ kubectl --context kind-rahbar-a03 logs job/batch-b-1 -n rahbar --tail=-1 | grep -v '"chunked"'
+{"ts": "2026-11-28T11:04:02Z", "logger": "rahbar.indexer", "msg": "indexer starting", "dummy": false, "full_reindex": false, "embed_model": "nomic-embed-text", "collection": "rahbar", "chroma": "chroma:8000", "corpus_dir": "/corpus_b", "pod": "batch-b-1-tt7r6"}
+{"ts": "2026-11-28T11:04:02Z", "logger": "rahbar.indexer", "msg": "pipeline starting", "run_id": "be61f0aa", "full_reindex": false, "corpus_dir": "/corpus_b", "batch": "batch_b"}
+{"ts": "2026-11-28T11:04:02Z", "logger": "rahbar.indexer", "msg": "discovered", "count": 10}
+{"ts": "2026-11-28T11:04:02Z", "logger": "rahbar.indexer", "msg": "registry loaded", "records": 3}
+{"ts": "2026-11-28T11:04:04Z", "logger": "rahbar.indexer", "msg": "near_dup_vectors", "method": "embedding", "model": "nomic-embed-text", "docs": 13, "newly_embedded": 10}
+{"ts": "2026-11-28T11:04:04Z", "logger": "rahbar.indexer", "msg": "quarantined", "source": "academic-rules-2026-copy.md", "reasons": "Exact duplicate of 'academic-rules-2026.md' (same content)"}
+{"ts": "2026-11-28T11:04:04Z", "logger": "rahbar.indexer", "msg": "verified_ok", "source": "academic-rules-2026-paraphrased.md"}
+{"ts": "2026-11-28T11:04:04Z", "logger": "rahbar.indexer", "msg": "verified_ok", "source": "academic-rules-2027.md"}
+{"ts": "2026-11-28T11:04:04Z", "logger": "rahbar.indexer", "msg": "quarantined", "source": "exam-policy-truncated.txt", "reasons": "No date or version found (set 'date:' or 'doc_version:' in front matter); Document ends mid-sentence: '...submitted in writing with supporting'"}
+{"ts": "2026-11-28T11:04:04Z", "logger": "rahbar.indexer", "msg": "quarantined", "source": "fees-2026-duplicate.md", "reasons": "Exact duplicate of 'fees-2026.md' (same content)"}
+{"ts": "2026-11-28T11:04:04Z", "logger": "rahbar.indexer", "msg": "verified_ok", "source": "hostel-rules-2026.md"}
+{"ts": "2026-11-28T11:04:04Z", "logger": "rahbar.indexer", "msg": "verified_ok", "source": "it-policy-with-injection.md"}
+{"ts": "2026-11-28T11:04:04Z", "logger": "rahbar.indexer", "msg": "verified_ok", "source": "library-policy-2026.txt"}
+{"ts": "2026-11-28T11:04:04Z", "logger": "rahbar.indexer", "msg": "quarantined", "source": "scholarship-policy-no-metadata.txt", "reasons": "No date or version found (set 'date:' or 'doc_version:' in front matter)"}
+{"ts": "2026-11-28T11:04:04Z", "logger": "rahbar.indexer", "msg": "verified_ok", "source": "transport-routes-2026.md"}
+{"ts": "2026-11-28T11:04:04Z", "logger": "rahbar.indexer", "msg": "verification_report_written", "path": "/data_lake/reports/verification_report_be61f0aa.json", "summary": {"total": 10, "passed": 6, "quarantined": 4}}
+{"ts": "2026-11-28T11:04:04Z", "logger": "rahbar.indexer", "msg": "new_document", "source": "academic-rules-2026-paraphrased.md", "version": "2026"}
+{"ts": "2026-11-28T11:04:04Z", "logger": "rahbar.indexer", "msg": "new_document", "source": "academic-rules-2027.md", "version": "2027-01"}
+{"ts": "2026-11-28T11:04:04Z", "logger": "rahbar.indexer", "msg": "new_document", "source": "hostel-rules-2026.md", "version": "2026-06"}
+{"ts": "2026-11-28T11:04:04Z", "logger": "rahbar.indexer", "msg": "new_document", "source": "it-policy-with-injection.md", "version": "2026-06"}
+{"ts": "2026-11-28T11:04:04Z", "logger": "rahbar.indexer", "msg": "new_document", "source": "library-policy-2026.txt", "version": "2026"}
+{"ts": "2026-11-28T11:04:04Z", "logger": "rahbar.indexer", "msg": "new_document", "source": "transport-routes-2026.md", "version": "2026-06"}
+{"ts": "2026-11-28T11:04:05Z", "logger": "rahbar.indexer", "msg": "registry_saved", "records": 9}
+{"ts": "2026-11-28T11:04:05Z", "logger": "rahbar.indexer", "msg": "api cache invalidation completed", "attempt": 1}
+{"ts": "2026-11-28T11:04:05Z", "logger": "rahbar.indexer", "msg": "indexer finished", "chunks": 46, "seconds": 2.9}
+

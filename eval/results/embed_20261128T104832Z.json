@@ -1,0 +1,10 @@
+{
+  "model": "nomic-embed-text",
+  "mean_paraphrase_similarity": 0.829,
+  "mean_unrelated_similarity": 0.4315,
+  "similarity_gap": 0.3976,
+  "time_per_chunk_ms": 52.94,
+  "determinism_max_diff": 0.0,
+  "paraphrase_pairs": 15,
+  "unrelated_pairs": 15
+}

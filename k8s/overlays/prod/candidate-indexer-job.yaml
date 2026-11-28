@@ -1,0 +1,106 @@
+# Part C candidate indexer for the PRODUCTION corpus (the rahbar-corpus PVC).
+# Same as k8s/base/candidate-indexer-job.yaml except the corpus volume: the base
+# version reads the small synthetic ConfigMap corpus, where every document is under
+# 222 words, so CHUNK_SIZE 400 and 200 produce identical chunks. On the real corpus
+# they differ (measured locally: 376 vs 642 chunks). Applied on its own, after
+# `kubectl apply -k k8s/overlays/prod`:
+#   kubectl apply -f k8s/overlays/prod/candidate-indexer-job.yaml
+# Not listed in kustomization.yaml, matching base (it is a one-off experiment Job).
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: rahbar-candidate-indexer
+  namespace: rahbar
+  labels:
+    app: rahbar-candidate-indexer
+    component: candidate
+spec:
+  backoffLimit: 1
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      labels:
+        app: rahbar-candidate-indexer
+    spec:
+      serviceAccountName: rahbar-indexer-sa
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+      containers:
+        - name: indexer
+          image: rahbar-indexer:a03
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          envFrom:
+            - configMapRef:
+                name: rahbar-config
+          env:
+            - name: CACHE_INVALIDATION_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: rahbar-secret
+                  key: CACHE_INVALIDATION_TOKEN
+            - name: CHROMA_COLLECTION
+              value: "rahbar-candidate"
+            - name: CHUNK_SIZE
+              value: "200"
+            - name: CHUNK_OVERLAP
+              value: "30"
+            - name: DATA_LAKE_DIR
+              value: "/data_lake/candidate"
+            - name: QUARANTINE_DIR
+              value: "/quarantine/candidate"
+            - name: ARCHIVE_DIR
+              value: "/archive/candidate"
+            - name: CORPUS_DIR
+              value: "/corpus"
+            # Invalidate the API that serves the rahbar-candidate collection
+            - name: API_URL
+              value: "http://rahbar-api-candidate:8000"
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 1024Mi
+          volumeMounts:
+            - name: tmp-dir
+              mountPath: /tmp
+            - name: corpus-volume
+              mountPath: /corpus
+              readOnly: true
+            - name: datalake
+              mountPath: /data_lake
+            - name: quarantine
+              mountPath: /quarantine
+            - name: archive
+              mountPath: /archive
+            - name: traces
+              mountPath: /traces
+      volumes:
+        - name: tmp-dir
+          emptyDir: {}
+        - name: corpus-volume
+          persistentVolumeClaim:
+            claimName: rahbar-corpus
+            readOnly: true
+        - name: datalake
+          persistentVolumeClaim:
+            claimName: datalake-pvc
+        - name: quarantine
+          persistentVolumeClaim:
+            claimName: quarantine-pvc
+        - name: archive
+          persistentVolumeClaim:
+            claimName: archive-pvc
+        - name: traces
+          persistentVolumeClaim:
+            claimName: traces-pvc

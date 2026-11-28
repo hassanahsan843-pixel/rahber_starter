@@ -8,6 +8,12 @@ resources:
   - serviceaccounts.yaml
   - configmap.yaml
   - corpus-configmap.yaml
+  # A03: Persistent volumes
+  - datalake-pvc.yaml
+  - quarantine-pvc.yaml
+  - archive-pvc.yaml
+  - traces-pvc.yaml
+  # Core services
   - chroma-service.yaml
   - chroma-statefulset.yaml
   - redis-service.yaml
@@ -16,8 +22,15 @@ resources:
   - api-deployment.yaml
   - ui-service.yaml
   - ui-deployment.yaml
+  # Jobs
   - indexer-job.yaml
   - reindex-cronjob.yaml
+  # A03: Eval job and candidate
+  - eval-thresholds-configmap.yaml
+  - eval-job.yaml
+  - candidate-deployment.yaml
+  - candidate-service.yaml
+  # Networking
   - ingress.yaml
   - hpa.yaml
   - networkpolicy.yaml

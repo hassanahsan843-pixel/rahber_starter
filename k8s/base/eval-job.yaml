@@ -1,0 +1,90 @@
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: rahbar-eval
+  namespace: rahbar
+  labels:
+    app: rahbar-eval
+    component: eval
+spec:
+  backoffLimit: 1
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      labels:
+        app: rahbar-eval
+    spec:
+      serviceAccountName: rahbar-indexer-sa
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+      containers:
+        - name: eval
+          image: rahbar-eval:dev
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -e
+
+              echo "=== Evaluating baseline API ==="
+              python eval/run_all.py \
+                --api http://rahbar-api:8000 \
+                --out /traces/baseline_results.json
+
+              echo "=== Evaluating candidate API ==="
+              python eval/run_all.py \
+                --api http://rahbar-api-candidate:8000 \
+                --skip-embed \
+                --out /traces/candidate_results.json
+
+              echo "=== Running release gate ==="
+              python eval/release_gate.py \
+                --baseline /traces/baseline_results.json \
+                --candidate /traces/candidate_results.json \
+                --thresholds /etc/eval-thresholds/thresholds.yaml \
+                --out /traces/gate_result_latest.json
+
+          envFrom:
+            - configMapRef:
+                name: rahbar-config
+          env:
+            - name: LLM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: rahbar-secret
+                  key: LLM_API_KEY
+                  optional: true
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 1024Mi
+          volumeMounts:
+            - name: tmp-dir
+              mountPath: /tmp
+            - name: traces
+              mountPath: /traces
+            - name: eval-thresholds
+              mountPath: /etc/eval-thresholds
+              readOnly: true
+      volumes:
+        - name: tmp-dir
+          emptyDir: {}
+        - name: traces
+          persistentVolumeClaim:
+            claimName: traces-pvc
+        - name: eval-thresholds
+          configMap:
+            name: eval-thresholds

@@ -1,0 +1,9 @@
+# Candidate pipeline configuration (chunk_size=200 - smaller chunks)
+# Change experiment: smaller chunks improve precision for exact-match questions
+# but may reduce recall for multi-chunk questions.
+chunk_size: 200
+chunk_overlap: 30
+embed_model: nomic-embed-text
+top_k: 5
+collection: rahbar-candidate
+description: "Candidate configuration - smaller chunk size (200 vs 400)"

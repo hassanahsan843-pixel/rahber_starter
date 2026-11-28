@@ -42,7 +42,6 @@ spec:
                     secretKeyRef:
                       name: rahbar-secret
                       key: CACHE_INVALIDATION_TOKEN
-                      optional: false
               resources:
                 requests:
                   cpu: 200m
@@ -51,14 +50,34 @@ spec:
                   cpu: 1000m
                   memory: 1024Mi
               volumeMounts:
-                - name: tmp-dir
-                  mountPath: /tmp
-                - name: corpus-volume
-                  mountPath: /corpus
+                - mountPath: /tmp
+                  name: tmp-dir
+                - mountPath: /corpus
+                  name: corpus-volume
                   readOnly: true
+                - name: datalake
+                  mountPath: /data_lake
+                - name: quarantine
+                  mountPath: /quarantine
+                - name: archive
+                  mountPath: /archive
+                - name: traces
+                  mountPath: /traces
           volumes:
             - name: tmp-dir
               emptyDir: {}
             - name: corpus-volume
               configMap:
                 name: rahbar-corpus
+            - name: datalake
+              persistentVolumeClaim:
+                claimName: datalake-pvc
+            - name: quarantine
+              persistentVolumeClaim:
+                claimName: quarantine-pvc
+            - name: archive
+              persistentVolumeClaim:
+                claimName: archive-pvc
+            - name: traces
+              persistentVolumeClaim:
+                claimName: traces-pvc

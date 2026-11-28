@@ -1,0 +1,21 @@
+{
+  "overall": "PASS",
+  "passed": 8,
+  "failed": 0,
+  "baseline": "eval\\results\\partc_baseline_chunk400_results.json",
+  "candidate": "eval\\results\\partc_candidate_chunk200_results.json",
+  "thresholds": "eval\\config\\thresholds.yaml",
+  "details": {
+    "passes": [
+      "PASS  Recall@5 drop vs baseline: 0.9231 (drop 0.0000 \u2264 0.05)",
+      "PASS  Recall@3 absolute floor: 0.8462 \u2265 threshold 0.5",
+      "PASS  MRR: 0.6987 \u2265 threshold 0.4",
+      "PASS  nDCG@5: 0.7557 \u2265 threshold 0.4",
+      "PASS  Faithfulness: 1.0000 \u2265 threshold 0.6",
+      "PASS  Citation validity: 1.0000 \u2265 threshold 0.9",
+      "PASS  Abstention correctness: 1.0000 \u2265 threshold 1.0",
+      "PASS  Latency p95: 6.9740 \u2264 threshold 10.0"
+    ],
+    "failures": []
+  }
+}

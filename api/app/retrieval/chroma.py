@@ -55,6 +55,14 @@ def _lexical_relevance(question: str, passage_text: str) -> float:
     return len(query_terms & passage_terms) / len(query_terms)
 
 
+def superseded_filter(question: str) -> dict[str, Any] | None:
+    """The Chroma `where` filter used for a question: superseded versions are excluded
+    unless the question explicitly asks about an older version. Shared with tracing so
+    the trace records exactly the filter that was applied."""
+    include_superseded = "2023" in question or "old" in question.lower()
+    return None if include_superseded else {"superseded": {"$eq": False}}
+
+
 def _fallback_embedding(text: str, dim: int = 768) -> list[float]:
     """Deterministic offline vector generator matching indexer fallback."""
     vec = [0.0] * dim
@@ -117,8 +125,7 @@ class ChromaRetriever:
 
         # Query ChromaDB with metadata filter excluding superseded documents
         # unless user explicitly queries an older version
-        include_superseded = "2023" in question or "old" in question.lower()
-        where_filter: Any = None if include_superseded else {"superseded": {"$eq": False}}
+        where_filter: Any = superseded_filter(question)
 
         offline_embeddings = not self.settings.ollama_url or any(
             marker in self.settings.ollama_url.lower()
@@ -168,6 +175,9 @@ class ChromaRetriever:
                 section=str(meta.get("section", "General")),
                 page=page_num,
                 score=round(similarity_score, 4),
+                doc_id=str(meta.get("doc_id", "")),
+                doc_version=str(meta.get("doc_version", "")),
+                superseded=bool(meta.get("superseded", False)),
             ))
 
         if offline_embeddings:

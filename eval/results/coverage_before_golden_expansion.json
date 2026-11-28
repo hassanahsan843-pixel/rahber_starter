@@ -1,0 +1,414 @@
+{
+  "method": "embedding",
+  "embed_model": "nomic-embed-text",
+  "threshold": 0.65,
+  "golden_count": 25,
+  "live_count": 40,
+  "covered": 24,
+  "uncovered": 16,
+  "coverage_pct": 0.6,
+  "similarity_threshold": 0.65,
+  "passed": false,
+  "invalid_lines": [],
+  "duplicate_ids": [],
+  "uncovered_by_category": {
+    "in_domain": 7,
+    "out_of_domain": 9
+  },
+  "uncovered_by_topic": {
+    "library": [
+      "How many courses can I repeat at FAST?"
+    ],
+    "attendance": [
+      "Can I bring my phone to an exam?",
+      "How do I appeal an exam result?"
+    ],
+    "transport": [
+      "Can I register my laptop with the university network?"
+    ],
+    "hostel": [
+      "Can I have overnight guests in the hostel?",
+      "What is the cafeteria menu for the week?"
+    ],
+    "academic_standing": [
+      "What academic resources does FAST provide online?",
+      "Does FAST offer a master's program?"
+    ],
+    "scholarships": [
+      "What GPA do I need after the fourth semester to continue?",
+      "How do I request a transcript?"
+    ],
+    "out_of_corpus": [
+      "How do I apply for a student exchange program?",
+      "What sports facilities are available on campus?",
+      "Is there a student union at FAST?",
+      "Are there any student entrepreneurship programs?",
+      "How can I get a student ID replacement?"
+    ],
+    "repeating_course": [
+      "What is the university's grading curve?"
+    ]
+  },
+  "rows": [
+    {
+      "id": "lq01",
+      "question": "What is the minimum attendance to pass a course?",
+      "best_golden": "What is the minimum attendance percentage required to sit the final examination?",
+      "similarity": 0.8146,
+      "covered": true,
+      "category": "in_domain",
+      "nearest_topic": "attendance"
+    },
+    {
+      "id": "lq02",
+      "question": "How many courses can I repeat at FAST?",
+      "best_golden": "How many books can a student borrow from the library at one time?",
+      "similarity": 0.6362,
+      "covered": false,
+      "category": "in_domain",
+      "nearest_topic": "library"
+    },
+    {
+      "id": "lq03",
+      "question": "What is the CGPA needed to stay off Academic Warning?",
+      "best_golden": "At what CGPA is a student placed on Academic Warning?",
+      "similarity": 0.8764,
+      "covered": true,
+      "category": "in_domain",
+      "nearest_topic": "academic_standing"
+    },
+    {
+      "id": "lq04",
+      "question": "Are library books renewable?",
+      "best_golden": "How long is the library book loan period and can it be renewed?",
+      "similarity": 0.6835,
+      "covered": true,
+      "category": "in_domain",
+      "nearest_topic": "library"
+    },
+    {
+      "id": "lq05",
+      "question": "What time does the morning bus leave from Rawalpindi?",
+      "best_golden": "What routes does the university bus service operate to Rawalpindi?",
+      "similarity": 0.7806,
+      "covered": true,
+      "category": "in_domain",
+      "nearest_topic": "transport"
+    },
+    {
+      "id": "lq06",
+      "question": "How much is the per credit hour fee?",
+      "best_golden": "How much is the tuition fee per credit hour for BS students?",
+      "similarity": 0.7636,
+      "covered": true,
+      "category": "in_domain",
+      "nearest_topic": "fees"
+    },
+    {
+      "id": "lq07",
+      "question": "Can I bring my phone to an exam?",
+      "best_golden": "A student has 78% attendance but missed two labs. Are they eligible to sit the final exam?",
+      "similarity": 0.6203,
+      "covered": false,
+      "category": "in_domain",
+      "nearest_topic": "attendance"
+    },
+    {
+      "id": "lq08",
+      "question": "Is university email required for submitting assignments?",
+      "best_golden": "Can students use personal email accounts for submitting assignments?",
+      "similarity": 0.8273,
+      "covered": true,
+      "category": "in_domain",
+      "nearest_topic": "it_policy"
+    },
+    {
+      "id": "lq09",
+      "question": "What is the hostel curfew on Saturday night?",
+      "best_golden": "What is the hostel curfew time on weekdays?",
+      "similarity": 0.8758,
+      "covered": true,
+      "category": "in_domain",
+      "nearest_topic": "hostel"
+    },
+    {
+      "id": "lq10",
+      "question": "What happens to my GPA if I retake a failed course?",
+      "best_golden": "When a student repeats a course, which grade is counted in GPA calculations?",
+      "similarity": 0.6862,
+      "covered": true,
+      "category": "in_domain",
+      "nearest_topic": "repeating_course"
+    },
+    {
+      "id": "lq11",
+      "question": "How many credit hours do I need to graduate?",
+      "best_golden": "What is the minimum number of credit hours required to complete the BS degree?",
+      "similarity": 0.8119,
+      "covered": true,
+      "category": "in_domain",
+      "nearest_topic": "degree_requirements"
+    },
+    {
+      "id": "lq12",
+      "question": "What is the library fine rate?",
+      "best_golden": "What is the library fine for overdue books?",
+      "similarity": 0.7353,
+      "covered": true,
+      "category": "in_domain",
+      "nearest_topic": "library"
+    },
+    {
+      "id": "lq13",
+      "question": "Can I register my laptop with the university network?",
+      "best_golden": "Can a student who registered for university transport change their route mid-semester?",
+      "similarity": 0.6346,
+      "covered": false,
+      "category": "in_domain",
+      "nearest_topic": "transport"
+    },
+    {
+      "id": "lq14",
+      "question": "What is the scholarship CGPA cutoff?",
+      "best_golden": "What CGPA must a student achieve to qualify for a merit scholarship?",
+      "similarity": 0.7637,
+      "covered": true,
+      "category": "in_domain",
+      "nearest_topic": "scholarships"
+    },
+    {
+      "id": "lq15",
+      "question": "How do I appeal an exam result?",
+      "best_golden": "A student has 78% attendance but missed two labs. Are they eligible to sit the final exam?",
+      "similarity": 0.6145,
+      "covered": false,
+      "category": "in_domain",
+      "nearest_topic": "attendance"
+    },
+    {
+      "id": "lq16",
+      "question": "What is the monthly transport fee?",
+      "best_golden": "What is the monthly fee for the university transport service?",
+      "similarity": 0.868,
+      "covered": true,
+      "category": "in_domain",
+      "nearest_topic": "transport"
+    },
+    {
+      "id": "lq17",
+      "question": "What routes connect Islamabad to FAST campus?",
+      "best_golden": "What routes does the university bus service operate to Rawalpindi?",
+      "similarity": 0.7053,
+      "covered": true,
+      "category": "in_domain",
+      "nearest_topic": "transport"
+    },
+    {
+      "id": "lq18",
+      "question": "Can I have overnight guests in the hostel?",
+      "best_golden": "What is the hostel curfew time on weekdays?",
+      "similarity": 0.6463,
+      "covered": false,
+      "category": "in_domain",
+      "nearest_topic": "hostel"
+    },
+    {
+      "id": "lq19",
+      "question": "What percentage of attendance bars me from the final exam?",
+      "best_golden": "What is the minimum attendance percentage required to sit the final examination?",
+      "similarity": 0.8572,
+      "covered": true,
+      "category": "in_domain",
+      "nearest_topic": "attendance"
+    },
+    {
+      "id": "lq20",
+      "question": "How long can I borrow a book from the library?",
+      "best_golden": "How many books can a student borrow from the library at one time?",
+      "similarity": 0.8191,
+      "covered": true,
+      "category": "in_domain",
+      "nearest_topic": "library"
+    },
+    {
+      "id": "lq21",
+      "question": "What academic resources does FAST provide online?",
+      "best_golden": "What is the CGPA threshold that triggers Academic Warning at FAST-NUCES?",
+      "similarity": 0.6007,
+      "covered": false,
+      "category": "in_domain",
+      "nearest_topic": "academic_standing"
+    },
+    {
+      "id": "lq22",
+      "question": "What GPA do I need after the fourth semester to continue?",
+      "best_golden": "What CGPA must a student achieve to qualify for a merit scholarship?",
+      "similarity": 0.6156,
+      "covered": false,
+      "category": "in_domain",
+      "nearest_topic": "scholarships"
+    },
+    {
+      "id": "lq23",
+      "question": "What are the mess timings in the hostel?",
+      "best_golden": "What is the hostel curfew time on weekdays?",
+      "similarity": 0.7211,
+      "covered": true,
+      "category": "in_domain",
+      "nearest_topic": "hostel"
+    },
+    {
+      "id": "lq24",
+      "question": "Are reference books available for borrowing from the library?",
+      "best_golden": "How many books can a student borrow from the library at one time?",
+      "similarity": 0.7565,
+      "covered": true,
+      "category": "in_domain",
+      "nearest_topic": "library"
+    },
+    {
+      "id": "lq25",
+      "question": "How much is the admission fee for new students?",
+      "best_golden": "What is the monthly fee for the university transport service?",
+      "similarity": 0.6697,
+      "covered": true,
+      "category": "in_domain",
+      "nearest_topic": "transport"
+    },
+    {
+      "id": "lq26",
+      "question": "What is the university's policy on sharing credentials?",
+      "best_golden": "What is the university's policy on student mental health support?",
+      "similarity": 0.6947,
+      "covered": true,
+      "category": "in_domain",
+      "nearest_topic": "out_of_corpus"
+    },
+    {
+      "id": "lq27",
+      "question": "How often are hostel rooms inspected?",
+      "best_golden": "What is the hostel curfew time on weekdays?",
+      "similarity": 0.6761,
+      "covered": true,
+      "category": "in_domain",
+      "nearest_topic": "hostel"
+    },
+    {
+      "id": "lq28",
+      "question": "What is the difference between the 2026 and 2027 attendance requirements?",
+      "best_golden": "Under the 2027 rules (Batch B), what is the new attendance threshold and how does it differ from the 2026 rules?",
+      "similarity": 0.8727,
+      "covered": true,
+      "category": "in_domain",
+      "nearest_topic": "version_comparison"
+    },
+    {
+      "id": "lq29",
+      "question": "Does FAST offer a master's program?",
+      "best_golden": "What is the CGPA threshold that triggers Academic Warning at FAST-NUCES?",
+      "similarity": 0.5894,
+      "covered": false,
+      "category": "out_of_domain",
+      "nearest_topic": "academic_standing"
+    },
+    {
+      "id": "lq30",
+      "question": "What is the university's policy on internship leave?",
+      "best_golden": "What is the university's policy on student mental health support?",
+      "similarity": 0.6945,
+      "covered": true,
+      "category": "out_of_domain",
+      "nearest_topic": "out_of_corpus"
+    },
+    {
+      "id": "lq31",
+      "question": "How do I apply for a student exchange program?",
+      "best_golden": "What is the process for transferring to another university mid-degree?",
+      "similarity": 0.5994,
+      "covered": false,
+      "category": "out_of_domain",
+      "nearest_topic": "out_of_corpus"
+    },
+    {
+      "id": "lq32",
+      "question": "What sports facilities are available on campus?",
+      "best_golden": "What are the university's rules for student parking on campus?",
+      "similarity": 0.6194,
+      "covered": false,
+      "category": "out_of_domain",
+      "nearest_topic": "out_of_corpus"
+    },
+    {
+      "id": "lq33",
+      "question": "Is there a student union at FAST?",
+      "best_golden": "What are the university's rules for student parking on campus?",
+      "similarity": 0.5782,
+      "covered": false,
+      "category": "out_of_domain",
+      "nearest_topic": "out_of_corpus"
+    },
+    {
+      "id": "lq34",
+      "question": "How do I request a transcript?",
+      "best_golden": "What CGPA must a student achieve to qualify for a merit scholarship?",
+      "similarity": 0.4526,
+      "covered": false,
+      "category": "out_of_domain",
+      "nearest_topic": "scholarships"
+    },
+    {
+      "id": "lq35",
+      "question": "What is the university's grading curve?",
+      "best_golden": "When a student repeats a course, which grade is counted in GPA calculations?",
+      "similarity": 0.6245,
+      "covered": false,
+      "category": "out_of_domain",
+      "nearest_topic": "repeating_course"
+    },
+    {
+      "id": "lq36",
+      "question": "Are there any student entrepreneurship programs?",
+      "best_golden": "Does the university offer a PhD program in Computer Science?",
+      "similarity": 0.5394,
+      "covered": false,
+      "category": "out_of_domain",
+      "nearest_topic": "out_of_corpus"
+    },
+    {
+      "id": "lq37",
+      "question": "What is the cafeteria menu for the week?",
+      "best_golden": "What is the hostel curfew time on weekdays?",
+      "similarity": 0.5649,
+      "covered": false,
+      "category": "out_of_domain",
+      "nearest_topic": "hostel"
+    },
+    {
+      "id": "lq38",
+      "question": "How can I get a student ID replacement?",
+      "best_golden": "What is the university's policy on student mental health support?",
+      "similarity": 0.5843,
+      "covered": false,
+      "category": "out_of_domain",
+      "nearest_topic": "out_of_corpus"
+    },
+    {
+      "id": "lq39",
+      "question": "Does the university offer career counseling?",
+      "best_golden": "Does the university offer a PhD program in Computer Science?",
+      "similarity": 0.6532,
+      "covered": true,
+      "category": "out_of_domain",
+      "nearest_topic": "out_of_corpus"
+    },
+    {
+      "id": "lq40",
+      "question": "What is the process for switching majors?",
+      "best_golden": "What is the process for transferring to another university mid-degree?",
+      "similarity": 0.7241,
+      "covered": true,
+      "category": "out_of_domain",
+      "nearest_topic": "out_of_corpus"
+    }
+  ]
+}

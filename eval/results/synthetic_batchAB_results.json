@@ -1,0 +1,2131 @@
+{
+  "timestamp": "20261127T203855Z",
+  "api": "http://localhost:18090",
+  "embed": null,
+  "retrieval": {
+    "baseline": {
+      "noise": false,
+      "recall_at_3": 0.9677,
+      "recall_at_5": 0.9677,
+      "mrr": 0.8871,
+      "ndcg_at_5": 0.9082,
+      "questions_evaluated": 44,
+      "rows": [
+        {
+          "id": "q01",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q02",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q03",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q04",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q05",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q06",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q07",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q08",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q09",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q10",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q11",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q12",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q13",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q14",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "mrr": 0.0,
+          "ndcg_at_5": 0.0
+        },
+        {
+          "id": "q15",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q16",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q17",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q18",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q19",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q20",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q21",
+          "type": "hard",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q22",
+          "type": "hard",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q23",
+          "type": "hard",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q24",
+          "type": "hard",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q25",
+          "type": "hard",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q26",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q27",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q28",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q29",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q30",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q31",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q32",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q33",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q34",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q35",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q36",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q37",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q38",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q39",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q40",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q41",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q42",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q43",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q44",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        }
+      ]
+    },
+    "noisy": {
+      "noise": true,
+      "recall_at_3": 0.9677,
+      "recall_at_5": 0.9677,
+      "mrr": 0.871,
+      "ndcg_at_5": 0.8963,
+      "questions_evaluated": 44,
+      "rows": [
+        {
+          "id": "q01",
+          "type": "answerable",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q02",
+          "type": "answerable",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q03",
+          "type": "answerable",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q04",
+          "type": "answerable",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q05",
+          "type": "answerable",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q06",
+          "type": "answerable",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q07",
+          "type": "answerable",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q08",
+          "type": "answerable",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q09",
+          "type": "answerable",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q10",
+          "type": "answerable",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q11",
+          "type": "answerable",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q12",
+          "type": "answerable",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q13",
+          "type": "answerable",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q14",
+          "type": "answerable",
+          "noise": true,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "mrr": 0.0,
+          "ndcg_at_5": 0.0
+        },
+        {
+          "id": "q15",
+          "type": "answerable",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q16",
+          "type": "unanswerable",
+          "noise": true,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q17",
+          "type": "unanswerable",
+          "noise": true,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q18",
+          "type": "unanswerable",
+          "noise": true,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q19",
+          "type": "unanswerable",
+          "noise": true,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q20",
+          "type": "unanswerable",
+          "noise": true,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q21",
+          "type": "hard",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q22",
+          "type": "hard",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q23",
+          "type": "hard",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q24",
+          "type": "hard",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q25",
+          "type": "hard",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q26",
+          "type": "answerable",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q27",
+          "type": "answerable",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q28",
+          "type": "answerable",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q29",
+          "type": "answerable",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q30",
+          "type": "answerable",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q31",
+          "type": "answerable",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q32",
+          "type": "answerable",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q33",
+          "type": "answerable",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q34",
+          "type": "answerable",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q35",
+          "type": "answerable",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q36",
+          "type": "answerable",
+          "noise": true,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q37",
+          "type": "unanswerable",
+          "noise": true,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q38",
+          "type": "unanswerable",
+          "noise": true,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q39",
+          "type": "unanswerable",
+          "noise": true,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q40",
+          "type": "unanswerable",
+          "noise": true,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q41",
+          "type": "unanswerable",
+          "noise": true,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q42",
+          "type": "unanswerable",
+          "noise": true,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q43",
+          "type": "unanswerable",
+          "noise": true,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q44",
+          "type": "unanswerable",
+          "noise": true,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        }
+      ]
+    }
+  },
+  "e2e": {
+    "faithfulness_mean": 0.9655,
+    "faithfulness_judge": "passage-text",
+    "faithfulness_judged": 29,
+    "answer_rate": 0.9355,
+    "citation_validity_mean": 1.0,
+    "abstention_correctness": 0.9231,
+    "abstain_correct": 12,
+    "abstain_total": 13,
+    "latency_p50_s": 0.054,
+    "latency_p95_s": 3.5,
+    "judge_agreement_rate": 0.875,
+    "questions_evaluated": 44,
+    "rows": [
+      {
+        "id": "q01",
+        "latency_s": 0.074,
+        "faithfulness": 0.0,
+        "support_ratio": 0.333,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "75% [source: academic-rules-2027.md, Section: 1. Attendance, Page: 1]"
+      },
+      {
+        "id": "q02",
+        "latency_s": 0.045,
+        "faithfulness": 1.0,
+        "support_ratio": 1.0,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "A student is placed on Academic Warning when their CGPA falls below 1.75 at the end of any regular semester."
+      },
+      {
+        "id": "q03",
+        "latency_s": 0.048,
+        "faithfulness": 1.0,
+        "support_ratio": 1.0,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "10,000"
+      },
+      {
+        "id": "q04",
+        "latency_s": 0.048,
+        "faithfulness": 1.0,
+        "support_ratio": 0.8,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "The most recent grade is counted in GPA calculations."
+      },
+      {
+        "id": "q05",
+        "latency_s": 0.048,
+        "faithfulness": 1.0,
+        "support_ratio": 0.867,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "If a student's attendance falls below the required threshold of 75%, they will be barred from the final examination and awarded a grade of F."
+      },
+      {
+        "id": "q06",
+        "latency_s": 0.041,
+        "faithfulness": 1.0,
+        "support_ratio": 0.583,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "The hostel curfew time on weekdays is 10:00 PM, as stated in section 1 of the hostel-rules-2026.md document."
+      },
+      {
+        "id": "q07",
+        "latency_s": 0.045,
+        "faithfulness": 1.0,
+        "support_ratio": 0.643,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "Students may borrow up to 5 books at a time. [Source: library-policy-2026.txt, Section: Borrowing Limit, Page: 1]"
+      },
+      {
+        "id": "q08",
+        "latency_s": 0.048,
+        "faithfulness": 1.0,
+        "support_ratio": 1.0,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "The library fine for overdue books is Rs. 10 per day per book."
+      },
+      {
+        "id": "q09",
+        "latency_s": 0.045,
+        "faithfulness": 1.0,
+        "support_ratio": 1.0,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "1.75"
+      },
+      {
+        "id": "q10",
+        "latency_s": 0.041,
+        "faithfulness": 1.0,
+        "support_ratio": 0.733,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "No, students are not allowed to use personal email accounts for submitting assignments or academic documents. According to the IT policy, personal email accounts should not be used for these purposes."
+      },
+      {
+        "id": "q11",
+        "latency_s": 0.046,
+        "faithfulness": 1.0,
+        "support_ratio": 1.0,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "Monthly transport fee: Rs. 2,500 per route."
+      },
+      {
+        "id": "q12",
+        "latency_s": 0.045,
+        "faithfulness": 1.0,
+        "support_ratio": 1.0,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "Route A: Rawalpindi (Saddar) \u2192 FAST-NUCES (morning and evening) and Route D: Rawalpindi (Liaquat Bagh) \u2192 FAST-NUCES (morning and evening)"
+      },
+      {
+        "id": "q13",
+        "latency_s": 0.047,
+        "faithfulness": 1.0,
+        "support_ratio": 0.885,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "The library book loan period is 14 days with one renewal permitted. [Source: Borrowing Limit: Students may borrow up to 5 books at a time. Loan Period: 14 days with one renewal permitted. Fine: Rs. 10 per day per book for overdue returns. Reference books are not available for borrowing. (Section: Borrowing Limit, Page: 1)]"
+      },
+      {
+        "id": "q14",
+        "latency_s": 2.539,
+        "faithfulness": null,
+        "support_ratio": 0.0,
+        "citation_validity": null,
+        "answered_from_context": false,
+        "must_abstain": false,
+        "answer": "Not specified"
+      },
+      {
+        "id": "q15",
+        "latency_s": 0.053,
+        "faithfulness": 1.0,
+        "support_ratio": 0.571,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "The minimum number of credit hours required to complete the BS degree is 130 as stated in section 5.1 of the academic-rules-2027.md."
+      },
+      {
+        "id": "q16",
+        "latency_s": 0.092,
+        "faithfulness": null,
+        "support_ratio": 0.125,
+        "citation_validity": null,
+        "answered_from_context": false,
+        "must_abstain": true,
+        "answer": "The university documents in the corpus do not contain information to answer this question."
+      },
+      {
+        "id": "q17",
+        "latency_s": 1.526,
+        "faithfulness": null,
+        "support_ratio": 0.0,
+        "citation_validity": null,
+        "answered_from_context": false,
+        "must_abstain": true,
+        "answer": "Not specified in the provided evidence passages."
+      },
+      {
+        "id": "q18",
+        "latency_s": 0.087,
+        "faithfulness": null,
+        "support_ratio": 0.375,
+        "citation_validity": null,
+        "answered_from_context": false,
+        "must_abstain": true,
+        "answer": "The university documents in the corpus do not contain information to answer this question."
+      },
+      {
+        "id": "q19",
+        "latency_s": 0.088,
+        "faithfulness": null,
+        "support_ratio": 0.375,
+        "citation_validity": null,
+        "answered_from_context": false,
+        "must_abstain": true,
+        "answer": "The university documents in the corpus do not contain information to answer this question."
+      },
+      {
+        "id": "q20",
+        "latency_s": 2.374,
+        "faithfulness": null,
+        "support_ratio": 0.143,
+        "citation_validity": null,
+        "answered_from_context": false,
+        "must_abstain": true,
+        "answer": "Answered_from_context: false. No information is provided in the retrieved passages about the process for transferring to another university mid-degree."
+      },
+      {
+        "id": "q21",
+        "latency_s": 0.063,
+        "faithfulness": 1.0,
+        "support_ratio": 0.444,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "No, they are no longer considered to be on Academic Warning, as their GPA is now above the threshold of 2.00."
+      },
+      {
+        "id": "q22",
+        "latency_s": 7.676,
+        "faithfulness": 1.0,
+        "support_ratio": 0.667,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "No, they are not eligible to sit the final exam due to their attendance below the threshold of 80%."
+      },
+      {
+        "id": "q23",
+        "latency_s": 0.064,
+        "faithfulness": 1.0,
+        "support_ratio": 0.786,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "The 2023 edition required 80% attendance, while the 2026 edition requires 75% attendance. The 2026 edition replaces the 2023 edition for all students from the Fall 2026 semester."
+      },
+      {
+        "id": "q24",
+        "latency_s": 0.062,
+        "faithfulness": 1.0,
+        "support_ratio": 0.556,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "The new attendance threshold under the 2027 edition (Batch B) is 75%, which is lower than the 2026 edition's threshold of 80%. [source: academic-rules-2027.md, Section: 1. Attendance, Page: 1]"
+      },
+      {
+        "id": "q25",
+        "latency_s": 0.051,
+        "faithfulness": 1.0,
+        "support_ratio": 1.0,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "No, changes to routes require a 30-day notice, and walk-in registrations are not accepted."
+      },
+      {
+        "id": "q26",
+        "latency_s": 2.328,
+        "faithfulness": null,
+        "support_ratio": 0.889,
+        "citation_validity": 1.0,
+        "answered_from_context": false,
+        "must_abstain": false,
+        "answer": "Students may repeat a maximum of three courses under the 2027 academic rules."
+      },
+      {
+        "id": "q27",
+        "latency_s": 0.052,
+        "faithfulness": 1.0,
+        "support_ratio": 0.867,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "A student must register their personally owned device with the IT department before connecting to the university network, providing their student ID and device MAC address."
+      },
+      {
+        "id": "q28",
+        "latency_s": 0.051,
+        "faithfulness": 1.0,
+        "support_ratio": 1.0,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "Accounts found to be shared will be suspended immediately and disciplinary action will be taken."
+      },
+      {
+        "id": "q29",
+        "latency_s": 2.37,
+        "faithfulness": 1.0,
+        "support_ratio": 0.75,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "No, a hostel resident is not permitted to have an overnight guest without prior written approval from the hostel warden."
+      },
+      {
+        "id": "q30",
+        "latency_s": 0.052,
+        "faithfulness": 1.0,
+        "support_ratio": 1.0,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "Weekly"
+      },
+      {
+        "id": "q31",
+        "latency_s": 0.055,
+        "faithfulness": 1.0,
+        "support_ratio": 0.857,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "Dinner is served from 7:30 PM to 9:00 PM."
+      },
+      {
+        "id": "q32",
+        "latency_s": 0.055,
+        "faithfulness": 1.0,
+        "support_ratio": 1.0,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "By 11:00 PM on weekends."
+      },
+      {
+        "id": "q33",
+        "latency_s": 0.045,
+        "faithfulness": 1.0,
+        "support_ratio": 0.714,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "No, reference books are not available for borrowing according to the Borrowing Limit policy."
+      },
+      {
+        "id": "q34",
+        "latency_s": 0.047,
+        "faithfulness": 1.0,
+        "support_ratio": 1.0,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "IEEE Xplore, ACM Digital Library and Springer"
+      },
+      {
+        "id": "q35",
+        "latency_s": 0.043,
+        "faithfulness": 1.0,
+        "support_ratio": 0.611,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "According to transport-routes-2026.md, Section: Morning departure: 7:30 AM from designated stops., Page: 1, the university bus departs from its pick-up points at 7:30 AM in the morning."
+      },
+      {
+        "id": "q36",
+        "latency_s": 0.049,
+        "faithfulness": 1.0,
+        "support_ratio": 0.667,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": false,
+        "answer": "A student must have a CGPA of 2.00 by the end of the fourth semester to stay in the program."
+      },
+      {
+        "id": "q37",
+        "latency_s": 0.046,
+        "faithfulness": 1.0,
+        "support_ratio": 1.0,
+        "citation_validity": 1.0,
+        "answered_from_context": true,
+        "must_abstain": true,
+        "answer": "No, silence must be maintained in all reading areas, and mobile phones must be on silent mode."
+      },
+      {
+        "id": "q38",
+        "latency_s": 1.544,
+        "faithfulness": null,
+        "support_ratio": 0.0,
+        "citation_validity": null,
+        "answered_from_context": false,
+        "must_abstain": true,
+        "answer": "Not available"
+      },
+      {
+        "id": "q39",
+        "latency_s": 1.304,
+        "faithfulness": null,
+        "support_ratio": 0.0,
+        "citation_validity": null,
+        "answered_from_context": false,
+        "must_abstain": true,
+        "answer": "Not available in the provided passages."
+      },
+      {
+        "id": "q40",
+        "latency_s": 1.422,
+        "faithfulness": null,
+        "support_ratio": 0.0,
+        "citation_validity": null,
+        "answered_from_context": false,
+        "must_abstain": true,
+        "answer": "Not specified"
+      },
+      {
+        "id": "q41",
+        "latency_s": 1.612,
+        "faithfulness": null,
+        "support_ratio": 0.111,
+        "citation_validity": null,
+        "answered_from_context": false,
+        "must_abstain": true,
+        "answer": "Not mentioned in the provided passages. The procedure to replace a lost student ID card is not specified."
+      },
+      {
+        "id": "q42",
+        "latency_s": 1.741,
+        "faithfulness": null,
+        "support_ratio": 0.111,
+        "citation_validity": null,
+        "answered_from_context": false,
+        "must_abstain": true,
+        "answer": "Not specified, as there is no mention of career counselling or placement services in the provided passages."
+      },
+      {
+        "id": "q43",
+        "latency_s": 3.5,
+        "faithfulness": null,
+        "support_ratio": 0.333,
+        "citation_validity": 1.0,
+        "answered_from_context": false,
+        "must_abstain": true,
+        "answer": "The provided information does not specify how a student can change from one degree programme to another. It is recommended to consult academic-rules-2026.md for the most up-to-date information on programme changes."
+      },
+      {
+        "id": "q44",
+        "latency_s": 7.223,
+        "faithfulness": null,
+        "support_ratio": 0.667,
+        "citation_validity": 1.0,
+        "answered_from_context": false,
+        "must_abstain": true,
+        "answer": "Unfortunately, the provided passages do not contain information on how to take part in an international exchange semester. However, it is mentioned that students must register for transport services before the start of each semester (Source: transport-routes-2026.md, Section: 3. Registration, Page: 1) and that students must attend at least 80 percent of the lectures of each course to be allowed to sit the final examination (Source: academic-rules-2026.md, Section: 1.1 A student must attend at least 80 percent of the lectures of each course to be allowed to sit the final examination. The Head of Department may condone a further absence only for documented medical reasons., Page: 1)."
+      }
+    ]
+  },
+  "stochasticity": {
+    "cache_bypassed": true,
+    "run1_retrieval": {
+      "noise": false,
+      "recall_at_3": 0.9677,
+      "recall_at_5": 0.9677,
+      "mrr": 0.8871,
+      "ndcg_at_5": 0.9082,
+      "questions_evaluated": 44,
+      "rows": [
+        {
+          "id": "q01",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q02",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q03",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q04",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q05",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q06",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q07",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q08",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q09",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q10",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q11",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q12",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q13",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q14",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "mrr": 0.0,
+          "ndcg_at_5": 0.0
+        },
+        {
+          "id": "q15",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q16",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q17",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q18",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q19",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q20",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q21",
+          "type": "hard",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q22",
+          "type": "hard",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q23",
+          "type": "hard",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q24",
+          "type": "hard",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q25",
+          "type": "hard",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q26",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q27",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q28",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q29",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q30",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q31",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q32",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q33",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q34",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q35",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q36",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q37",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q38",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q39",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q40",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q41",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q42",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q43",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q44",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        }
+      ]
+    },
+    "run2_retrieval": {
+      "noise": false,
+      "recall_at_3": 0.9677,
+      "recall_at_5": 0.9677,
+      "mrr": 0.8871,
+      "ndcg_at_5": 0.9082,
+      "questions_evaluated": 44,
+      "rows": [
+        {
+          "id": "q01",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q02",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q03",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q04",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q05",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q06",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q07",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q08",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q09",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q10",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q11",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q12",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q13",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q14",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 0.0,
+          "recall_at_5": 0.0,
+          "mrr": 0.0,
+          "ndcg_at_5": 0.0
+        },
+        {
+          "id": "q15",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q16",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q17",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q18",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q19",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q20",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q21",
+          "type": "hard",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q22",
+          "type": "hard",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q23",
+          "type": "hard",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 0.5,
+          "ndcg_at_5": 0.6309297535714575
+        },
+        {
+          "id": "q24",
+          "type": "hard",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q25",
+          "type": "hard",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q26",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q27",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q28",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q29",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q30",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q31",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q32",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q33",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q34",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q35",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q36",
+          "type": "answerable",
+          "noise": false,
+          "recall_at_3": 1.0,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 1.0
+        },
+        {
+          "id": "q37",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q38",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q39",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q40",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q41",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q42",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q43",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        },
+        {
+          "id": "q44",
+          "type": "unanswerable",
+          "noise": false,
+          "recall_at_3": null,
+          "recall_at_5": null,
+          "mrr": null,
+          "ndcg_at_5": null
+        }
+      ]
+    },
+    "retrieval_diffs": {
+      "recall_at_3": 0.0,
+      "recall_at_5": 0.0,
+      "mrr": 0.0,
+      "ndcg_at_5": 0.0
+    },
+    "run1_e2e": {
+      "faithfulness_mean": 0.963,
+      "citation_validity_mean": 1.0,
+      "abstention_correctness": 0.9231,
+      "latency_p50_s": 2.37,
+      "latency_p95_s": 4.776
+    },
+    "run2_e2e": {
+      "faithfulness_mean": 1.0,
+      "citation_validity_mean": 1.0,
+      "abstention_correctness": 0.8462,
+      "latency_p50_s": 2.326,
+      "latency_p95_s": 3.722
+    },
+    "e2e_diffs": {
+      "faithfulness_mean": 0.037,
+      "citation_validity_mean": 0.0,
+      "abstention_correctness": 0.0769,
+      "latency_p50_s": 0.044,
+      "latency_p95_s": 1.054
+    },
+    "answer_stability": {
+      "questions_compared": 44,
+      "identical_answer_rate": 0.4318,
+      "answer_decision_flips": 6,
+      "flipped_ids": [
+        "q01",
+        "q10",
+        "q21",
+        "q22",
+        "q29",
+        "q44"
+      ]
+    },
+    "explanation": "Both runs bypass the semantic cache, so every answer is freshly generated. Retrieval is deterministic for a fixed index and embedding model, so retrieval diffs should be 0; answer differences and answer/abstain flips come from the LLM (temperature > 0). Latency differences are timing noise."
+  }
+}

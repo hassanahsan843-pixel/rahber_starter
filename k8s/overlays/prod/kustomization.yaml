@@ -20,6 +20,19 @@ patches:
       data:
         LLM_PROVIDER: hosted
         OLLAMA_URL: http://host.minikube.internal:11434
+  # Part C on the real corpus: score with the A02 golden set written for it
+  # (base/CI keep eval/golden.jsonl, which targets the synthetic corpus).
+  - target:
+      group: batch
+      version: v1
+      kind: Job
+      name: rahbar-eval
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: EVAL_GOLDEN
+          value: eval/golden.yaml
   - target:
       group: batch
       version: v1

@@ -1,0 +1,708 @@
+$ kubectl exec -n rahbar datalake-reader -- sh -c "ls -la /data_lake/reports /quarantine"
+/data_lake/reports:
+total 48
+drwxr-xr-x    2 10001    10001         4096 Nov 28 11:04 .
+drwxrwxrwx    5 root     root          4096 Nov 28 11:04 ..
+-rw-r--r--    1 10001    10001         5414 Nov 28 11:04 verification_report_1bb2d5ad.json
+-rw-r--r--    1 10001    10001         4704 Nov 28 10:54 verification_report_7a3b828a.json
+-rw-r--r--    1 10001    10001        16167 Nov 28 11:04 verification_report_be61f0aa.json
+-rw-r--r--    1 10001    10001         4704 Nov 28 10:56 verification_report_fc13df2d.json
+
+/quarantine:
+total 40
+drwxrwxrwx    2 root     root          4096 Nov 28 11:04 .
+drwxr-xr-x    1 root     root          4096 Nov 28 11:05 ..
+-rw-r--r--    1 10001    10001         1118 Nov 28 11:04 academic-rules-2026-copy_20261128T110404Z.md
+-rw-r--r--    1 10001    10001          467 Nov 28 11:04 academic-rules-2026-copy_20261128T110404Z.md.quarantine.json
+-rw-r--r--    1 10001    10001          804 Nov 28 11:04 exam-policy-truncated_20261128T110404Z.txt
+-rw-r--r--    1 10001    10001          612 Nov 28 11:04 exam-policy-truncated_20261128T110404Z.txt.quarantine.json
+-rw-r--r--    1 10001    10001          615 Nov 28 11:04 fees-2026-duplicate_20261128T110404Z.md
+-rw-r--r--    1 10001    10001          447 Nov 28 11:04 fees-2026-duplicate_20261128T110404Z.md.quarantine.json
+-rw-r--r--    1 10001    10001          858 Nov 28 11:04 scholarship-policy-no-metadata_20261128T110404Z.txt
+-rw-r--r--    1 10001    10001          577 Nov 28 11:04 scholarship-policy-no-metadata_20261128T110404Z.txt.quarantine.json
+
+$ kubectl exec -n rahbar datalake-reader -- sh -c "cat /data_lake/reports/verification_report_be61f0aa.json"
+{
+  "run_id": "be61f0aa",
+  "timestamp": "2026-11-28T11:04:04Z",
+  "summary": {
+    "total": 10,
+    "passed": 6,
+    "quarantined": 4
+  },
+  "documents": [
+    {
+      "source": "academic-rules-2026-copy.md",
+      "doc_id": "d7890d4918de372e",
+      "doc_hash": "7ffe7c1e9d33b58c2c1ae2d7d29cc22e20fcfeb187ada24180212d4263e27a08",
+      "passed": false,
+      "quarantined": true,
+      "quarantine_reason": "Exact duplicate of 'academic-rules-2026.md' (same content)",
+      "checks": [
+        {
+          "name": "quality_empty",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "quality_garbled",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "quality_extraction",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_source",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_title",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_date",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_pages",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_truncation",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "recency_new",
+          "passed": true,
+          "reason": "First ingestion of this document"
+        },
+        {
+          "name": "uniqueness_exact_dup",
+          "passed": false,
+          "reason": "Exact duplicate of 'academic-rules-2026.md' (same content)"
+        }
+      ]
+    },
+    {
+      "source": "academic-rules-2026-paraphrased.md",
+      "doc_id": "f596c29e7e2bd484",
+      "doc_hash": "fcecb63794ffdfa9a41191078b3b761d3f095df23179df2c6f9b894c0b7e2e5d",
+      "passed": true,
+      "quarantined": false,
+      "quarantine_reason": "",
+      "checks": [
+        {
+          "name": "quality_empty",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "quality_garbled",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "quality_extraction",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_source",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_title",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_date",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_pages",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_truncation",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "recency_new",
+          "passed": true,
+          "reason": "First ingestion of this document"
+        },
+        {
+          "name": "uniqueness_exact_dup",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "uniqueness_near_dup",
+          "passed": true,
+          "reason": "WARNING possible near-duplicate of: academic-rules-2023.md (sim=0.910), academic-rules-2026.md (sim=0.933), academic-rules-2026-copy.md (sim=0.933) [embedding; reported at >= 0.9, quarantined at >= 0.97]"
+        }
+      ]
+    },
+    {
+      "source": "academic-rules-2027.md",
+      "doc_id": "a64cdaed9362c7f7",
+      "doc_hash": "b0c9c63f6e4f12c5c17e3ca62770d5c350e7af395a3589112462e965c775ce5f",
+      "passed": true,
+      "quarantined": false,
+      "quarantine_reason": "",
+      "checks": [
+        {
+          "name": "quality_empty",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "quality_garbled",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "quality_extraction",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_source",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_title",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_date",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_pages",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_truncation",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "recency_new",
+          "passed": true,
+          "reason": "First ingestion of this document"
+        },
+        {
+          "name": "recency_family",
+          "passed": true,
+          "reason": "Newer version 2027-01 of 'academic-rules-2026.md' (2026)"
+        },
+        {
+          "name": "uniqueness_exact_dup",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "uniqueness_near_dup",
+          "passed": true,
+          "reason": ""
+        }
+      ]
+    },
+    {
+      "source": "exam-policy-truncated.txt",
+      "doc_id": "d61540c379eb6530",
+      "doc_hash": "57d87ff26a918ac8caa06c12a61621850b006003ec2bfd9e8929f64a0359a110",
+      "passed": false,
+      "quarantined": true,
+      "quarantine_reason": "No date or version found (set 'date:' or 'doc_version:' in front matter); Document ends mid-sentence: '...submitted in writing with supporting'",
+      "checks": [
+        {
+          "name": "quality_empty",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "quality_garbled",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "quality_extraction",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_source",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_title",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_date",
+          "passed": false,
+          "reason": "No date or version found (set 'date:' or 'doc_version:' in front matter)"
+        },
+        {
+          "name": "completeness_pages",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_truncation",
+          "passed": false,
+          "reason": "Document ends mid-sentence: '...submitted in writing with supporting'"
+        },
+        {
+          "name": "recency_new",
+          "passed": true,
+          "reason": "First ingestion of this document"
+        },
+        {
+          "name": "uniqueness_exact_dup",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "uniqueness_near_dup",
+          "passed": true,
+          "reason": ""
+        }
+      ]
+    },
+    {
+      "source": "fees-2026-duplicate.md",
+      "doc_id": "4fbccd829e6e2e63",
+      "doc_hash": "6c9167909876878ce2e47a81ef6fa69b6738acf19367bd5c3a4ef0b41f90a5f4",
+      "passed": false,
+      "quarantined": true,
+      "quarantine_reason": "Exact duplicate of 'fees-2026.md' (same content)",
+      "checks": [
+        {
+          "name": "quality_empty",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "quality_garbled",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "quality_extraction",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_source",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_title",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_date",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_pages",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_truncation",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "recency_new",
+          "passed": true,
+          "reason": "First ingestion of this document"
+        },
+        {
+          "name": "uniqueness_exact_dup",
+          "passed": false,
+          "reason": "Exact duplicate of 'fees-2026.md' (same content)"
+        }
+      ]
+    },
+    {
+      "source": "hostel-rules-2026.md",
+      "doc_id": "f4a324e5290e7a31",
+      "doc_hash": "4ddf6c6b50aaf034b0529de643de257c6f3da6ccd6c15dfaacdd83ad65e75a54",
+      "passed": true,
+      "quarantined": false,
+      "quarantine_reason": "",
+      "checks": [
+        {
+          "name": "quality_empty",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "quality_garbled",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "quality_extraction",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_source",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_title",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_date",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_pages",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_truncation",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "recency_new",
+          "passed": true,
+          "reason": "First ingestion of this document"
+        },
+        {
+          "name": "uniqueness_exact_dup",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "uniqueness_near_dup",
+          "passed": true,
+          "reason": ""
+        }
+      ]
+    },
+    {
+      "source": "it-policy-with-injection.md",
+      "doc_id": "86b840855b1171e2",
+      "doc_hash": "0530c57c08a51d4bf233db8edeb048928ffd4ada3ae84ff2946c32a72491e375",
+      "passed": true,
+      "quarantined": false,
+      "quarantine_reason": "",
+      "checks": [
+        {
+          "name": "quality_empty",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "quality_garbled",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "quality_extraction",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_source",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_title",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_date",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_pages",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_truncation",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "recency_new",
+          "passed": true,
+          "reason": "First ingestion of this document"
+        },
+        {
+          "name": "uniqueness_exact_dup",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "uniqueness_near_dup",
+          "passed": true,
+          "reason": ""
+        }
+      ]
+    },
+    {
+      "source": "library-policy-2026.txt",
+      "doc_id": "556c343fcb7ad3e2",
+      "doc_hash": "b10a90196f3cec550d958d9ab1f1287a0f7495e510454921db5e55bd79520791",
+      "passed": true,
+      "quarantined": false,
+      "quarantine_reason": "",
+      "checks": [
+        {
+          "name": "quality_empty",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "quality_garbled",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "quality_extraction",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_source",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_title",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_date",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_pages",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_truncation",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "recency_new",
+          "passed": true,
+          "reason": "First ingestion of this document"
+        },
+        {
+          "name": "uniqueness_exact_dup",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "uniqueness_near_dup",
+          "passed": true,
+          "reason": ""
+        }
+      ]
+    },
+    {
+      "source": "scholarship-policy-no-metadata.txt",
+      "doc_id": "1783e8d952152a26",
+      "doc_hash": "aa16fed7a440bb6d9aa446ca7903e7cecf10cd24fdae66cb1d118c7a24c2a5c2",
+      "passed": false,
+      "quarantined": true,
+      "quarantine_reason": "No date or version found (set 'date:' or 'doc_version:' in front matter)",
+      "checks": [
+        {
+          "name": "quality_empty",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "quality_garbled",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "quality_extraction",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_source",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_title",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_date",
+          "passed": false,
+          "reason": "No date or version found (set 'date:' or 'doc_version:' in front matter)"
+        },
+        {
+          "name": "completeness_pages",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_truncation",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "recency_new",
+          "passed": true,
+          "reason": "First ingestion of this document"
+        },
+        {
+          "name": "uniqueness_exact_dup",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "uniqueness_near_dup",
+          "passed": true,
+          "reason": ""
+        }
+      ]
+    },
+    {
+      "source": "transport-routes-2026.md",
+      "doc_id": "bc9f47b71ccfbca9",
+      "doc_hash": "72b0457dfabc4540901e524f9044a15389be63071ee83770db2fd9b953039e48",
+      "passed": true,
+      "quarantined": false,
+      "quarantine_reason": "",
+      "checks": [
+        {
+          "name": "quality_empty",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "quality_garbled",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "quality_extraction",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_source",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_title",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_date",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_pages",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "completeness_truncation",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "recency_new",
+          "passed": true,
+          "reason": "First ingestion of this document"
+        },
+        {
+          "name": "uniqueness_exact_dup",
+          "passed": true,
+          "reason": ""
+        },
+        {
+          "name": "uniqueness_near_dup",
+          "passed": true,
+          "reason": ""
+        }
+      ]
+    }
+  ]
+}
+$ kubectl exec -n rahbar datalake-reader -- sh -c "grep -E 'source|batch|archived' /data_lake/registry.json"
+    "source": "academic-rules-2023.md",
+    "archived": false,
+    "batch": "corpus"
+    "source": "academic-rules-2026.md",
+    "archived": false,
+    "batch": "corpus"
+    "source": "fees-2026.md",
+    "archived": false,
+    "batch": "corpus"
+    "source": "academic-rules-2026-paraphrased.md",
+    "archived": false,
+    "batch": "batch_b"
+    "source": "academic-rules-2027.md",
+    "archived": false,
+    "batch": "batch_b"
+    "source": "hostel-rules-2026.md",
+    "archived": false,
+    "batch": "batch_b"
+    "source": "it-policy-with-injection.md",
+    "archived": false,
+    "batch": "batch_b"
+    "source": "library-policy-2026.txt",
+    "archived": false,
+    "batch": "batch_b"
+    "source": "transport-routes-2026.md",
+    "archived": false,
+    "batch": "batch_b"

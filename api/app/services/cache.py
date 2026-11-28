@@ -36,15 +36,23 @@ class SemanticCache:
         redis_host: str = "redis",
         redis_port: int = 6379,
         allow_memory_fallback: bool = True,
+        namespace: str = "rahbar",
     ) -> None:
         self.threshold = threshold
         self.redis_host = redis_host
         self.redis_port = redis_port
         self.allow_memory_fallback = allow_memory_fallback
+        # Entries are keyed per Chroma collection, so the baseline and candidate APIs
+        # (which share one Redis) never serve each other's answers. The generation
+        # counter stays shared: any re-index invalidates every namespace.
+        self.namespace = namespace or "rahbar"
         self.generation_id = 1
         self._in_memory_store: list[dict[str, Any]] = []
         self._redis_client: Any = None
         self._connect()
+
+    def _key_prefix(self) -> str:
+        return f"cache:{self.namespace}:v{self.generation_id}:"
 
     def _connect(self) -> bool:
         try:
@@ -90,7 +98,7 @@ class SemanticCache:
                 stored_generation = self._redis_client.get("cache:generation")
                 if stored_generation:
                     self.generation_id = int(stored_generation)
-                pattern = f"cache:v{self.generation_id}:*"
+                pattern = f"{self._key_prefix()}*"
                 keys = list(self._redis_client.scan_iter(match=pattern, count=100))
                 if keys:
                     values = self._redis_client.mget(keys[:100])
@@ -174,7 +182,8 @@ class SemanticCache:
                 if expected_generation is not None and expected_generation != self.generation_id:
                     log.info("skipping cache write for an outdated index generation")
                     return
-                key = f"cache:v{self.generation_id}:{abs(hash(query))}"
+                entry["generation_id"] = self.generation_id
+                key = f"{self._key_prefix()}{abs(hash(query))}"
                 self._redis_client.set(key, json.dumps(entry), ex=86400)
             except Exception as exc:
                 log.warning("redis cache write error", extra={"error": str(exc)})
@@ -213,6 +222,7 @@ def get_cache(
     redis_host: str = "redis",
     redis_port: int = 6379,
     allow_memory_fallback: bool = True,
+    namespace: str = "rahbar",
 ) -> SemanticCache:
     global _CACHE_INSTANCE
     if _CACHE_INSTANCE is None:
@@ -221,5 +231,6 @@ def get_cache(
             redis_host=redis_host,
             redis_port=redis_port,
             allow_memory_fallback=allow_memory_fallback,
+            namespace=namespace,
         )
     return _CACHE_INSTANCE
