@@ -1,0 +1,31 @@
+$ kubectl --context kind-rahbar-a03 apply -f k8s/base/candidate-indexer-job.yaml
+job.batch/rahbar-candidate-indexer created
+
+$ kubectl --context kind-rahbar-a03 wait --for=condition=complete job/rahbar-candidate-indexer -n rahbar --timeout=1200s
+job.batch/rahbar-candidate-indexer condition met
+
+$ kubectl --context kind-rahbar-a03 logs job/rahbar-candidate-indexer -n rahbar --tail=-1 | grep -v '"chunked"'
+{"ts": "2026-11-28T11:04:13Z", "logger": "rahbar.indexer", "msg": "indexer starting", "dummy": false, "full_reindex": false, "embed_model": "nomic-embed-text", "collection": "rahbar-candidate", "chroma": "chroma:8000", "corpus_dir": "/corpus", "pod": "rahbar-candidate-indexer-csxrz"}
+{"ts": "2026-11-28T11:04:13Z", "logger": "rahbar.indexer", "msg": "pipeline starting", "run_id": "6e6caa78", "full_reindex": false, "corpus_dir": "/corpus", "batch": "corpus"}
+{"ts": "2026-11-28T11:04:13Z", "logger": "rahbar.indexer", "msg": "discovered", "count": 3}
+{"ts": "2026-11-28T11:04:13Z", "logger": "rahbar.indexer", "msg": "registry loaded", "records": 0}
+{"ts": "2026-11-28T11:04:13Z", "logger": "rahbar.indexer", "msg": "near_dup_vectors", "method": "embedding", "model": "nomic-embed-text", "docs": 3, "newly_embedded": 3}
+{"ts": "2026-11-28T11:04:13Z", "logger": "rahbar.indexer", "msg": "verified_ok", "source": "academic-rules-2023.md"}
+{"ts": "2026-11-28T11:04:13Z", "logger": "rahbar.indexer", "msg": "verified_ok", "source": "academic-rules-2026.md"}
+{"ts": "2026-11-28T11:04:13Z", "logger": "rahbar.indexer", "msg": "verified_ok", "source": "fees-2026.md"}
+{"ts": "2026-11-28T11:04:13Z", "logger": "rahbar.indexer", "msg": "verification_report_written", "path": "/data_lake/candidate/reports/verification_report_6e6caa78.json", "summary": {"total": 3, "passed": 3, "quarantined": 0}}
+{"ts": "2026-11-28T11:04:13Z", "logger": "rahbar.indexer", "msg": "new_document", "source": "academic-rules-2023.md", "version": "2023"}
+{"ts": "2026-11-28T11:04:13Z", "logger": "rahbar.indexer", "msg": "new_document", "source": "academic-rules-2026.md", "version": "2026"}
+{"ts": "2026-11-28T11:04:13Z", "logger": "rahbar.indexer", "msg": "new_document", "source": "fees-2026.md", "version": "2026"}
+{"ts": "2026-11-28T11:04:14Z", "logger": "rahbar.indexer", "msg": "registry_saved", "records": 3}
+{"ts": "2026-11-28T11:04:18Z", "logger": "rahbar.indexer", "msg": "waiting for API cache invalidation", "attempt": 1, "error": "timed out"}
+{"ts": "2026-11-28T11:04:20Z", "logger": "rahbar.indexer", "msg": "api cache invalidation completed", "attempt": 2}
+{"ts": "2026-11-28T11:04:20Z", "logger": "rahbar.indexer", "msg": "indexer finished", "chunks": 24, "seconds": 7.7}
+
+$ kubectl --context kind-rahbar-a03 rollout status deployment/rahbar-api-candidate -n rahbar --timeout=600s
+deployment "rahbar-api-candidate" successfully rolled out
+
+$ kubectl --context kind-rahbar-a03 exec -n rahbar statefulset/chroma -- sh -c 'echo collections listed via API below' ; kubectl --context kind-rahbar-a03 exec -n rahbar deploy/rahbar-api -- python -c "import chromadb;c=chromadb.HttpClient(host='chroma',port=8000);print([(x.name, c.get_collection(x.name).count(), c.get_collection(x.name).metadata) for x in c.list_collections()])"
+collections listed via API below
+[('rahbar', 70, {'hnsw:space': 'cosine', 'embed_model': 'nomic-embed-text', 'dimension': 768}), ('rahbar-candidate', 24, {'embed_model': 'nomic-embed-text', 'hnsw:space': 'cosine', 'dimension': 768})]
+

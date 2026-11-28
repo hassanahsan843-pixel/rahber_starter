@@ -1,0 +1,90 @@
+$ kubectl --context kind-rahbar-a03 get configmap eval-thresholds -n rahbar -o jsonpath='{.data.thresholds\.yaml}'
+recall_at_5_min_drop: 0.05
+recall_at_3_min: 0.50
+mrr_min: 0.40
+ndcg_at_5_min: 0.40
+faithfulness_min: 0.60
+citation_validity_min: 0.90
+abstention_correctness_min: 1.0
+latency_p95_max_s: 10.0
+$ kubectl --context kind-rahbar-a03 apply -f k8s/base/release-gate-job.yaml
+job.batch/rahbar-release-gate created
+
+$ kubectl --context kind-rahbar-a03 logs job/rahbar-release-gate -n rahbar
+
+=== C2: Release Gate ===
+
+  PASS  Recall@5 drop vs baseline: 0.9677 (drop 0.0000 ≤ 0.05)
+  PASS  Recall@3 absolute floor: 0.9677 ≥ threshold 0.5
+  PASS  MRR: 0.8871 ≥ threshold 0.4
+  PASS  nDCG@5: 0.9082 ≥ threshold 0.4
+  PASS  Faithfulness: 0.9667 ≥ threshold 0.6
+  PASS  Citation validity: 1.0000 ≥ threshold 0.9
+  PASS  Latency p95: 2.4420 ≤ threshold 10.0
+  FAIL  Abstention correctness: 0.8462 < threshold 1.0
+
+  Overall: FAIL (7 passed, 1 failed)
+
+  Gate report saved to /traces/gate_result_latest.json
+
+$ kubectl --context kind-rahbar-a03 get pods -n rahbar -l job-name=rahbar-release-gate -o jsonpath='{.items[0].status.containerStatuses[0].state.terminated.exitCode}{"\n"}'
+1
+
+# DEMO ONLY: relax the failing checks to show the gate re-reads the ConfigMap;
+# the original thresholds are restored right after and remain the release criteria.
+$ kubectl --context kind-rahbar-a03 get configmap eval-thresholds -n rahbar -o jsonpath='{.data.thresholds\.yaml}'
+recall_at_5_min_drop: 0.05
+recall_at_3_min: 0.5
+mrr_min: 0.4
+ndcg_at_5_min: 0.4
+faithfulness_min: 0.6
+citation_validity_min: 0.9
+abstention_correctness_min: 0.8
+latency_p95_max_s: 10.0
+$ kubectl --context kind-rahbar-a03 apply -f k8s/base/release-gate-job.yaml
+job.batch/rahbar-release-gate created
+
+$ kubectl --context kind-rahbar-a03 logs job/rahbar-release-gate -n rahbar
+
+=== C2: Release Gate ===
+
+  PASS  Recall@5 drop vs baseline: 0.9677 (drop 0.0000 ≤ 0.05)
+  PASS  Recall@3 absolute floor: 0.9677 ≥ threshold 0.5
+  PASS  MRR: 0.8871 ≥ threshold 0.4
+  PASS  nDCG@5: 0.9082 ≥ threshold 0.4
+  PASS  Faithfulness: 0.9667 ≥ threshold 0.6
+  PASS  Citation validity: 1.0000 ≥ threshold 0.9
+  PASS  Abstention correctness: 0.8462 ≥ threshold 0.8
+  PASS  Latency p95: 2.4420 ≤ threshold 10.0
+
+  Overall: PASS (8 passed, 0 failed)
+
+  Gate report saved to /traces/gate_result_latest.json
+
+$ kubectl --context kind-rahbar-a03 get pods -n rahbar -l job-name=rahbar-release-gate -o jsonpath='{.items[0].status.containerStatuses[0].state.terminated.exitCode}{"\n"}'
+0
+
+# restore the original thresholds
+$ kubectl --context kind-rahbar-a03 apply -f k8s/base/release-gate-job.yaml
+job.batch/rahbar-release-gate created
+
+$ kubectl --context kind-rahbar-a03 logs job/rahbar-release-gate -n rahbar
+
+=== C2: Release Gate ===
+
+  PASS  Recall@5 drop vs baseline: 0.9677 (drop 0.0000 ≤ 0.05)
+  PASS  Recall@3 absolute floor: 0.9677 ≥ threshold 0.5
+  PASS  MRR: 0.8871 ≥ threshold 0.4
+  PASS  nDCG@5: 0.9082 ≥ threshold 0.4
+  PASS  Faithfulness: 0.9667 ≥ threshold 0.6
+  PASS  Citation validity: 1.0000 ≥ threshold 0.9
+  PASS  Latency p95: 2.4420 ≤ threshold 10.0
+  FAIL  Abstention correctness: 0.8462 < threshold 1.0
+
+  Overall: FAIL (7 passed, 1 failed)
+
+  Gate report saved to /traces/gate_result_latest.json
+
+$ kubectl --context kind-rahbar-a03 get pods -n rahbar -l job-name=rahbar-release-gate -o jsonpath='{.items[0].status.containerStatuses[0].state.terminated.exitCode}{"\n"}'
+1
+

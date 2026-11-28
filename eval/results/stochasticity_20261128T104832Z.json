@@ -1,0 +1,855 @@
+{
+  "cache_bypassed": true,
+  "run1_retrieval": {
+    "noise": false,
+    "recall_at_3": 0.9677,
+    "recall_at_5": 0.9677,
+    "mrr": 0.8871,
+    "ndcg_at_5": 0.9082,
+    "questions_evaluated": 44,
+    "rows": [
+      {
+        "id": "q01",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "ndcg_at_5": 0.6309297535714575
+      },
+      {
+        "id": "q02",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q03",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q04",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "ndcg_at_5": 0.6309297535714575
+      },
+      {
+        "id": "q05",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "ndcg_at_5": 0.6309297535714575
+      },
+      {
+        "id": "q06",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q07",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q08",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q09",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q10",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q11",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q12",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q13",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q14",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 0.0,
+        "recall_at_5": 0.0,
+        "mrr": 0.0,
+        "ndcg_at_5": 0.0
+      },
+      {
+        "id": "q15",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q16",
+        "type": "unanswerable",
+        "noise": false,
+        "recall_at_3": null,
+        "recall_at_5": null,
+        "mrr": null,
+        "ndcg_at_5": null
+      },
+      {
+        "id": "q17",
+        "type": "unanswerable",
+        "noise": false,
+        "recall_at_3": null,
+        "recall_at_5": null,
+        "mrr": null,
+        "ndcg_at_5": null
+      },
+      {
+        "id": "q18",
+        "type": "unanswerable",
+        "noise": false,
+        "recall_at_3": null,
+        "recall_at_5": null,
+        "mrr": null,
+        "ndcg_at_5": null
+      },
+      {
+        "id": "q19",
+        "type": "unanswerable",
+        "noise": false,
+        "recall_at_3": null,
+        "recall_at_5": null,
+        "mrr": null,
+        "ndcg_at_5": null
+      },
+      {
+        "id": "q20",
+        "type": "unanswerable",
+        "noise": false,
+        "recall_at_3": null,
+        "recall_at_5": null,
+        "mrr": null,
+        "ndcg_at_5": null
+      },
+      {
+        "id": "q21",
+        "type": "hard",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "ndcg_at_5": 0.6309297535714575
+      },
+      {
+        "id": "q22",
+        "type": "hard",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q23",
+        "type": "hard",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "ndcg_at_5": 0.6309297535714575
+      },
+      {
+        "id": "q24",
+        "type": "hard",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q25",
+        "type": "hard",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q26",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q27",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q28",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q29",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q30",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q31",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q32",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q33",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q34",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q35",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q36",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q37",
+        "type": "unanswerable",
+        "noise": false,
+        "recall_at_3": null,
+        "recall_at_5": null,
+        "mrr": null,
+        "ndcg_at_5": null
+      },
+      {
+        "id": "q38",
+        "type": "unanswerable",
+        "noise": false,
+        "recall_at_3": null,
+        "recall_at_5": null,
+        "mrr": null,
+        "ndcg_at_5": null
+      },
+      {
+        "id": "q39",
+        "type": "unanswerable",
+        "noise": false,
+        "recall_at_3": null,
+        "recall_at_5": null,
+        "mrr": null,
+        "ndcg_at_5": null
+      },
+      {
+        "id": "q40",
+        "type": "unanswerable",
+        "noise": false,
+        "recall_at_3": null,
+        "recall_at_5": null,
+        "mrr": null,
+        "ndcg_at_5": null
+      },
+      {
+        "id": "q41",
+        "type": "unanswerable",
+        "noise": false,
+        "recall_at_3": null,
+        "recall_at_5": null,
+        "mrr": null,
+        "ndcg_at_5": null
+      },
+      {
+        "id": "q42",
+        "type": "unanswerable",
+        "noise": false,
+        "recall_at_3": null,
+        "recall_at_5": null,
+        "mrr": null,
+        "ndcg_at_5": null
+      },
+      {
+        "id": "q43",
+        "type": "unanswerable",
+        "noise": false,
+        "recall_at_3": null,
+        "recall_at_5": null,
+        "mrr": null,
+        "ndcg_at_5": null
+      },
+      {
+        "id": "q44",
+        "type": "unanswerable",
+        "noise": false,
+        "recall_at_3": null,
+        "recall_at_5": null,
+        "mrr": null,
+        "ndcg_at_5": null
+      }
+    ]
+  },
+  "run2_retrieval": {
+    "noise": false,
+    "recall_at_3": 0.9677,
+    "recall_at_5": 0.9677,
+    "mrr": 0.8871,
+    "ndcg_at_5": 0.9082,
+    "questions_evaluated": 44,
+    "rows": [
+      {
+        "id": "q01",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "ndcg_at_5": 0.6309297535714575
+      },
+      {
+        "id": "q02",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q03",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q04",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "ndcg_at_5": 0.6309297535714575
+      },
+      {
+        "id": "q05",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "ndcg_at_5": 0.6309297535714575
+      },
+      {
+        "id": "q06",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q07",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q08",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q09",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q10",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q11",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q12",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q13",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q14",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 0.0,
+        "recall_at_5": 0.0,
+        "mrr": 0.0,
+        "ndcg_at_5": 0.0
+      },
+      {
+        "id": "q15",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q16",
+        "type": "unanswerable",
+        "noise": false,
+        "recall_at_3": null,
+        "recall_at_5": null,
+        "mrr": null,
+        "ndcg_at_5": null
+      },
+      {
+        "id": "q17",
+        "type": "unanswerable",
+        "noise": false,
+        "recall_at_3": null,
+        "recall_at_5": null,
+        "mrr": null,
+        "ndcg_at_5": null
+      },
+      {
+        "id": "q18",
+        "type": "unanswerable",
+        "noise": false,
+        "recall_at_3": null,
+        "recall_at_5": null,
+        "mrr": null,
+        "ndcg_at_5": null
+      },
+      {
+        "id": "q19",
+        "type": "unanswerable",
+        "noise": false,
+        "recall_at_3": null,
+        "recall_at_5": null,
+        "mrr": null,
+        "ndcg_at_5": null
+      },
+      {
+        "id": "q20",
+        "type": "unanswerable",
+        "noise": false,
+        "recall_at_3": null,
+        "recall_at_5": null,
+        "mrr": null,
+        "ndcg_at_5": null
+      },
+      {
+        "id": "q21",
+        "type": "hard",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "ndcg_at_5": 0.6309297535714575
+      },
+      {
+        "id": "q22",
+        "type": "hard",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q23",
+        "type": "hard",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "ndcg_at_5": 0.6309297535714575
+      },
+      {
+        "id": "q24",
+        "type": "hard",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q25",
+        "type": "hard",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q26",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q27",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q28",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q29",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q30",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q31",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q32",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q33",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q34",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q35",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q36",
+        "type": "answerable",
+        "noise": false,
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0
+      },
+      {
+        "id": "q37",
+        "type": "unanswerable",
+        "noise": false,
+        "recall_at_3": null,
+        "recall_at_5": null,
+        "mrr": null,
+        "ndcg_at_5": null
+      },
+      {
+        "id": "q38",
+        "type": "unanswerable",
+        "noise": false,
+        "recall_at_3": null,
+        "recall_at_5": null,
+        "mrr": null,
+        "ndcg_at_5": null
+      },
+      {
+        "id": "q39",
+        "type": "unanswerable",
+        "noise": false,
+        "recall_at_3": null,
+        "recall_at_5": null,
+        "mrr": null,
+        "ndcg_at_5": null
+      },
+      {
+        "id": "q40",
+        "type": "unanswerable",
+        "noise": false,
+        "recall_at_3": null,
+        "recall_at_5": null,
+        "mrr": null,
+        "ndcg_at_5": null
+      },
+      {
+        "id": "q41",
+        "type": "unanswerable",
+        "noise": false,
+        "recall_at_3": null,
+        "recall_at_5": null,
+        "mrr": null,
+        "ndcg_at_5": null
+      },
+      {
+        "id": "q42",
+        "type": "unanswerable",
+        "noise": false,
+        "recall_at_3": null,
+        "recall_at_5": null,
+        "mrr": null,
+        "ndcg_at_5": null
+      },
+      {
+        "id": "q43",
+        "type": "unanswerable",
+        "noise": false,
+        "recall_at_3": null,
+        "recall_at_5": null,
+        "mrr": null,
+        "ndcg_at_5": null
+      },
+      {
+        "id": "q44",
+        "type": "unanswerable",
+        "noise": false,
+        "recall_at_3": null,
+        "recall_at_5": null,
+        "mrr": null,
+        "ndcg_at_5": null
+      }
+    ]
+  },
+  "retrieval_diffs": {
+    "recall_at_3": 0.0,
+    "recall_at_5": 0.0,
+    "mrr": 0.0,
+    "ndcg_at_5": 0.0
+  },
+  "run1_e2e": {
+    "faithfulness_mean": 1.0,
+    "citation_validity_mean": 1.0,
+    "abstention_correctness": 0.9231,
+    "latency_p50_s": 2.126,
+    "latency_p95_s": 3.779
+  },
+  "run2_e2e": {
+    "faithfulness_mean": 0.9583,
+    "citation_validity_mean": 1.0,
+    "abstention_correctness": 0.9231,
+    "latency_p50_s": 2.042,
+    "latency_p95_s": 4.697
+  },
+  "e2e_diffs": {
+    "faithfulness_mean": 0.0417,
+    "citation_validity_mean": 0.0,
+    "abstention_correctness": 0.0,
+    "latency_p50_s": 0.084,
+    "latency_p95_s": 0.918
+  },
+  "answer_stability": {
+    "questions_compared": 44,
+    "identical_answer_rate": 0.4773,
+    "answer_decision_flips": 5,
+    "flipped_ids": [
+      "q21",
+      "q23",
+      "q24",
+      "q25",
+      "q33"
+    ]
+  },
+  "explanation": "Both runs bypass the semantic cache, so every answer is freshly generated. Retrieval is deterministic for a fixed index and embedding model, so retrieval diffs should be 0; answer differences and answer/abstain flips come from the LLM (temperature > 0). Latency differences are timing noise."
+}

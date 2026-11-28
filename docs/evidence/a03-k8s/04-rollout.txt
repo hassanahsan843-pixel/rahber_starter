@@ -1,0 +1,7 @@
+$ kubectl --context kind-rahbar-a03 rollout status deployment/rahbar-api -n rahbar --timeout=600s
+deployment "rahbar-api" successfully rolled out
+
+$ kubectl --context kind-rahbar-a03 rollout status deployment/rahbar-api-candidate -n rahbar --timeout=600s || true
+Waiting for deployment "rahbar-api-candidate" rollout to finish: 0 of 1 updated replicas are available...
+error: deployment "rahbar-api-candidate" exceeded its progress deadline
+

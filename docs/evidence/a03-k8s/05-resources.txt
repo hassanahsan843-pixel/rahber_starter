@@ -1,0 +1,63 @@
+$ kubectl --context kind-rahbar-a03 get all,pvc,configmap,cronjob,job -n rahbar
+NAME                                        READY   STATUS      RESTARTS        AGE
+pod/chroma-0                                1/1     Running     0               10m
+pod/rahbar-api-5d7cdfff76-8nkl2             1/1     Running     1 (8m22s ago)   10m
+pod/rahbar-api-5d7cdfff76-cvggj             1/1     Running     1 (8m22s ago)   10m
+pod/rahbar-api-5d7cdfff76-p9872             1/1     Running     1 (8m22s ago)   10m
+pod/rahbar-api-candidate-757b6cb596-wg8g6   0/1     Running     1 (8m22s ago)   10m
+pod/rahbar-indexer-d4tgb                    0/1     Completed   1 (7m29s ago)   10m
+pod/rahbar-ui-6d887d7d95-5rfkh              1/1     Running     0               10m
+pod/redis-6b88fc4c7f-l7hjh                  1/1     Running     0               10m
+
+NAME                           TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+service/chroma                 ClusterIP   10.96.109.229   <none>        8000/TCP   10m
+service/rahbar-api             ClusterIP   10.96.33.189    <none>        8000/TCP   10m
+service/rahbar-api-candidate   ClusterIP   10.96.243.123   <none>        8000/TCP   10m
+service/rahbar-ui              ClusterIP   10.96.137.196   <none>        80/TCP     10m
+service/redis                  ClusterIP   10.96.137.219   <none>        6379/TCP   10m
+
+NAME                                   READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/rahbar-api             3/3     3            3           10m
+deployment.apps/rahbar-api-candidate   0/1     1            0           10m
+deployment.apps/rahbar-ui              1/1     1            1           10m
+deployment.apps/redis                  1/1     1            1           10m
+
+NAME                                              DESIRED   CURRENT   READY   AGE
+replicaset.apps/rahbar-api-5d7cdfff76             3         3         3       10m
+replicaset.apps/rahbar-api-candidate-757b6cb596   1         1         0       10m
+replicaset.apps/rahbar-ui-6d887d7d95              1         1         1       10m
+replicaset.apps/redis-6b88fc4c7f                  1         1         1       10m
+
+NAME                      READY   AGE
+statefulset.apps/chroma   1/1     10m
+
+NAME                                                 REFERENCE               TARGETS              MINPODS   MAXPODS   REPLICAS   AGE
+horizontalpodautoscaler.autoscaling/rahbar-api-hpa   Deployment/rahbar-api   cpu: <unknown>/70%   3         8         3          10m
+
+NAME                    SCHEDULE    TIMEZONE   SUSPEND   ACTIVE   LAST SCHEDULE   AGE
+cronjob.batch/reindex   0 3 * * 0   <none>     False     0        <none>          10m
+
+NAME                       STATUS     COMPLETIONS   DURATION   AGE
+job.batch/rahbar-indexer   Complete   1/1           2m44s      10m
+
+NAME                                         STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+persistentvolumeclaim/archive-pvc            Bound    pvc-ddf926b5-4982-403d-8f94-642cd1b3263a   2Gi        RWO            standard       <unset>                 10m
+persistentvolumeclaim/chroma-data-chroma-0   Bound    pvc-76b69ebd-1cbf-4514-ab81-c2b6e0811053   1Gi        RWO            standard       <unset>                 10m
+persistentvolumeclaim/datalake-pvc           Bound    pvc-176caa98-aa88-4e53-aa59-5ffe15dfdc06   1Gi        RWO            standard       <unset>                 10m
+persistentvolumeclaim/quarantine-pvc         Bound    pvc-b246f9a9-c8cd-4f9e-8d49-08e044dfd663   1Gi        RWO            standard       <unset>                 10m
+persistentvolumeclaim/redis-data             Bound    pvc-0a15ba47-6f41-4ca6-b0fb-18eaf89eff59   500Mi      RWO            standard       <unset>                 10m
+persistentvolumeclaim/traces-pvc             Bound    pvc-7399656a-e006-4823-9b4d-5439961a5dee   2Gi        RWO            standard       <unset>                 10m
+
+NAME                              DATA   AGE
+configmap/eval-thresholds         1      10m
+configmap/kube-root-ca.crt        1      10m
+configmap/rahbar-config           26     10m
+configmap/rahbar-corpus           4      10m
+configmap/rahbar-corpus-batch-b   11     10m
+
+$ kubectl --context kind-rahbar-a03 get deployment rahbar-api -n rahbar -o jsonpath='{.spec.strategy}{"\n"}'
+{"rollingUpdate":{"maxSurge":1,"maxUnavailable":0},"type":"RollingUpdate"}
+
+$ kubectl --context kind-rahbar-a03 get deployment rahbar-api -n rahbar -o jsonpath='{range .spec.template.spec.containers[*]}{.name}: requests={.resources.requests} limits={.resources.limits}{"\n"}{end}'
+api: requests={"cpu":"100m","memory":"256Mi"} limits={"cpu":"500m","memory":"512Mi"}
+

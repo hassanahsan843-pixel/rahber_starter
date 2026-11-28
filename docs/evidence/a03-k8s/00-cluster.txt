@@ -1,0 +1,7 @@
+$ kubectl config current-context
+kind-rahbar-a03
+
+$ kubectl --context kind-rahbar-a03 get nodes -o wide
+NAME                       STATUS   ROLES           AGE     VERSION   INTERNAL-IP   EXTERNAL-IP   OS-IMAGE                       KERNEL-VERSION                              CONTAINER-RUNTIME
+rahbar-a03-control-plane   Ready    control-plane   9m10s   v1.37.0   172.18.0.3    <none>        Debian GNU/Linux 13 (trixie)   6.18.58.1-microsoft-standard-WSL2 (amd64)   containerd://2.3.4
+

@@ -1,0 +1,2 @@
+# Verbatim command output: keep kubectl/tool whitespace exactly as printed.
+*.txt -whitespace

@@ -1,0 +1,319 @@
+$ kubectl --context kind-rahbar-a03 apply -k k8s/overlays/local | grep -E 'job.batch/rahbar-eval|configured|created' || true
+statefulset.apps/chroma configured
+cronjob.batch/reindex configured
+job.batch/rahbar-eval created
+job.batch/rahbar-indexer configured
+
+$ kubectl --context kind-rahbar-a03 get pod rahbar-eval-9hmf2 -n rahbar
+NAME                READY   STATUS   RESTARTS   AGE
+rahbar-eval-9hmf2   0/1     Error    0          26m
+
+$ kubectl --context kind-rahbar-a03 logs rahbar-eval-9hmf2 -n rahbar --tail=-1 | grep -vE '^  q[0-9]+ ' 
+=== Evaluating baseline API ===
+
+============================================================
+  B1 – Embedding Evaluation
+============================================================
+
+=== B1: Embedding Evaluation (model: nomic-embed-text) ===
+
+  [paraphrase] sim=0.7776  'What is the minimum attendance required?'
+  [paraphrase] sim=0.8636  'Students barred from exam if attendance falls belo'
+  [paraphrase] sim=0.9492  'A CGPA below 2.00 triggers Academic Warning.'
+  [paraphrase] sim=0.8529  'When repeating a course only the most recent grade'
+  [paraphrase] sim=0.9193  'The BS tuition fee is Rs. 10,000 per credit hour.'
+  [paraphrase] sim=0.8166  'Hostel curfew on weekdays is 10 PM.'
+  [paraphrase] sim=0.7114  'The library loan period is 14 days.'
+  [paraphrase] sim=0.9380  'Merit scholarships require a CGPA of 3.5 or above.'
+  [paraphrase] sim=0.8035  'University transport routes connect Rawalpindi and'
+  [paraphrase] sim=0.8217  'Mobile phones are banned from examination halls.'
+  [paraphrase] sim=0.7160  'All devices must be registered with the IT departm'
+  [paraphrase] sim=0.6547  'A student dropped from the program for sustained l'
+  [paraphrase] sim=0.8893  'Library fines are Rs. 10 per overdue book per day.'
+  [paraphrase] sim=0.8069  'University email must be used for official communi'
+  [paraphrase] sim=0.9148  'Minimum 130 credit hours needed for the BS degree.'
+
+  Mean paraphrase similarity : 0.8290
+  Mean unrelated similarity  : 0.4315
+  Similarity gap             : 0.3976
+  Time per chunk             : 41.2 ms
+  Determinism max difference : 0.00000000
+
+  Results saved to /app/eval/results/embed_20261128T112615Z.json
+
+============================================================
+  B2 – Retrieval Evaluation (clean + noise)
+============================================================
+
+=== B2: Retrieval Evaluation (44 questions) ===
+
+--- Baseline (clean queries) ---
+
+--- Noise test (typos in queries) ---
+
+  Baseline  R@3=0.9677  R@5=0.9677  MRR=0.8871  nDCG@5=0.9082
+  Noisy     R@3=0.9677  R@5=0.9677  MRR=0.871  nDCG@5=0.8963
+
+  Results saved to /app/eval/results/retrieval_20261128T112615Z.json
+
+============================================================
+  B3 – End-to-End Evaluation
+============================================================
+
+=== B3: End-to-End Evaluation (44 questions) ===
+
+
+  Faithfulness judge         : passage-text, >= 40% of answer words
+  Faithfulness (mean)        : 0.9655 over 29 answered questions
+  Citation validity (mean)   : 1.0
+  Abstention correctness     : 0.9231 (12/13)
+  Latency p50                : 0.06s
+  Latency p95                : 3.24s
+  Answer rate (answerable)   : 0.9355 (29/31)  [faithfulness is judged on these answered questions only]
+  Judge agreement (8 manual) : 0.75 (6/8)
+
+  Results saved to /app/eval/results/e2e_20261128T112615Z.json
+
+============================================================
+  B4 – Stochasticity Check
+============================================================
+
+=== B4: Stochasticity Evaluation ===
+Running evaluation twice with the same configuration (semantic cache bypassed with Cache-Control: no-cache)...
+
+--- Run 1 ---
+
+=== B2: Retrieval Evaluation (44 questions) ===
+
+--- Baseline (clean queries) ---
+
+--- Noise test (typos in queries) ---
+
+  Baseline  R@3=0.9677  R@5=0.9677  MRR=0.8871  nDCG@5=0.9082
+  Noisy     R@3=0.9677  R@5=0.9677  MRR=0.8548  nDCG@5=0.8844
+
+=== B3: End-to-End Evaluation (44 questions) ===
+
+
+  Faithfulness judge         : passage-text, >= 40% of answer words
+  Faithfulness (mean)        : 0.96 over 25 answered questions
+  Citation validity (mean)   : 1.0
+  Abstention correctness     : 0.9231 (12/13)
+  Latency p50                : 2.04s
+  Latency p95                : 4.21s
+  Answer rate (answerable)   : 0.8065 (25/31)  [faithfulness is judged on these answered questions only]
+  Judge agreement (8 manual) : 0.625 (5/8)
+
+--- Run 2 ---
+
+=== B2: Retrieval Evaluation (44 questions) ===
+
+--- Baseline (clean queries) ---
+
+--- Noise test (typos in queries) ---
+
+  Baseline  R@3=0.9677  R@5=0.9677  MRR=0.8871  nDCG@5=0.9082
+  Noisy     R@3=0.9677  R@5=0.9677  MRR=0.8548  nDCG@5=0.8844
+
+=== B3: End-to-End Evaluation (44 questions) ===
+
+
+  Faithfulness judge         : passage-text, >= 40% of answer words
+  Faithfulness (mean)        : 1.0 over 25 answered questions
+  Citation validity (mean)   : 1.0
+  Abstention correctness     : 0.9231 (12/13)
+  Latency p50                : 2.05s
+  Latency p95                : 6.48s
+  Answer rate (answerable)   : 0.8065 (25/31)  [faithfulness is judged on these answered questions only]
+  Judge agreement (8 manual) : 0.75 (6/8)
+
+--- Retrieval metric differences (Run1 - Run2) ---
+  recall_at_3          diff=0.000000
+  recall_at_5          diff=0.000000
+  mrr                  diff=0.000000
+  ndcg_at_5            diff=0.000000
+
+--- E2E metric differences (Run1 - Run2) ---
+  faithfulness_mean              diff=0.040000
+  citation_validity_mean         diff=0.000000
+  abstention_correctness         diff=0.000000
+  latency_p50_s                  diff=0.005000
+  latency_p95_s                  diff=2.271000
+
+--- Per-question answer stability (Run1 vs Run2) ---
+  identical answers          : 0.4318
+  answer/abstain flips       : 2 ['q10', 'q29']
+
+  Results saved to /app/eval/results/stochasticity_20261128T112615Z.json
+
+============================================================
+  SUMMARY TABLE
+============================================================
+
+  Metric                            Value
+  --------------------------------  ----------
+  B1 Paraphrase similarity          0.829
+  B1 Unrelated similarity           0.4315
+  B1 Similarity gap                 0.3976
+  B1 Time per chunk (ms)            41.23
+  B2 Recall@3 (clean)               0.9677
+  B2 Recall@5 (clean)               0.9677
+  B2 MRR (clean)                    0.8871
+  B2 nDCG@5 (clean)                 0.9082
+  B3 Faithfulness                   0.9655
+  B3 Citation validity              1.0
+  B3 Abstention correctness         0.9231
+  B3 Latency p50 (s)                0.061
+  B3 Latency p95 (s)                3.239
+
+  Combined results saved to /traces/baseline_results.json
+=== Evaluating candidate API ===
+
+[Skipping B1 embedding eval (--skip-embed)]
+
+============================================================
+  B2 – Retrieval Evaluation (clean + noise)
+============================================================
+
+=== B2: Retrieval Evaluation (44 questions) ===
+
+--- Baseline (clean queries) ---
+
+--- Noise test (typos in queries) ---
+
+  Baseline  R@3=0.9677  R@5=0.9677  MRR=0.8871  nDCG@5=0.9082
+  Noisy     R@3=0.9677  R@5=0.9677  MRR=0.871  nDCG@5=0.8963
+
+  Results saved to /app/eval/results/retrieval_20261128T113923Z.json
+
+============================================================
+  B3 – End-to-End Evaluation
+============================================================
+
+=== B3: End-to-End Evaluation (44 questions) ===
+
+
+  Faithfulness judge         : passage-text, >= 40% of answer words
+  Faithfulness (mean)        : 0.9667 over 30 answered questions
+  Citation validity (mean)   : 1.0
+  Abstention correctness     : 0.8462 (11/13)
+  Latency p50                : 0.06s
+  Latency p95                : 2.44s
+  Answer rate (answerable)   : 0.9677 (30/31)  [faithfulness is judged on these answered questions only]
+  Judge agreement (8 manual) : 0.875 (7/8)
+
+  Results saved to /app/eval/results/e2e_20261128T113923Z.json
+
+============================================================
+  B4 – Stochasticity Check
+============================================================
+
+=== B4: Stochasticity Evaluation ===
+Running evaluation twice with the same configuration (semantic cache bypassed with Cache-Control: no-cache)...
+
+--- Run 1 ---
+
+=== B2: Retrieval Evaluation (44 questions) ===
+
+--- Baseline (clean queries) ---
+
+--- Noise test (typos in queries) ---
+
+  Baseline  R@3=0.9677  R@5=0.9677  MRR=0.8871  nDCG@5=0.9082
+  Noisy     R@3=0.9677  R@5=0.9677  MRR=0.8548  nDCG@5=0.8844
+
+=== B3: End-to-End Evaluation (44 questions) ===
+
+
+  Faithfulness judge         : passage-text, >= 40% of answer words
+  Faithfulness (mean)        : 0.9615 over 26 answered questions
+  Citation validity (mean)   : 1.0
+  Abstention correctness     : 0.9231 (12/13)
+  Latency p50                : 2.03s
+  Latency p95                : 4.36s
+  Answer rate (answerable)   : 0.8387 (26/31)  [faithfulness is judged on these answered questions only]
+  Judge agreement (8 manual) : 0.625 (5/8)
+
+--- Run 2 ---
+
+=== B2: Retrieval Evaluation (44 questions) ===
+
+--- Baseline (clean queries) ---
+
+--- Noise test (typos in queries) ---
+
+  Baseline  R@3=0.9677  R@5=0.9677  MRR=0.8871  nDCG@5=0.9082
+  Noisy     R@3=0.9677  R@5=0.9677  MRR=0.8548  nDCG@5=0.8844
+
+=== B3: End-to-End Evaluation (44 questions) ===
+
+
+  Faithfulness judge         : passage-text, >= 40% of answer words
+  Faithfulness (mean)        : 0.9583 over 24 answered questions
+  Citation validity (mean)   : 1.0
+  Abstention correctness     : 1.0 (13/13)
+  Latency p50                : 2.06s
+  Latency p95                : 4.48s
+  Answer rate (answerable)   : 0.7742 (24/31)  [faithfulness is judged on these answered questions only]
+  Judge agreement (8 manual) : 0.625 (5/8)
+
+--- Retrieval metric differences (Run1 - Run2) ---
+  recall_at_3          diff=0.000000
+  recall_at_5          diff=0.000000
+  mrr                  diff=0.000000
+  ndcg_at_5            diff=0.000000
+
+--- E2E metric differences (Run1 - Run2) ---
+  faithfulness_mean              diff=0.003200
+  citation_validity_mean         diff=0.000000
+  abstention_correctness         diff=0.076900
+  latency_p50_s                  diff=0.024000
+  latency_p95_s                  diff=0.121000
+
+--- Per-question answer stability (Run1 vs Run2) ---
+  identical answers          : 0.5227
+  answer/abstain flips       : 5 ['q23', 'q24', 'q25', 'q29', 'q37']
+
+  Results saved to /app/eval/results/stochasticity_20261128T113923Z.json
+
+============================================================
+  SUMMARY TABLE
+============================================================
+
+  Metric                            Value
+  --------------------------------  ----------
+  B1 Paraphrase similarity          N/A
+  B1 Unrelated similarity           N/A
+  B1 Similarity gap                 N/A
+  B1 Time per chunk (ms)            N/A
+  B2 Recall@3 (clean)               0.9677
+  B2 Recall@5 (clean)               0.9677
+  B2 MRR (clean)                    0.8871
+  B2 nDCG@5 (clean)                 0.9082
+  B3 Faithfulness                   0.9667
+  B3 Citation validity              1.0
+  B3 Abstention correctness         0.8462
+  B3 Latency p50 (s)                0.062
+  B3 Latency p95 (s)                2.442
+
+  Combined results saved to /traces/candidate_results.json
+=== Running release gate ===
+
+=== C2: Release Gate ===
+
+  PASS  Recall@5 drop vs baseline: 0.9677 (drop 0.0000 ≤ 0.05)
+  PASS  Recall@3 absolute floor: 0.9677 ≥ threshold 0.5
+  PASS  MRR: 0.8871 ≥ threshold 0.4
+  PASS  nDCG@5: 0.9082 ≥ threshold 0.4
+  PASS  Faithfulness: 0.9667 ≥ threshold 0.6
+  PASS  Citation validity: 1.0000 ≥ threshold 0.9
+  PASS  Latency p95: 2.4420 ≤ threshold 10.0
+  FAIL  Abstention correctness: 0.8462 < threshold 1.0
+
+  Overall: FAIL (7 passed, 1 failed)
+
+  Gate report saved to /traces/gate_result_latest.json
+
+$ kubectl --context kind-rahbar-a03 get pod rahbar-eval-9hmf2 -n rahbar -o jsonpath='{.status.containerStatuses[0].state.terminated.exitCode}{"\n"}'
+1
+

@@ -1,0 +1,23 @@
+$ kubectl --context kind-rahbar-a03 create job reindex-unchanged-1 --from=cronjob/reindex -n rahbar
+job.batch/reindex-unchanged-1 created
+
+$ kubectl --context kind-rahbar-a03 wait --for=condition=complete job/reindex-unchanged-1 -n rahbar --timeout=1200s
+job.batch/reindex-unchanged-1 condition met
+
+$ kubectl --context kind-rahbar-a03 logs job/reindex-unchanged-1 -n rahbar --tail=-1
+{"ts": "2026-11-28T11:04:09Z", "logger": "rahbar.indexer", "msg": "indexer starting", "dummy": false, "full_reindex": false, "embed_model": "nomic-embed-text", "collection": "rahbar", "chroma": "chroma:8000", "corpus_dir": "/corpus", "pod": "reindex-unchanged-1-gmz6z"}
+{"ts": "2026-11-28T11:04:09Z", "logger": "rahbar.indexer", "msg": "pipeline starting", "run_id": "1bb2d5ad", "full_reindex": false, "corpus_dir": "/corpus", "batch": "corpus"}
+{"ts": "2026-11-28T11:04:09Z", "logger": "rahbar.indexer", "msg": "discovered", "count": 3}
+{"ts": "2026-11-28T11:04:09Z", "logger": "rahbar.indexer", "msg": "registry loaded", "records": 9}
+{"ts": "2026-11-28T11:04:10Z", "logger": "rahbar.indexer", "msg": "near_dup_vectors", "method": "embedding", "model": "nomic-embed-text", "docs": 9, "newly_embedded": 0}
+{"ts": "2026-11-28T11:04:10Z", "logger": "rahbar.indexer", "msg": "verified_ok", "source": "academic-rules-2023.md"}
+{"ts": "2026-11-28T11:04:10Z", "logger": "rahbar.indexer", "msg": "verified_ok", "source": "academic-rules-2026.md"}
+{"ts": "2026-11-28T11:04:10Z", "logger": "rahbar.indexer", "msg": "verified_ok", "source": "fees-2026.md"}
+{"ts": "2026-11-28T11:04:10Z", "logger": "rahbar.indexer", "msg": "verification_report_written", "path": "/data_lake/reports/verification_report_1bb2d5ad.json", "summary": {"total": 3, "passed": 3, "quarantined": 0}}
+{"ts": "2026-11-28T11:04:10Z", "logger": "rahbar.indexer", "msg": "unchanged", "source": "academic-rules-2023.md", "version": "2023"}
+{"ts": "2026-11-28T11:04:10Z", "logger": "rahbar.indexer", "msg": "unchanged", "source": "academic-rules-2026.md", "version": "2026"}
+{"ts": "2026-11-28T11:04:10Z", "logger": "rahbar.indexer", "msg": "unchanged", "source": "fees-2026.md", "version": "2026"}
+{"ts": "2026-11-28T11:04:10Z", "logger": "rahbar.indexer", "msg": "incremental_no_changes", "message": "Zero new chunks embedded \u2013 corpus unchanged"}
+{"ts": "2026-11-28T11:04:10Z", "logger": "rahbar.indexer", "msg": "api cache invalidation completed", "attempt": 1}
+{"ts": "2026-11-28T11:04:10Z", "logger": "rahbar.indexer", "msg": "indexer finished", "chunks": 0, "seconds": 0.5}
+

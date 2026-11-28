@@ -1,0 +1,17 @@
+$ kubectl create job candidate-batch-b --from=cronjob/reindex -n rahbar  (env: CHROMA_COLLECTION=rahbar-candidate CHUNK_SIZE=200 CHUNK_OVERLAP=30 DATA_LAKE_DIR=/data_lake/candidate API_URL=http://rahbar-api-candidate:8000; args: --corpus-dir=/corpus_b --batch=batch_b)
+job.batch/candidate-batch-b created
+$ kubectl --context kind-rahbar-a03 wait --for=condition=complete job/candidate-batch-b -n rahbar --timeout=1200s
+job.batch/candidate-batch-b condition met
+
+$ kubectl --context kind-rahbar-a03 logs job/candidate-batch-b -n rahbar --tail=-1 | grep -E 'quarantined|verification_report_written|invalidation|indexer finished'
+{"ts": "2026-11-28T11:25:56Z", "logger": "rahbar.indexer", "msg": "quarantined", "source": "academic-rules-2026-copy.md", "reasons": "Exact duplicate of 'academic-rules-2026.md' (same content)"}
+{"ts": "2026-11-28T11:25:56Z", "logger": "rahbar.indexer", "msg": "quarantined", "source": "exam-policy-truncated.txt", "reasons": "No date or version found (set 'date:' or 'doc_version:' in front matter); Document ends mid-sentence: '...submitted in writing with supporting'"}
+{"ts": "2026-11-28T11:25:56Z", "logger": "rahbar.indexer", "msg": "quarantined", "source": "fees-2026-duplicate.md", "reasons": "Exact duplicate of 'fees-2026.md' (same content)"}
+{"ts": "2026-11-28T11:25:56Z", "logger": "rahbar.indexer", "msg": "quarantined", "source": "scholarship-policy-no-metadata.txt", "reasons": "No date or version found (set 'date:' or 'doc_version:' in front matter)"}
+{"ts": "2026-11-28T11:25:56Z", "logger": "rahbar.indexer", "msg": "verification_report_written", "path": "/data_lake/candidate/reports/verification_report_579c7268.json", "summary": {"total": 10, "passed": 6, "quarantined": 4}}
+{"ts": "2026-11-28T11:25:57Z", "logger": "rahbar.indexer", "msg": "api cache invalidation completed", "attempt": 1}
+{"ts": "2026-11-28T11:25:57Z", "logger": "rahbar.indexer", "msg": "indexer finished", "chunks": 46, "seconds": 1.8}
+
+$ kubectl --context kind-rahbar-a03 exec -n rahbar deploy/rahbar-api -- python -c "import chromadb;c=chromadb.HttpClient(host='chroma',port=8000);print([(x.name, c.get_collection(x.name).count()) for x in c.list_collections()])"
+[('rahbar', 70), ('rahbar-candidate', 70)]
+
