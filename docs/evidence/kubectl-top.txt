@@ -18,3 +18,4 @@ rahbar-indexer-manual-reindex-1-m8qj2  165m         380Mi
 Resource Justification:
 - API Pods average ~20m CPU and ~142Mi memory during steady inference. Requests are set to 100m/256Mi and limits to 500m/512Mi.
 - Indexer Job peaks at ~165m CPU and 380Mi memory during OCR rendering. Limits are set to 1000m/1024Mi to guarantee zero OOMKills.
+Status: Existing cluster snapshot; it was not regenerated against the current manifests during this update. Capture fresh `kubectl top pods -n rahbar` output before submission.\n

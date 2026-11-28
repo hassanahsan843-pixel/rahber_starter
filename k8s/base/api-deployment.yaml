@@ -54,6 +54,11 @@ spec:
                   name: rahbar-secret
                   key: LLM_API_KEY
                   optional: true
+            - name: CACHE_INVALIDATION_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: rahbar-secret
+                  key: CACHE_INVALIDATION_TOKEN
           resources:
             requests:
               cpu: 100m

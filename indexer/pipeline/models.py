@@ -153,6 +153,9 @@ class DataLakeRecord:
     superseded: bool
     archived: bool = False
     archive_path: str = ""
+    # Ingestion batch that owns this record (e.g. "corpus", "batch_b"). A run only
+    # treats records of its own batch as removable; "" = legacy (primary corpus).
+    batch: str = ""
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -167,6 +170,7 @@ class DataLakeRecord:
             "superseded": self.superseded,
             "archived": self.archived,
             "archive_path": self.archive_path,
+            "batch": self.batch,
         }
 
     @staticmethod
@@ -183,4 +187,5 @@ class DataLakeRecord:
             superseded=d.get("superseded", False),
             archived=d.get("archived", False),
             archive_path=d.get("archive_path", ""),
+            batch=d.get("batch", ""),
         )

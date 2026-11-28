@@ -1,30 +1,26 @@
 ---
-title: FAST-NUCES Academic Rules 2026 (Near Duplicate - Paraphrased)
-doc_version: 2026-06
+title: Margalla Institute Academic Rules 2026 (Near Duplicate - Paraphrased)
+doc_version: 2026
 date: 2026-06-01
 superseded: false
 ---
 
-# Academic Regulations 2026
+# Academic Regulations of the Margalla Institute of Technology, 2026
 
-## 1. Class Participation Requirements
+From the Fall 2026 term onward, these regulations take the place of the 2023 rules for every learner.
 
-A pupil needs to be present for a minimum of eighty percent of all class sessions.
-Those who do not meet the participation threshold shall be ineligible to appear
-in the terminal assessment and shall receive a failing grade.
+## 1. Class Presence
 
-## 2. Grade Point Warning
+1.1 To be permitted into the end-of-term examination, a learner has to be present in no fewer than eighty out of every hundred lectures of a course. A departmental head may excuse additional absences, but only where medical evidence is provided.
 
-When a learner's cumulative grade point average drops below the two-point threshold
-after any regular academic term, that learner is placed under Academic Alert status.
+1.2 Learners who do not reach the required presence are awarded an FA grade for that course.
 
-## 3. Course Retake Policy
+## 2. Grade Point Alert
 
-Learners are permitted to retake courses. When retaken, the terminal grade recorded
-shall be the grade from the most recent attempt. Prior attempts will be visible on
-the official transcript.
+2.1 Whenever a learner's cumulative grade point average ends a regular term under the two-point mark, the learner is put on academic alert.
 
-## 4. Minimum Graduation Credits
+2.2 Remaining on academic alert across three terms in a row leads to removal from the programme.
 
-A total of one hundred and thirty credit hours must be successfully completed
-for the award of the Bachelor of Science degree.
+## 3. Taking a Course Again
+
+3.1 Any course may be taken a second time in order to raise the cumulative average. The result of the latest attempt is the one that stands, even if it is worse than an earlier result.

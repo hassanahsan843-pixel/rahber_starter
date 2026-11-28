@@ -63,6 +63,7 @@ The API service exposes the following endpoints:
 | Method | Path | Purpose | Probing & Security |
 | :--- | :--- | :--- | :--- |
 | GET | `/healthz` | **Liveness Probe**: Confirms the FastAPI process is alive. Does not touch dependencies. | Kubelet restart probe |
+| GET | `/api/healthz` | API health route used by the Ingress smoke test. | Deployment smoke test |
 | GET | `/readyz` | **Readiness Probe**: Returns `200` only if Chroma is reachable, the collection is non-empty, Redis is responsive, and `EMBED_MODEL` matches metadata. Otherwise returns `503`. | Traffic routing probe |
 | GET | `/metrics` | **Prometheus Metrics**: Exposes latency histograms, token counters, cache hit ratios, and abstentions. | Prometheus scrape |
 | POST | `/api/ask` | **Query Endpoint**: Accepts `{"question": "..."}` and returns a validated `AskResponse` with citations. | User traffic |
@@ -78,16 +79,15 @@ curl -X POST "http://rahbar.local/api/ask" \
 
 ## Local Cluster Quickstart (Minikube)
 
-Follow these steps from a clean clone to deploy the complete system:
+Follow these steps from a clean clone to deploy against the verified FAST-NUCES corpus. The `dev` overlay is for the tiny synthetic CI fixture corpus; it is not the real university corpus.
 
 ### 1. Prerequisites
 - Docker Engine & Minikube
 - `kubectl` & `kustomize`
-- Ollama running locally (for default host inference mode):
+- A Groq API key for hosted answer generation, and Ollama running locally for embeddings:
   ```bash
   export OLLAMA_HOST=0.0.0.0
   ollama serve
-  ollama pull llama3.2:3b
   ollama pull nomic-embed-text
   ```
 
@@ -110,37 +110,55 @@ minikube image load rahbar-indexer:dev
 minikube image load rahbar-ui:dev
 ```
 
-### 4. Manifest Apply Order
-Apply the manifests from the repository root in the exact documented order:
+### 4. Download and verify the public corpus
+
+The PDFs are not committed. Download them locally, verify their checksums, then stage them into the production overlay's PVC:
 
 ```bash
-# Step 1: Create namespace
-kubectl apply -f k8s/base/namespace.yaml
+python -m pip install httpx pyyaml
+python corpus/fetch.py
+python corpus/fetch.py --verify
 
-# Step 2: Create runtime Secret from command line (NEVER commit real keys)
+kubectl apply -f k8s/base/namespace.yaml
+kubectl apply -f k8s/overlays/prod/corpus-pvc.yaml
+kubectl apply -f scripts/corpus-loader-pod.yaml
+kubectl wait --for=condition=Ready pod/rahbar-corpus-loader -n rahbar --timeout=120s
+kubectl cp corpus/raw/. rahbar/rahbar-corpus-loader:/corpus
+kubectl delete pod rahbar-corpus-loader -n rahbar --wait=true
+```
+
+The corpus is stored on a PVC because Kubernetes ConfigMaps cannot hold this document set. The Indexer Job and weekly CronJob mount that PVC read-only.
+
+### 5. Create the runtime Secret and apply manifests
+
+Set `LLM_API_KEY` to your hosted provider key and `CACHE_INVALIDATION_TOKEN` to a private random value in your shell. Then apply the production overlay:
+
+```bash
+export CACHE_INVALIDATION_TOKEN="$(openssl rand -hex 32)"
+# Create runtime Secret from shell variables (NEVER commit real keys)
 kubectl create secret generic rahbar-secret -n rahbar \
-  --from-literal=LLM_API_KEY="dev-key-placeholder" \
+  --from-literal=LLM_API_KEY="$LLM_API_KEY" \
+  --from-literal=CACHE_INVALIDATION_TOKEN="$CACHE_INVALIDATION_TOKEN" \
   --dry-run=client -o yaml | kubectl apply -f -
 
-# Step 3: Apply the complete Kustomize overlay
-kubectl apply -k k8s/overlays/dev
+# Apply production manifests: the Indexer Job runs once against the staged corpus.
+kubectl apply -k k8s/overlays/prod
 
-# Step 4: Verify stateful services are healthy
+# Wait for stateful services and the real index build.
 kubectl wait --for=condition=ready pod -l app=chroma -n rahbar --timeout=120s
 kubectl wait --for=condition=ready pod -l app=redis -n rahbar --timeout=120s
+kubectl wait --for=condition=complete job/rahbar-indexer -n rahbar --timeout=900s
 ```
 
-### 5. Run the Indexer Job
-To build the initial vector index, run the standalone indexer Job:
+### 6. Run the Indexer Job again when documents change
+
+The initial apply creates the `rahbar-indexer` Job. For later re-indexing, first stage the updated files into the PVC with the loader pod above, then run:
 ```bash
-# Execute batch indexing Job from CronJob template
 kubectl create job --from=cronjob/reindex manual-indexer-1 -n rahbar
-
-# Watch until completion
-kubectl wait --for=condition=complete job/manual-indexer-1 -n rahbar --timeout=300s
+kubectl wait --for=condition=complete job/manual-indexer-1 -n rahbar --timeout=900s
 ```
 
-### 6. Verify Rollout & Scaling
+### 7. Verify Rollout & Scaling
 ```bash
 # Ensure API deployment has rolled out successfully across all 3 replicas
 kubectl rollout status deployment/rahbar-api -n rahbar --timeout=180s
@@ -151,6 +169,55 @@ kubectl get endpoints -n rahbar
 # Verify HPA metrics
 kubectl get hpa -n rahbar
 ```
+
+---
+
+## Assignment 03 (RAGOps): exact commands
+
+Python commands run from the repository root with the dependencies in
+`api/requirements-dev.txt` and `indexer/requirements-dev.txt`. Evaluation commands
+need a running API (`--api`) and, for B1/coverage, Ollama with `nomic-embed-text`.
+Kubernetes steps are in [`k8s/README.md`](k8s/README.md) (overlays: `dev` = offline CI,
+`local` = kind/Minikube with Ollama on the host, `prod` = Groq + real corpus PVC).
+
+**Part A – data management** (indexer; `DATA_LAKE_DIR`, `QUARANTINE_DIR`, `ARCHIVE_DIR` set the folders)
+```bash
+cd indexer
+python -m pipeline.run                                   # Batch A (CORPUS_DIR)
+python -m pipeline.run --corpus-dir ../corpus/batch_b --batch batch_b   # Batch B, keeps Batch A
+python -m pipeline.run                                   # unchanged re-run: zero chunks embedded
+pytest -q tests/test_batches_and_verification.py         # batches, duplicates, archive, restore
+```
+Each run writes `DATA_LAKE_DIR/reports/verification_report_<run_id>.json`.
+
+**Part B – offline evaluation** (one command, timestamped files in `eval/results/`)
+```bash
+python eval/run_all.py --api http://localhost:8000
+```
+
+**Part C – change experiment and release gate** (thresholds in `eval/config/thresholds.yaml`)
+```bash
+python eval/run_all.py --api http://<baseline-api> --golden eval/golden.yaml --out eval/results/partc_baseline_chunk400_results.json
+python eval/run_all.py --api http://<candidate-api> --golden eval/golden.yaml --skip-embed --out eval/results/partc_candidate_chunk200_results.json
+python eval/release_gate.py --baseline eval/results/partc_baseline_chunk400_results.json \
+  --candidate eval/results/partc_candidate_chunk200_results.json \
+  --thresholds eval/config/thresholds.yaml --out eval/results/partc_gate_result.json   # exit 0 PASS, 1 FAIL
+```
+
+**Part D – tracing** (each `/api/ask` appends to `TRACE_FILE`, default `/traces/traces.jsonl`)
+```bash
+python scripts/trace_inspect.py <trace_id> --file traces/sample_traces.jsonl   # context + exact prompt
+python scripts/trace_summary.py --file traces/sample_traces.jsonl --hours 100000
+```
+
+**Part E – coverage** (embedding similarity, cutoff and target from `COVERAGE_THRESHOLD`, 0.65)
+```bash
+python eval/coverage.py --out eval/results/coverage_report.json   # exit 1 below threshold
+python eval/coverage.py --method bow                              # offline bag-of-words variant
+```
+
+**Part F – Kubernetes**: see [`k8s/README.md`](k8s/README.md) for the deployment, ingestion and
+evaluation Jobs, ConfigMap threshold change, candidate, rollout and rollback.
 
 ---
 

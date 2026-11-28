@@ -5,3 +5,55 @@ namespace: rahbar
 
 resources:
   - ../../base
+  - corpus-pvc.yaml
+
+patches:
+  - target:
+      version: v1
+      kind: ConfigMap
+      name: rahbar-config
+    patch: |-
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: rahbar-config
+      data:
+        LLM_PROVIDER: hosted
+        OLLAMA_URL: http://host.minikube.internal:11434
+  # Part C on the real corpus: score with the A02 golden set written for it
+  # (base/CI keep eval/golden.jsonl, which targets the synthetic corpus).
+  - target:
+      group: batch
+      version: v1
+      kind: Job
+      name: rahbar-eval
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: EVAL_GOLDEN
+          value: eval/golden.yaml
+  - target:
+      group: batch
+      version: v1
+      kind: Job
+      name: rahbar-indexer
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/volumes/1
+        value:
+          name: corpus-volume
+          persistentVolumeClaim:
+            claimName: rahbar-corpus
+  - target:
+      group: batch
+      version: v1
+      kind: CronJob
+      name: reindex
+    patch: |-
+      - op: replace
+        path: /spec/jobTemplate/spec/template/spec/volumes/1
+        value:
+          name: corpus-volume
+          persistentVolumeClaim:
+            claimName: rahbar-corpus

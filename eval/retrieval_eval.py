@@ -22,8 +22,6 @@ import argparse
 import json
 import math
 import random
-import sys
-import time
 from pathlib import Path
 from typing import Any
 
@@ -33,17 +31,36 @@ import yaml
 HERE = Path(__file__).resolve().parent
 
 
+def _normalize(q: dict) -> dict:
+    """One schema for both golden formats.
+
+    golden.jsonl: ground_truth_doc + must_abstain.
+    golden.yaml (A02 real-corpus set): relevant: [{source, section}] + must_abstain/type.
+    Without this, every golden.yaml question had no ground_truth_doc and was
+    silently excluded from Recall/MRR/nDCG.
+    """
+    q = dict(q)
+    sources = [str(r.get("source")) for r in (q.get("relevant") or []) if r.get("source")]
+    if q.get("ground_truth_doc"):
+        sources = [str(q["ground_truth_doc"])] + [s for s in sources if s != q["ground_truth_doc"]]
+    q["relevant_sources"] = sources
+    q["ground_truth_doc"] = q.get("ground_truth_doc") or (sources[0] if sources else None)
+    q["must_abstain"] = bool(q.get("must_abstain")) or q.get("type") in ("unanswerable", "abstain")
+    return q
+
+
 def load_golden(path: Path) -> list[dict]:
-    """Load golden.jsonl or golden.yaml, return list of question dicts."""
+    """Load golden.jsonl or golden.yaml, return normalized question dicts."""
     if path.suffix == ".jsonl":
         questions = []
         for line in path.read_text(encoding="utf-8").splitlines():
             line = line.strip()
             if line:
                 questions.append(json.loads(line))
-        return questions
-    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-    return data.get("questions") or []
+    else:
+        data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+        questions = data.get("questions") or []
+    return [_normalize(q) for q in questions]
 
 
 def ask(client: httpx.Client, api: str, question: str) -> dict:
@@ -62,13 +79,15 @@ def _match(rel: dict, ret: dict) -> bool:
     return rel_src in ret_src or ret_src in rel_src
 
 
+def _is_relevant(q: dict, ret: dict) -> bool:
+    sources = q.get("relevant_sources") or [q.get("ground_truth_doc")]
+    return any(_match({"ground_truth_doc": s}, ret) for s in sources if s)
+
+
 def recall_at_k(q: dict, retrieved: list[dict], k: int) -> float | None:
     if q.get("must_abstain") or not q.get("ground_truth_doc"):
         return None
-    hits = any(
-        _match({"ground_truth_doc": q["ground_truth_doc"]}, r)
-        for r in retrieved[:k]
-    )
+    hits = any(_is_relevant(q, r) for r in retrieved[:k])
     return 1.0 if hits else 0.0
 
 
@@ -76,7 +95,7 @@ def mrr(q: dict, retrieved: list[dict]) -> float | None:
     if q.get("must_abstain") or not q.get("ground_truth_doc"):
         return None
     for rank, r in enumerate(retrieved, start=1):
-        if _match({"ground_truth_doc": q["ground_truth_doc"]}, r):
+        if _is_relevant(q, r):
             return 1.0 / rank
     return 0.0
 
@@ -86,7 +105,7 @@ def ndcg_at_k(q: dict, retrieved: list[dict], k: int) -> float | None:
         return None
 
     for i, r in enumerate(retrieved[:k], start=1):
-        if _match({"ground_truth_doc": q["ground_truth_doc"]}, r):
+        if _is_relevant(q, r):
             dcg = 1.0 / math.log2(i + 1)
             idcg = 1.0
             return dcg / idcg
@@ -148,8 +167,12 @@ def evaluate(questions: list[dict], client: httpx.Client, api: str,
             "mrr": m,
             "ndcg_at_5": n,
         })
-        print(f"  {q['id']:<5} R@3={r3 or '-':>5}  R@5={r5 or '-':>5}  "
-              f"MRR={m or '-':>5}  nDCG={n or '-':>5}  '{question[:45]}'")
+        def _fmt(v: float | None) -> str:
+            # 0.0 is a miss and must be visible; '-' only means "not scored"
+            return "-" if v is None else f"{v:.3f}"
+
+        print(f"  {q['id']:<5} R@3={_fmt(r3):>5}  R@5={_fmt(r5):>5}  "
+              f"MRR={_fmt(m):>5}  nDCG={_fmt(n):>5}  '{question[:45]}'")
 
     def _avg(lst: list[float]) -> float:
         return round(sum(lst) / len(lst), 4) if lst else 0.0
@@ -166,11 +189,11 @@ def evaluate(questions: list[dict], client: httpx.Client, api: str,
 
 
 def run_retrieval_eval(api: str, golden_path: Path, out_path: Path | None = None,
-                       seed: int = 42) -> dict[str, Any]:
+                       seed: int = 42, headers: dict[str, str] | None = None) -> dict[str, Any]:
     questions = load_golden(golden_path)
     print(f"\n=== B2: Retrieval Evaluation ({len(questions)} questions) ===")
 
-    with httpx.Client(timeout=60.0) as client:
+    with httpx.Client(timeout=60.0, headers=headers) as client:
         print("\n--- Baseline (clean queries) ---")
         baseline = evaluate(questions, client, api, noise=False)
 

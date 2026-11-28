@@ -76,15 +76,33 @@ def print_trace(record: dict) -> None:
     chunks = record.get("retrieved_chunks") or []
     print(f"  RETRIEVED CONTEXT ({len(chunks)} chunks)\n  {sep}")
     for i, c in enumerate(chunks, 1):
-        print(f"  [{i}] {c.get('source')} / {c.get('section')} (p.{c.get('page')})  "
-              f"score={c.get('score')}")
+        doc = f" doc={c.get('doc_id')} v{c.get('doc_version')}" if c.get("doc_id") else ""
+        sup = " SUPERSEDED" if c.get("superseded") else ""
+        print(f"  [{i}] {c.get('chunk_id')} {c.get('source')} / {c.get('section')} "
+              f"(p.{c.get('page')})  score={c.get('score')}{doc}{sup}")
+    if record.get("reranked_order"):
+        print(f"  Final order: {', '.join(record['reranked_order'])}")
     print()
 
     print(f"  LLM MODEL:        {record.get('llm_model')}")
     print(f"  TEMPERATURE:      {record.get('llm_temperature')}")
     print(f"  PROMPT HASH:      {record.get('prompt_hash')}")
+    prompt = record.get("prompt")
+    if prompt is not None:
+        import hashlib
+
+        ok = hashlib.sha256(prompt.encode("utf-8")).hexdigest() == record.get("prompt_hash")
+        print(f"  PROMPT CHECK:     {'reconstructed prompt matches hash' if ok else 'HASH MISMATCH'}")
     print(f"  PROVIDER:         {record.get('provider')}")
     print(f"  CACHE HIT:        {record.get('cache_hit')}\n")
+
+    if prompt:
+        print(f"  EXACT PROMPT SENT TO THE MODEL (system + user)\n  {sep}")
+        for line in prompt.splitlines():
+            print(f"  | {line}")
+        print()
+    elif prompt == "":
+        print("  (no model call: answered from cache or abstained before generation)\n")
 
     print(f"  RESPONSE\n  {sep}")
     print(f"  {record.get('response')}\n")

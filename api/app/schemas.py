@@ -26,6 +26,10 @@ class Passage(BaseModel):
     section: str
     page: int | None = None
     score: float = Field(description="Similarity, higher is closer (1 - cosine distance).")
+    # Index metadata carried through for tracing (empty for the stub retriever)
+    doc_id: str = ""
+    doc_version: str = ""
+    superseded: bool = False
 
 
 class Citation(BaseModel):
@@ -52,6 +56,9 @@ class RetrievedRef(BaseModel):
     section: str
     page: int | None = None
     score: float
+    # The retrieved chunk's text, so the B3 faithfulness judge can check the answer
+    # against what the model actually saw. Default keeps older cache entries valid.
+    text: str = ""
 
 
 class AskResponse(BaseModel):

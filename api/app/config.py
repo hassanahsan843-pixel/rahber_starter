@@ -46,6 +46,7 @@ class Settings:
     ollama_url: str = "http://host.minikube.internal:11434"
     hosted_base_url: str = ""        # e.g. an OpenAI-compatible endpoint
     llm_api_key: str = field(default="", repr=False)   # from the Secret; never log it
+    cache_invalidation_token: str = field(default="", repr=False)
 
     log_level: str = "INFO"
 
@@ -68,5 +69,6 @@ def get_settings() -> Settings:
         ollama_url=os.environ.get("OLLAMA_URL", "http://host.minikube.internal:11434"),
         hosted_base_url=os.environ.get("HOSTED_BASE_URL", ""),
         llm_api_key=os.environ.get("LLM_API_KEY", ""),
+        cache_invalidation_token=os.environ.get("CACHE_INVALIDATION_TOKEN", ""),
         log_level=os.environ.get("LOG_LEVEL", "INFO"),
     )

@@ -8,13 +8,24 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
+# Refresh Debian security updates in the slim base image (including zlib).
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends --only-upgrade zlib1g && \
+    apt-get upgrade -y --no-install-recommends && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
 # Create a dedicated non-root user and group
 RUN groupadd -r appuser && useradd -r -g appuser -d /app -s /sbin/nologin appuser
 
 # Install dependencies first for efficient layer caching
 COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade \
+        pip \
+        "setuptools==84.2.1" \
+        "wheel==0.48.0" \
+        "jaraco.context==6.1.2" && \
+    pip install --no-cache-dir -r requirements.txt && \
+    pip check
 
 # Copy application source
 COPY app ./app

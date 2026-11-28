@@ -27,15 +27,14 @@ from typing import Any
 import httpx
 
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE.parent))   # so `eval.retrieval_eval` imports when run directly
 
 
 def load_golden(path: Path) -> list[dict]:
-    questions = []
-    for line in path.read_text(encoding="utf-8").splitlines():
-        line = line.strip()
-        if line:
-            questions.append(json.loads(line))
-    return questions
+    """Same loader as B2, so golden.yaml (real corpus) works and must_abstain is consistent."""
+    from eval.retrieval_eval import load_golden as _load
+
+    return _load(path)
 
 
 def ask(client: httpx.Client, api: str, question: str) -> tuple[dict, float]:
@@ -51,24 +50,61 @@ def ask(client: httpx.Client, api: str, question: str) -> tuple[dict, float]:
 # A response is "faithful" if at least 40% of its answer words appear in
 # the concatenated retrieved documents text.
 
+FAITHFULNESS_MIN_SUPPORT = 0.40
+
+
 def _tokenize(text: str) -> set[str]:
+    """Answer words: words longer than 3 letters, plus every number.
+
+    Numbers ("80", "2.00", "10,000") are usually the fact being checked, so they
+    are kept even when short; thousands separators are dropped so "10,000" and
+    "10000" match.
+    """
     import re
-    return set(w.lower() for w in re.findall(r"\w+", text) if len(w) > 3)
+
+    tokens = set()
+    for w in re.findall(r"\d+(?:[.,]\d+)*|[^\W\d_]+", text.lower()):
+        if w[0].isdigit():
+            tokens.add(w.replace(",", ""))
+        elif len(w) > 3:
+            tokens.add(w)
+    return tokens
 
 
-def faithfulness_score(answer: str, retrieved: list[dict]) -> float:
-    """Return 1.0 if answer is grounded in retrieved text, 0.0 otherwise."""
-    if not retrieved or not answer:
-        return 0.0
-    context_tokens = set()
-    for r in retrieved:
-        context_tokens |= _tokenize(r.get("source", "") + " " + r.get("section", ""))
-    # Also check the answer text matches key phrases from retrieved docs
+def support_ratio(answer: str, retrieved: list[dict]) -> float | None:
+    """Share of answer words found in the retrieved passage text (None if no text)."""
+    context = " ".join(str(r.get("text") or "") for r in retrieved)
+    if not context.strip():
+        return None
     answer_tokens = _tokenize(answer)
     if not answer_tokens:
         return 0.0
-    overlap = len(answer_tokens & context_tokens) / len(answer_tokens)
-    return 1.0 if overlap >= 0.1 else 0.0
+    return len(answer_tokens & _tokenize(context)) / len(answer_tokens)
+
+
+def _legacy_title_score(answer: str, retrieved: list[dict]) -> float:
+    """Old behaviour, only for APIs that do not return passage text."""
+    context_tokens: set[str] = set()
+    for r in retrieved:
+        context_tokens |= _tokenize(r.get("source", "") + " " + r.get("section", ""))
+    answer_tokens = _tokenize(answer)
+    if not answer_tokens:
+        return 0.0
+    return 1.0 if len(answer_tokens & context_tokens) / len(answer_tokens) >= 0.1 else 0.0
+
+
+def faithfulness_score(answer: str, retrieved: list[dict]) -> float:
+    """Return 1.0 if answer is grounded in retrieved text, 0.0 otherwise.
+
+    Grounded = at least FAITHFULNESS_MIN_SUPPORT of the answer words occur in the
+    text of the passages the API retrieved for this request (`retrieved[].text`).
+    """
+    if not retrieved or not answer:
+        return 0.0
+    ratio = support_ratio(answer, retrieved)
+    if ratio is None:
+        return _legacy_title_score(answer, retrieved)
+    return 1.0 if ratio >= FAITHFULNESS_MIN_SUPPORT else 0.0
 
 
 def citation_valid(response: dict) -> float | None:
@@ -100,7 +136,8 @@ MANUAL_LABELS: dict[str, bool] = {
 }
 
 
-def run_e2e_eval(api: str, golden_path: Path, out_path: Path | None = None) -> dict[str, Any]:
+def run_e2e_eval(api: str, golden_path: Path, out_path: Path | None = None,
+                 headers: dict[str, str] | None = None) -> dict[str, Any]:
     questions = load_golden(golden_path)
     print(f"\n=== B3: End-to-End Evaluation ({len(questions)} questions) ===\n")
 
@@ -111,10 +148,16 @@ def run_e2e_eval(api: str, golden_path: Path, out_path: Path | None = None) -> d
     abstain_total = 0
     abstain_correct = 0
 
-    # Judge agreement
+    # Judge agreement. MANUAL_LABELS were written for golden.jsonl's questions; other
+    # golden files reuse the same ids (q01...) for different questions, so the labels
+    # would be compared with the wrong answers.
     judge_agreement: list[bool] = []
+    labels_apply = golden_path.name == "golden.jsonl"
+    judge_mode = "passage-text"
+    answerable_total = 0
+    answerable_answered = 0
 
-    with httpx.Client(timeout=120.0) as client:
+    with httpx.Client(timeout=120.0, headers=headers) as client:
         for q in questions:
             try:
                 response, latency = ask(client, api, q["question"])
@@ -127,10 +170,19 @@ def run_e2e_eval(api: str, golden_path: Path, out_path: Path | None = None) -> d
             answer_text = response.get("answer", "")
             answered = response.get("answered_from_context", False)
 
-            # Faithfulness
-            faith = faithfulness_score(answer_text, retrieved)
+            # Faithfulness: judged only for responses that answered from context.
+            # An abstention makes no claim (abstention correctness covers it).
+            faith: float | None = None
+            ratio = support_ratio(answer_text, retrieved)
+            if ratio is None and retrieved:
+                judge_mode = "legacy-titles (API returned no passage text)"
+            if answered:
+                faith = faithfulness_score(answer_text, retrieved)
+                if not q.get("must_abstain"):
+                    faithful_scores.append(faith)
             if not q.get("must_abstain"):
-                faithful_scores.append(faith)
+                answerable_total += 1
+                answerable_answered += int(bool(answered))
 
             # Abstention
             if q.get("must_abstain"):
@@ -144,21 +196,25 @@ def run_e2e_eval(api: str, golden_path: Path, out_path: Path | None = None) -> d
                 citation_scores.append(cv)
 
             # Judge agreement check
-            if q["id"] in MANUAL_LABELS:
+            if labels_apply and q["id"] in MANUAL_LABELS:
                 manual = MANUAL_LABELS[q["id"]]
-                judge = faith >= 0.5 or answered
+                judge = bool(faith)          # the judge's own verdict, nothing else
                 judge_agreement.append(judge == manual)
 
             status = "✓" if (q.get("must_abstain") and not answered) or (not q.get("must_abstain") and answered) else "✗"
-            print(f"  {q['id']:<5} {status} lat={latency:.2f}s faith={faith:.2f} '{q['question'][:50]}'")
+            faith_txt = "  - " if faith is None else f"{faith:.2f}"
+            sup_txt = "" if ratio is None else f" support={ratio:.2f}"
+            print(f"  {q['id']:<5} {status} lat={latency:.2f}s faith={faith_txt}{sup_txt} '{q['question'][:50]}'")
 
             rows.append({
                 "id": q["id"],
                 "latency_s": round(latency, 3),
                 "faithfulness": faith,
+                "support_ratio": None if ratio is None else round(ratio, 3),
                 "citation_validity": cv,
                 "answered_from_context": answered,
                 "must_abstain": q.get("must_abstain", False),
+                "answer": answer_text,
             })
 
     # Latency percentiles
@@ -169,17 +225,28 @@ def run_e2e_eval(api: str, golden_path: Path, out_path: Path | None = None) -> d
     mean_faith = round(sum(faithful_scores) / len(faithful_scores), 4) if faithful_scores else 0.0
     mean_cit = round(sum(citation_scores) / len(citation_scores), 4) if citation_scores else 1.0
     abstention_rate = round(abstain_correct / abstain_total, 4) if abstain_total else 1.0
-    judge_agree = round(sum(judge_agreement) / len(judge_agreement), 4) if judge_agreement else 0.0
+    judge_agree: float | None = (round(sum(judge_agreement) / len(judge_agreement), 4)
+                                 if judge_agreement else None)
+    answer_rate = round(answerable_answered / answerable_total, 4) if answerable_total else 0.0
 
-    print(f"\n  Faithfulness (mean)        : {mean_faith}")
+    print(f"\n  Faithfulness judge         : {judge_mode}, >= {FAITHFULNESS_MIN_SUPPORT:.0%} of answer words")
+    print(f"  Faithfulness (mean)        : {mean_faith} over {len(faithful_scores)} answered questions")
     print(f"  Citation validity (mean)   : {mean_cit}")
     print(f"  Abstention correctness     : {abstention_rate} ({abstain_correct}/{abstain_total})")
     print(f"  Latency p50                : {p50:.2f}s")
     print(f"  Latency p95                : {p95:.2f}s")
-    print(f"  Judge agreement (8 manual) : {judge_agree} ({sum(judge_agreement)}/{len(judge_agreement)})")
+    print(f"  Answer rate (answerable)   : {answer_rate} ({answerable_answered}/{answerable_total})"
+          "  [faithfulness is judged on these answered questions only]")
+    if judge_agree is None:
+        print("  Judge agreement            : n/a (manual labels are for golden.jsonl)")
+    else:
+        print(f"  Judge agreement (8 manual) : {judge_agree} ({sum(judge_agreement)}/{len(judge_agreement)})")
 
     result = {
         "faithfulness_mean": mean_faith,
+        "faithfulness_judge": judge_mode,
+        "faithfulness_judged": len(faithful_scores),
+        "answer_rate": answer_rate,
         "citation_validity_mean": mean_cit,
         "abstention_correctness": abstention_rate,
         "abstain_correct": abstain_correct,

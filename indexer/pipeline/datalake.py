@@ -71,13 +71,74 @@ def archive_record(
         registry[doc_id].archive_path = archive_path
 
 
+def record_batch(rec: DataLakeRecord, legacy_batch: str) -> str:
+    """The batch a record belongs to; legacy records (no batch) belong to the primary corpus."""
+    return rec.batch or legacy_batch
+
+
+def in_batch(rec: DataLakeRecord, batch: str, legacy_batch: str) -> bool:
+    return record_batch(rec, legacy_batch) == batch
+
+
 def find_orphan_chunk_ids(
     registry: dict[str, DataLakeRecord],
     active_doc_ids: set[str],
+    batch: str | None = None,
+    legacy_batch: str = "",
 ) -> list[str]:
-    """Return chunk IDs from documents that are no longer in the active corpus."""
+    """Return chunk IDs of documents that were removed from THIS batch's corpus.
+
+    Only records owned by `batch` are considered: ingesting Batch B on its own must
+    never delete Batch A's chunks just because Batch A's files are not in this run.
+    `batch=None` keeps the old whole-registry behaviour (single-corpus callers).
+    """
     orphan_ids: list[str] = []
     for rec in registry.values():
+        if batch is not None and not in_batch(rec, batch, legacy_batch):
+            continue
         if rec.doc_id not in active_doc_ids and not rec.archived:
             orphan_ids.extend(rec.chunk_ids)
     return orphan_ids
+
+
+# ---------------------------------------------------------------------------
+# Document snapshots: the data lake keeps the text of every indexed version, so
+# archival can preserve the real previous content and verification can compare
+# new documents against documents indexed by earlier runs or other batches.
+
+def _snapshot_path(doc_id: str, doc_hash: str) -> Path:
+    return Path(DATA_LAKE_DIR) / "documents" / doc_id / f"{doc_hash}.txt"
+
+
+def save_snapshot(doc_id: str, doc_hash: str, text: str) -> None:
+    path = _snapshot_path(doc_id, doc_hash)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if not path.exists():
+        path.write_text(text, encoding="utf-8")
+
+
+def _vector_path(doc_id: str, doc_hash: str, model: str) -> Path:
+    safe = "".join(ch if ch.isalnum() or ch in "-_." else "_" for ch in model)
+    return Path(DATA_LAKE_DIR) / "documents" / doc_id / f"{doc_hash}.{safe}.vec.json"
+
+
+def save_doc_vector(doc_id: str, doc_hash: str, model: str, vector: list[float]) -> None:
+    """Cache a whole-document embedding (near-duplicate check) for this exact content."""
+    path = _vector_path(doc_id, doc_hash, model)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(vector), encoding="utf-8")
+
+
+def load_doc_vector(doc_id: str, doc_hash: str, model: str) -> list[float] | None:
+    try:
+        return list(json.loads(_vector_path(doc_id, doc_hash, model).read_text(encoding="utf-8")))
+    except (OSError, ValueError):
+        return None
+
+
+def load_snapshot(doc_id: str, doc_hash: str) -> str | None:
+    path = _snapshot_path(doc_id, doc_hash)
+    try:
+        return path.read_text(encoding="utf-8")
+    except OSError:
+        return None

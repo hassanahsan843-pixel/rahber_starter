@@ -210,9 +210,10 @@
 
 | Requirement | Status | Evidence |
 |-------------|--------|----------|
-| BOW cosine similarity vs golden set | ✅ | `eval/coverage.py` |
-| Configurable threshold | ✅ | `--threshold` flag; default 0.65 |
-| Exit code for below-threshold | ✅ | `coverage.py` returns non-zero |
+| Similarity vs golden set | ✅ | `eval/coverage.py`: embedding cosine with the pinned `nomic-embed-text` (default); bag-of-words available with `--method bow` |
+| Configurable threshold | ✅ | `--threshold` flag; default 0.65 (also the match cutoff) |
+| Exit code for below-threshold | ✅ | `coverage.py` returns 1 below threshold, 2 if embeddings are unavailable |
+| Measured result | ✅ | `eval/results/coverage_report.json`: 82.5% (33/40) with embeddings; 25.0% with bag-of-words, which misses paraphrases |
 
 ### E3. Drift experiment
 

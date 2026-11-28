@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -109,7 +110,10 @@ def run_all(api: str, golden_path: Path, skip_embed: bool = False,
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="B5: Full evaluation suite")
     parser.add_argument("--api", required=True)
-    parser.add_argument("--golden", type=Path, default=HERE / "golden.jsonl")
+    # EVAL_GOLDEN lets an overlay pick the golden set without editing the Job command:
+    # golden.jsonl targets the synthetic corpus, golden.yaml the real (prod PVC) corpus.
+    parser.add_argument("--golden", type=Path,
+                        default=Path(os.environ.get("EVAL_GOLDEN") or HERE / "golden.jsonl"))
     parser.add_argument("--skip-embed", action="store_true",
                         help="Skip B1 embedding eval (no indexer virtualenv needed)")
     parser.add_argument("--seed", type=int, default=42)

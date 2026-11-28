@@ -34,6 +34,11 @@ spec:
             - configMapRef:
                 name: rahbar-config
           env:
+            - name: CACHE_INVALIDATION_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: rahbar-secret
+                  key: CACHE_INVALIDATION_TOKEN
             - name: CHROMA_COLLECTION
               value: "rahbar-candidate"
             - name: CHUNK_SIZE
@@ -48,6 +53,9 @@ spec:
               value: "/archive/candidate"
             - name: CORPUS_DIR
               value: "/corpus"
+            # Invalidate the API that serves the rahbar-candidate collection
+            - name: API_URL
+              value: "http://rahbar-api-candidate:8000"
           resources:
             requests:
               cpu: 200m
@@ -60,6 +68,7 @@ spec:
               mountPath: /tmp
             - name: corpus-volume
               mountPath: /corpus
+              readOnly: true
             - name: datalake
               mountPath: /data_lake
             - name: quarantine

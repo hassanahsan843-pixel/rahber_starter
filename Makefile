@@ -51,10 +51,13 @@ images: ## build the three images and load them into minikube (needs yours: Dock
 apply: ## apply the dev overlay (needs yours: manifests)
 	kubectl apply -k k8s/overlays/dev
 
-secret: ## create the LLM key Secret from the LLM_API_KEY variable; never from a file
+secret: ## create the Secret from LLM_API_KEY and CACHE_INVALIDATION_TOKEN variables; never from a file
 	@test -n "$$LLM_API_KEY" || { echo "export LLM_API_KEY=... first"; exit 1; }
+	@test -n "$$CACHE_INVALIDATION_TOKEN" || { echo "export CACHE_INVALIDATION_TOKEN=\$$(openssl rand -hex 32) first"; exit 1; }
 	kubectl create secret generic rahbar-secret -n $(NS) \
-	  --from-literal=LLM_API_KEY="$$LLM_API_KEY" --dry-run=client -o yaml | kubectl apply -f -
+	  --from-literal=LLM_API_KEY="$$LLM_API_KEY" \
+	  --from-literal=CACHE_INVALIDATION_TOKEN="$$CACHE_INVALIDATION_TOKEN" \
+	  --dry-run=client -o yaml | kubectl apply -f -
 
 index: ## run the indexer once, from the CronJob's template (needs yours: CronJob reindex)
 	kubectl create job --from=cronjob/reindex reindex-$$(date +%s) -n $(NS)

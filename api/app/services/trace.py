@@ -80,12 +80,18 @@ def write_trace(
     cache_hit: bool,
     filters_applied: dict | None = None,
     query_rewritten: str | None = None,
+    final_order: list[str] | None = None,
 ) -> None:
-    """Write one trace record to stdout and to the persistent trace file."""
+    """Write one trace record to stdout and to the persistent trace file.
+
+    `prompt` is the exact text sent to the model (system + user message, "" when
+    no model call was made); it is stored in full so scripts/trace_inspect.py can
+    reconstruct the context, and `prompt_hash` is its SHA-256.
+    """
     if not _TRACE_ENABLED:
         return
 
-    prompt_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()[:16]
+    prompt_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()
     total_ms = latency_retrieval_ms + latency_generation_ms + latency_cache_ms
 
     record: dict[str, Any] = {
@@ -98,8 +104,11 @@ def write_trace(
         "retrieved_chunks": retrieved,
         "retrieval_scores": [r.get("score") for r in retrieved],
         "filters_applied": filters_applied or {},
-        "reranked_order": None,
+        # Final chunk order handed to the model (after the offline lexical rerank when
+        # OLLAMA_URL=offline; otherwise the retrieval order, as there is no reranker).
+        "reranked_order": final_order,
         "prompt_hash": prompt_hash,
+        "prompt": prompt,
         "llm_model": getattr(settings, "llm_model", "unknown"),
         "llm_temperature": getattr(settings, "temperature", 0.2),
         "response": response_text,

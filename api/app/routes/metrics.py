@@ -40,7 +40,7 @@ CACHE_HITS = Counter(
 ABSTENTIONS = Counter(
     "rahbar_abstentions_total",
     "Count of queries declined / abstained",
-    ["reason"],  # "relevance_floor" | "no_passages" | "input_length"
+    ["reason"],  # "relevance_floor" | "no_passages" | "no_evidence_overlap" | "input_length"
 )
 
 FALLBACKS = Counter(

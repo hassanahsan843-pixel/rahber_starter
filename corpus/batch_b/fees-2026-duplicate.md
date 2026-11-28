@@ -1,21 +1,25 @@
 ---
-title: FAST-NUCES Fee Structure 2026 (Duplicate)
-doc_version: 2026-06
-date: 2026-06-01
+source: fees-2026.md
+doc_version: 2026
 superseded: false
 ---
-
-# Fee Structure 2026
+# Margalla Institute of Technology: Fee Schedule (Fall 2026)
 
 ## 1. Tuition
 
-BS programs: Rs. 10,000 per credit hour.
-MS programs: Rs. 15,000 per credit hour.
+| Programme | Fee per credit hour (PKR) |
+| --- | --- |
+| BS (all disciplines) | 10,000 |
+| MS | 12,500 |
 
-## 2. Admission Fee
+## 2. Other charges
 
-A one-time admission fee of Rs. 25,000 applies to all new students.
+| Charge | Amount (PKR) |
+| --- | --- |
+| Late registration | 3,000 |
+| Transcript (per copy) | 1,500 |
+| Campus transfer | 5,000 |
 
-## 3. Semester Registration
+## 3. Refunds
 
-Rs. 5,000 per semester registration fee applies in addition to credit hour fees.
+3.1 Tuition is refunded in full when a course is dropped within the first 10 days of classes, and at 50 percent between day 11 and day 20. No refund is given after day 20.

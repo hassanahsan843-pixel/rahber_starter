@@ -36,6 +36,12 @@ spec:
               envFrom:
                 - configMapRef:
                     name: rahbar-config
+              env:
+                - name: CACHE_INVALIDATION_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: rahbar-secret
+                      key: CACHE_INVALIDATION_TOKEN
               resources:
                 requests:
                   cpu: 200m
@@ -44,10 +50,11 @@ spec:
                   cpu: 1000m
                   memory: 1024Mi
               volumeMounts:
-                - name: tmp-dir
-                  mountPath: /tmp
-                - name: corpus-volume
-                  mountPath: /corpus
+                - mountPath: /tmp
+                  name: tmp-dir
+                - mountPath: /corpus
+                  name: corpus-volume
+                  readOnly: true
                 - name: datalake
                   mountPath: /data_lake
                 - name: quarantine

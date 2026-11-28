@@ -51,7 +51,9 @@ def run_gate(baseline: dict, candidate: dict, thresholds: dict) -> tuple[list[st
                direction: str = "min", baseline_val: float | None = None,
                max_drop: float | None = None) -> None:
         if max_drop is not None and baseline_val is not None:
-            drop = baseline_val - actual
+            # Round away float noise: 0.80 - 0.75 is 0.05000000000000004, which
+            # would otherwise fail a drop that is exactly at the allowed limit.
+            drop = round(baseline_val - actual, 9)
             if drop > max_drop:
                 failures.append(f"FAIL  {label}: {actual:.4f} (dropped {drop:.4f} vs baseline {baseline_val:.4f}, max drop {max_drop})")
             else:

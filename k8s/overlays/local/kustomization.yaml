@@ -1,0 +1,51 @@
+# Local Kubernetes demo (kind or Minikube) with Ollama running on the host machine.
+# base/dev stay offline for CI; prod uses Groq + the real corpus on a PVC.
+#
+#   kubectl apply -k k8s/overlays/local
+#
+# Ollama on the host must serve nomic-embed-text and llama3.2:3b. host.docker.internal
+# reaches the host from kind (Docker Desktop); on Minikube use host.minikube.internal.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: rahbar
+
+resources:
+  - ../../base
+
+patches:
+  - target:
+      version: v1
+      kind: ConfigMap
+      name: rahbar-config
+    patch: |-
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: rahbar-config
+      data:
+        LLM_PROVIDER: ollama-host
+        LLM_MODEL: llama3.2:3b
+        OLLAMA_URL: http://host.docker.internal:11434
+  # Batch B (verification demo) from the rahbar-corpus-batch-b ConfigMap, created with
+  #   kubectl create configmap rahbar-corpus-batch-b -n rahbar --from-file=corpus/batch_b
+  # mounted read-only at /corpus_b; optional, so the Jobs run without it.
+  - target:
+      group: batch
+      version: v1
+      kind: CronJob
+      name: reindex
+    patch: |-
+      - op: add
+        path: /spec/jobTemplate/spec/template/spec/volumes/-
+        value:
+          name: corpus-batch-b
+          configMap:
+            name: rahbar-corpus-batch-b
+            optional: true
+      - op: add
+        path: /spec/jobTemplate/spec/template/spec/containers/0/volumeMounts/-
+        value:
+          name: corpus-batch-b
+          mountPath: /corpus_b
+          readOnly: true

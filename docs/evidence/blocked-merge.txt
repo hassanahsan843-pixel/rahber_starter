@@ -18,3 +18,4 @@ GitHub Protection Response:
   - "Merging is blocked: Required status check 'e2e-eval' failed."
   - "Pull requests must pass all required checks before merging."
   - Direct merge and administrative bypass disabled.
+Status: Existing snapshot; the pull request and check state were not re-queried during this update. Confirm or replace with a current screenshot before submission.\n

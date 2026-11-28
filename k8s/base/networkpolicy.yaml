@@ -105,10 +105,15 @@ spec:
       ports:
         - protocol: TCP
           port: 8000
+    # Indexer Jobs call POST /api/cache/invalidate (token-authenticated) after indexing
     - from:
         - podSelector:
-            matchLabels:
-              app: rahbar-indexer
+            matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - rahbar-indexer
+                  - rahbar-candidate-indexer
       ports:
         - protocol: TCP
           port: 8000
@@ -225,6 +230,18 @@ spec:
       ports:
         - protocol: TCP
           port: 8000
+    # Re-index invalidation is authorized through the API's internal endpoint.
+    - to:
+        - podSelector:
+            matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - rahbar-api
+                  - rahbar-api-candidate
+      ports:
+        - protocol: TCP
+          port: 8000
     # Allow Indexer -> Ollama host for embeddings
     - ports:
         - protocol: TCP
@@ -257,3 +274,7 @@ spec:
       ports:
         - protocol: TCP
           port: 8000
+    # B1 embedding evaluation calls the embedding model (Ollama) directly
+    - ports:
+        - protocol: TCP
+          port: 11434
